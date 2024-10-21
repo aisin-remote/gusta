@@ -55,7 +55,9 @@ function has_all_null_values($array)
                                                                 <span class="badge badge-pill badge-danger ml-3">Hari ini, jam :
                                                                     {{ $facility->time }}</span>
                                                             @else
-                                                                <span class="badge badge-pill badge-warning ml-3">{{ Carbon\Carbon::parse($facility->date)->toFormattedDateString()  }} - jam :
+                                                                <span
+                                                                    class="badge badge-pill badge-warning ml-3">{{ Carbon\Carbon::parse($facility->date)->toFormattedDateString() }}
+                                                                    - jam :
                                                                     {{ $facility->time }}</span>
                                                             @endif
                                                         </a>
@@ -236,7 +238,7 @@ function has_all_null_values($array)
                                         有効なチケット</small></h4>
                             </div>
                         </div>
-                        <table class="table table-responsive" id="allTicket">
+                        <table class="table" id="allTicket">
                             <thead>
                                 <tr>
                                     <th class="text-center">No</th>
@@ -254,15 +256,15 @@ function has_all_null_values($array)
                                 @if (!$appointments->isEmpty())
                                     @foreach ($appointments as $appointment)
                                         <?php
-                                            $appointmentDateTime = Carbon\Carbon::parse($appointment->date.' '.$appointment->time);
+                                        $appointmentDateTime = Carbon\Carbon::parse($appointment->date . ' ' . $appointment->time);
                                         ?>
                                         <tr>
-                                            <td class="display-4">{{ $appointment->id }}</td>
-                                            <td class="display-4">{{ $appointment->name }}</td>
+                                            <td class="display-4">{{ $loop->iteration }}</td>
+                                            <td class="display-4">{{ $appointment->user->name }}</td>
                                             <td class="display-4">{{ $appointment->purpose }}</td>
                                             <td class="display-4">
 
-                                                {{ Carbon\Carbon::parse($appointment->date.' '.$appointment->time) }}
+                                                {{ Carbon\Carbon::parse($appointment->date . ' ' . $appointment->time) }}
 
                                             </td>
                                             <td class="display-4">{{ $appointment->pic->name }}</td>
@@ -281,21 +283,19 @@ function has_all_null_values($array)
 
                                             @if ($appointment->facility_status == 'done')
                                                 <td>
-                                                    <span
-                                                        class="badge badge-pill badge-success p-2 text-light">Prepared</span>
+                                                    <span class="badge badge-pill badge-success p-2 text-light">Prepared</span>
                                                 </td>
                                             @else
-
-                                                @if(!$appointmentDateTime->isPast())
-                                                <td>
-                                                    <span
-                                                        class="badge badge-pill badge-warning p-2 text-light">Unprepared</span>
-                                                </td>
+                                                @if (!$appointmentDateTime->isPast())
+                                                    <td>
+                                                        <span
+                                                            class="badge badge-pill badge-warning p-2 text-light">Unprepared</span>
+                                                    </td>
                                                 @else
-                                                <td>
-                                                    <span
-                                                        class="badge badge-pill badge-danger p-2 text-light">Tidak Disiapkan</span>
-                                                </td>
+                                                    <td>
+                                                        <span class="badge badge-pill badge-danger p-2 text-light">Tidak
+                                                            Disiapkan</span>
+                                                    </td>
                                                 @endif
                                             @endif
 
@@ -407,6 +407,7 @@ function has_all_null_values($array)
                                 <tr>
                                     <th class="text-center">No</th>
                                     <th class="text-center">Visitor Name</th>
+                                    <th class="text-center">Visitor Company</th>
                                     <th class="text-center">Visit Purpose</th>
                                     <th class="text-center">Visit Date</th>
                                     <th class="text-center">PIC</th>
@@ -418,7 +419,8 @@ function has_all_null_values($array)
                                     @foreach ($appointments as $appointment)
                                         <tr>
                                             <td class="display-4">{{ $loop->iteration }}</td>
-                                            <td class="display-4">{{ $appointment->name }}</td>
+                                            <td class="display-4">{{ $appointment->user->name }}</td>
+                                            <td class="display-4">{{ $appointment->user->company }}</td>
                                             <td class="display-4">{{ $appointment->purpose }}</td>
                                             <td class="display-4">
                                                 {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
@@ -472,8 +474,7 @@ function has_all_null_values($array)
                                                         <div class="col-md-12 text-center py-5 px-sm-5 ">
                                                             <h2>Your Barcode is Here!</h2>
                                                             <p class="text-muted">show this barcode to the security guard</p>
-                                                            <span>{!! \QrCode::size(200)->generate($appointment->id) !!}</span>
-                                                            <h5 class="mt-3">id={{ $appointment->id }}</h5>
+                                                            <span>{!! \QrCode::size(200)->generate($appointment->qr_code) !!}</span>
                                                             <form class="pt-5">
                                                                 <button type="submit" class="btn btn-primary"
                                                                     data-dismiss="modal" aria-label="Close">close
@@ -545,7 +546,9 @@ function has_all_null_values($array)
         $(document).ready(function() {
 
             $('#allTicket').DataTable({
-                order : [[3, 'asc']],
+                order: [
+                    [3, 'asc']
+                ],
                 "lengthChange": false
             });
 

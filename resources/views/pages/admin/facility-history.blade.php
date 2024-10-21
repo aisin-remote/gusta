@@ -23,8 +23,8 @@
                             <tr>
                                 <th class="text-center">ID Tiket</th>
                                 <th class="text-center">PIC</th>
-                                <th class="text-center">Nama Tamu</th>
-                                <th class="text-center">Jumlah Tamu</th>
+                                {{-- <th class="text-center">Nama Tamu</th>
+                                <th class="text-center">Jumlah Tamu</th> --}}
                                 <th class="text-center">Tujuan</th>
                                 <th class="text-center">Tanggal</th>
                                 <th class="text-center">Status Kebutuhan</th>
@@ -36,21 +36,21 @@
                                     <tr>
                                         <td class="display-4">{{ $appointment->id }} </td>
                                         <td class="display-4">{{ $appointment->name }} </td>
-                                        <td class="display-4">{{ $appointment->guest_name }}</td>
-                                        <td class="display-4">{{ $appointment->guest }}</td>
+                                        {{-- <td class="display-4">{{ $appointment->guest_name }}</td> --}}
+                                        {{-- <td class="display-4">{{ $appointment->guest }}</td> --}}
                                         <td class="display-4">{{ $appointment->purpose }}</td>
-                                        <td class="display-4">{{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
+                                        <td class="display-4">
+                                            {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
 
                                         @if ($appointment->status == 'done')
                                             <td>
-                                                <span
-                                                    class="badge badge-pill badge-success p-2 text-light">Selesai Disiapkan
+                                                <span class="badge badge-pill badge-success p-2 text-light">Selesai
+                                                    Disiapkan
                                                 </span>
                                             </td>
                                         @else
                                             <td>
-                                                <span
-                                                    class="badge badge-pill badge-warning p-2 text-light">Belum Disiapkan
+                                                <span class="badge badge-pill badge-warning p-2 text-light">Belum Disiapkan
                                                 </span>
                                             </td>
                                         @endif

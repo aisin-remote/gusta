@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use App\ApprovalHistory;
-use App\Checkin;
-use App\FacilityDetail;
-use App\RoomDetail;
+use App\Card;
 use App\User;
+use App\Guest;
+use App\Checkin;
+use App\RoomDetail;
+use App\FacilityDetail;
+use App\ApprovalHistory;
 use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
@@ -19,7 +21,16 @@ class Appointment extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
+    
+    public function card()
+    {
+        return $this->belongsTo(Card::class, 'card_id', 'id');
+    }
+    
+    public function guests()
+    {
+        return $this->hasMany(Guest::class);
+    }
 
     public function pic()
     {

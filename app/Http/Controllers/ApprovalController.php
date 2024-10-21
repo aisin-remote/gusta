@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Guest;
 use App\Checkin;
 use Carbon\Carbon;
 use App\FacilityDetail;
@@ -23,7 +24,7 @@ class ApprovalController extends Controller
 
         $appointments = Appointment::latest();
         //load facitily detail
-        $appointments->with('facility_detail');
+        $appointments->with('facility_detail', 'guests');
 
 
         if ($occupation->occupation == 2) {
@@ -48,7 +49,6 @@ class ApprovalController extends Controller
             }
         }
 
-
         return view('pages.admin.index', [
             'appointments' => $appointments,
             'occupation' => $occupation
@@ -61,7 +61,7 @@ class ApprovalController extends Controller
         $userDept = auth()->user()->department_id;
         $user = User::select('occupation')->where('id', $userId)->first();
 
-        $appointments = Appointment::latest();
+        $appointments = Appointment::with('guests')->latest();
 
 
         if ($user->occupation == 2) {
@@ -233,7 +233,7 @@ class ApprovalController extends Controller
         $appointment = DB::table('facility_details')
             ->join('appointments', 'facility_details.appointment_id', '=' , 'appointments.id')
             ->join('users', 'appointments.pic_id', '=', 'users.id')
-            ->select('appointments.id','users.name', 'appointments.name as guest_name', 'appointments.purpose', 'appointments.guest', 'appointments.date' ,'facility_details.status')
+            ->select('appointments.id','users.name', 'appointments.purpose', 'appointments.date' ,'facility_details.status')
             ->where('pic_approval', 'approved')
             ->where('dh_approval', 'approved')
             ->get();
@@ -253,23 +253,34 @@ class ApprovalController extends Controller
 
     public function qrScan(Request $request)
     {
-        $qrId = $request->qrcode;
-        $appointments = Appointment::where('id', $qrId)->first();
+        $qrId = $request->qr_code;
+        $status = null;
+        $appointments = Appointment::with('card')->where('qr_code', $qrId)->first();
 
-        // get checkin status
-        $checkin_status = Checkin::where('appointment_id', $qrId)->first();
+        if(!$appointments || empty($appointments) || $appointments == null){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid QR Code',
+            ]);
+        }
+
+        $checkin_status = Checkin::where('appointment_id', $appointments->id)->first();
+
         $now = Carbon::now();
         // update checkin status
         //$appointments->time - 10 minutes
 
+        
         $appointments10minutes = Carbon::parse($appointments->time)->subMinutes(10);
-
 
         if ($appointments->date >= $now->format('Y-m-d') && $appointments->time >= $now->format('H:i:s')) {
             //not allow if it's not 10 minutes before the appointment
 
             if ($appointments->date != $now->format('Y-m-d') && $appointments10minutes >= $now->format('H:i:s')) {
-                $status = 'gagal_notyet';
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Not yet time to visit!',
+                ]);
             } else {
                 if ($appointments !== null || $checkin_status !== null) {
                     if ($checkin_status->status === 'out') {
@@ -288,13 +299,28 @@ class ApprovalController extends Controller
                 }
             }
         } else {
-            $status = 'gagal_expired';
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ticket Expired!',
+            ]);
         }
 
-        return view('pages.admin.qrcode', [
-            'appointments' => $appointments,
-            'qr' => $qrId,
-            'status' => $status
+        $guests = Guest::where('appointment_id', $appointments->id)->get(); // Fetch guests associated with the appointment
+
+        $cardDetails = [];
+        foreach ($guests as $guest) {
+            $cardDetails[] = [
+                'guest_name' => $guest->name, // You can adjust this based on your Guest model fields
+                'guest_id_card' => $guest->id_card, // You can adjust this based on your Guest model fields
+                'card_title' => $appointments->card->title ?? 'No Title', // Fetching the card title associated with the appointment
+                'card_image_url' => asset('uploads/cards/' . $appointments->card->card ?? 'default.jpg'), // You can modify to handle default card images
+            ];
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'checkin_status' => $status,
+            'details' => $cardDetails
         ]);
     }
 }

@@ -3,6 +3,7 @@
 use App\User;
 use App\Checkin;
 use App\Models\Appointment;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -19,11 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 // default route
 Route::get('/', function () {
+
     return view('pages.user-pages.login');
 })->middleware(['guest']);
 
 Route::post('/logout-auth', 'Auth\LoginController@logout')->name('logout.auth');
-
 // guest route
 Route::middleware(['guest'])->group(function () {
 
@@ -37,8 +38,37 @@ Route::middleware(['guest'])->group(function () {
 
 // auth route
 Route::middleware(['auth'])->group(function () {
+    Route::get('/portal', function () {
+        return view('pages.user-pages.portal');
+    })->name('portal');
+    
+    Route::post('/set-company', function (Request $request) {
+        $request->validate(['company' => 'required']);
+        session(['company' => $request->input('company')]);
+    
+        return redirect('/category');
+    })->name('setCompany');
+    
+    Route::post('/remove-company', function () {
+        session()->forget('company'); // Remove the 'company' session key
+        return response()->json(['success' => true]);
+    })->name('removeCompany');
+    
+    Route::get('/category', function () {
+        return view('pages.user-pages.categories');
+    })->middleware('checkCompanyType');
 
-    Route::get('/dashboard', 'DashboardController@index')->name('dashboard.index');
+    Route::post('/set-category', function (Request $request) {
+        $request->validate(['category' => 'required']);
+        session(['category' => $request->input('category')]);
+    
+        return redirect('/dashboard');
+    })->name('setCategory');
+
+    Route::get('/dashboard', 'DashboardController@index')
+        ->name('dashboard.index')
+        ->middleware('check.role.session');
+    
     Route::get('/update-password', 'UpdatePasswordController@index')->name('password.index');
     Route::get('/book-room', 'BookingController@index')->name('room.index');
     Route::get('/detail-room', 'BookingController@roomDetail')->name('room.detail');
@@ -60,7 +90,7 @@ Route::middleware(['auth'])->group(function () {
     // admin (scan qr)
     Route::post('/appointment/export-appointment', 'AppointmentController@export')->name('appointment.export');
     Route::get('/qrScanView', 'ApprovalController@qrScanView')->name('qrScanView.index');
-    Route::post('/qrScan', 'ApprovalController@qrScan')->name('qrScan.index');
+    Route::get('/qrScan', 'ApprovalController@qrScan')->name('qrScan.validate');
 
     // GA
     Route::get('/facility/history', 'ApprovalController@facilityHistory')->name('facility.history');

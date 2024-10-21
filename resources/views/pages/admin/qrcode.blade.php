@@ -7,131 +7,59 @@
 @section('content')
     <div class="row">
         <div class="col-md-12">
-            @if (session('scanned'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('scanned') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            @endif
+            <div id="alert-message" class="alert alert-dismissible fade show" role="alert" style="display: none;">
+                <span id="alert-content"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         </div>
     </div>
+
     <div class="row justify-content-between">
-        <div class="col-lg-6 grid-margin">
+        <div class="col-lg-12 grid-margin">
             <main class="page payment-page">
-                <section class="payment-form dark">
+                <section class="payment-form">
                     <div class="container">
-                        <form action="{{ route('qrScan.index') }}" method="POST">
-                            {{ csrf_field() }}
-                            <div class="products text-center">
-                                <h3 class="title">Scan QR Code</h3>
-                                <input id="qrcode" type="text" class="form-control my-4 py-4" placeholder="QR Code..."
-                                    name="qrcode" autofocus>
+                        <div class="card shadow-lg p-4 border-0 text-center">
+                            <div class="card-body">
+                                <h3 class="card-title mb-4">Scan QR Code</h3>
+                                <div class="input-group">
+                                    <input id="qrcode" type="text" class="form-control py-3 rounded-sm mr-2"
+                                        placeholder="Enter QR Code..." autofocus>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary rounded-sm px-4" type="button">Scan</button>
+                                    </div>
+                                </div>
+                                <p class="mt-3 text-muted">Please scan your QR code to proceed.</p>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </section>
             </main>
         </div>
-        <div class="col-lg-6 grid-margin">
-            <main class="page payment-page">
-                <section class="payment-form dark">
-                    <div class="container">
-                        <form>
-                            <div class="products">
-                                <h3 class="title">Ticket Details</h3>
-                                @if (empty($appointments))
-                                    <div class="text-center pt-3">
-                                        <span class="">No barcode has been scanned</span>
-                                    </div>
-                                @else
-                                    @if ($appointments->pic_approval === 'approved' && $appointments->dh_approval === 'approved')
-                                        <?php $is_valid = false; ?>
-                                        @if ($status == 'sukses_in')
-                                            <?php $is_valid = true; ?>
-                                            <div class="alert alert-success text-center" role="alert">
-                                                Ticket valid! Visitor inside AIIA
-                                            </div>
-                                        @elseif($status == 'sukses_out')
-                                            <?php $is_valid = true; ?>
-                                            <div class="alert alert-success text-center" role="alert">
-                                                Ticket valid! Visitor outside AIIA
-                                            </div>
-                                        @elseif($status == 'gagal_notyet')
-                                            <div class="alert alert-danger text-center" role="alert">
-                                                Not yet time to visit!
-                                            </div>
-                                        @elseif($status == 'gagal_expired')
-                                            <div class="alert alert-danger text-center" role="alert">
-                                                Ticket expired!
-                                            </div>
-                                        @endif
-                                        @if($is_valid)
-                                            <img class="rounded mx-auto d-block mb-4 img-fluid"
-                                                src="{{ asset('uploads/doc/' . $appointments->doc) }}" width="400"
-                                                height="200">
-                                            <div class="d-flex justify-content-between">
-                                                <span class="font-weight-bold">Personal Data</span>
-                                            </div>
 
-                                            <div class="d-flex justify-content-between">
-                                                <span class="text-muted">Visitor Name</span>
-                                                <span class="font-weight-bold">{{ $appointments->name }}</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <span class="text-muted">Visitor Company</span>
-                                                <span class="font-weight-bold">{{ $appointments->user->company }}</span>
-                                            </div>
-
-                                            <div class="d-flex justify-content-between mt-4">
-                                                <span class="font-weight-bold">Visit Plan</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <span class="text-muted">Visit Purpose</span>
-                                                <span class="font-weight-bold">{{ $appointments->purpose }}</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <span class="text-muted">Visit Frequency</span>
-                                                <span class="font-weight-bold">{{ $appointments->frequency }}</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <span class="text-muted">Visit Date</span>
-                                                <span
-                                                    class="font-weight-bold">{{ Carbon\Carbon::parse($appointments->start_date)->toFormattedDateString() }}
-                                                    -
-                                                    {{ Carbon\Carbon::parse($appointments->end_date)->toFormattedDateString() }}</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <span class="text-muted">Visit Time</span>
-                                                <span class="font-weight-bold">{{ $appointments->time }}</span>
-                                            </div>
-                                            <div class="d-flex justify-content-between">
-                                                <span class="text-muted">Total Visitor</span>
-                                                <span class="font-weight-bold">{{ $appointments->guest }}</span>
-                                            </div>
-
-                                            <div class="item mt-0">
-                                            </div>
-                                            <div class="total">PIC<span
-                                                    class="price">{{ $appointments->pic->name }}</span>
-                                            </div>
-                                        @endif
-                                    @elseif ($appointments === null)
-                                        <div class="alert alert-danger" role="alert">
-                                            Ticket Invalid!
-                                        </div>
-                                    @else
-                                        <div class="alert alert-danger" role="alert">
-                                            Ticket Invalid!
-                                        </div>
-                                    @endif
-                                @endif
-                            </div>
-                        </form>
+        <!-- Modal for showing ticket details -->
+        <div class="modal fade" id="ticketDetailsModal" tabindex="-1" role="dialog" aria-labelledby="ticketDetailsLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document" id="modalSize">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ticketDetailsLabel">Ticket Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </section>
-            </main>
+                    <div class="modal-body d-flex flex-column justify-content-center align-items-center"
+                        id="ticket-details-content">
+                        <!-- Ticket details will be loaded here via AJAX -->
+                    </div>
+                    <div class="modal-footer">
+                        <!-- Close button -->
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -147,8 +75,131 @@
     <script>
         $(document).ready(function() {
             $('#qrcode').focus();
+
+            // Automatically refocus on the QR code input field when clicking on the page
             $(document).on('click', function() {
                 $('#qrcode').focus();
+            });
+
+            // Handle the scanned QR code on pressing 'Enter'
+            $('#qrcode').on('keypress', function(event) {
+                if (event.which === 13) { // 13 is the Enter key code
+                    let qrCode = $(this).val().trim();
+
+                    if (qrCode.length > 0) {
+                        // Send AJAX request to validate the QR code
+                        $.ajax({
+                            url: '{{ route('qrScan.validate') }}', // Ensure route exists for QR validation
+                            method: 'get',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                qr_code: qrCode
+                            },
+                            success: function(response) {
+                                if (response.status == 'success') {
+                                    let cardDetails = '';
+                                    let guestCount = response.details
+                                        .length; // Get the number of guests
+
+                                    let statusText = response.checkin_status === 'sukses_in' ?
+                                        'Current Visitor Status: In' :
+                                        'Current Visitor Status: Out';
+                                    cardDetails += `
+                                        <div class="alert alert-info mb-3 w-100">
+                                            <strong>${statusText}</strong>
+                                        </div>
+                                    `;
+
+                                    // Start the table for guest details
+                                    cardDetails += `
+                                        <table class="table table-bordered mb-4">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th class="text-center">Guest Name</th>
+                                                    <th class="text-center">Guest ID Card</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                    `;
+
+                                    // Loop through guest details
+                                    response.details.forEach(function(guestCard) {
+                                        cardDetails += `
+                                            <tr>
+                                                <td class="text-center">${guestCard.guest_name}</td>
+                                                <td class="text-center">${guestCard.guest_id_card}</td>
+                                            </tr>
+                                        `;
+                                    });
+
+                                    // Close the table tag
+                                    cardDetails += `</tbody></table>`;
+
+                                    // Add the card images for each guest in a grid layout
+                                    cardDetails += `
+                                        <div class="row justify-content-center">
+                                    `;
+
+                                    response.details.forEach(function(guestCard) {
+                                        cardDetails += `
+                                        <div class="col-md-4">
+                                            <div class="card">
+                                                <img src="${guestCard.card_image_url}" class="img-fluid" alt="Card Image" style="width: 200px;">
+                                            </div>
+                                        </div>
+                                    `;
+                                    });
+
+                                    cardDetails += `</div>`; // Close the row div
+
+                                    // Adjust modal size based on guest count
+                                    let modalSizeClass = '';
+                                    if (guestCount === 1) {
+                                        modalSizeClass = 'modal-sm'; // Small modal for 1 guest
+                                    } else if (guestCount >= 2 && guestCount <= 3) {
+                                        modalSizeClass =
+                                            'modal-md'; // Medium modal for 2-3 guests
+                                    } else if (guestCount >= 4) {
+                                        modalSizeClass =
+                                            'modal-lg'; // Large modal for 4 or more guests
+                                    }
+
+                                    // Set the modal size dynamically
+                                    $('#modalSize').removeClass(
+                                        'modal-sm modal-md modal-lg').addClass(
+                                        modalSizeClass);
+
+                                    // Load the content into the modal and show it
+                                    $('#ticket-details-content').html(cardDetails);
+                                    $('#ticketDetailsModal').modal('show');
+                                } else {
+                                    // Show error message
+                                    $('#alert-content').text(response.message);
+                                    $('#alert-message').addClass('alert-danger').show();
+
+                                    setTimeout(function() {
+                                        $('#alert-message').fadeOut('slow');
+                                    }, 4000);
+                                }
+                            },
+                            error: function(xhr) {
+                                // Show error if AJAX request fails
+                                $('#alert-content').text(
+                                    'An error occurred. Please try again: ' + xhr
+                                    .responseText);
+                                $('#alert-message').addClass('alert-danger').show();
+
+                                setTimeout(function() {
+                                    $('#alert-message').fadeOut('slow');
+                                }, 4000);
+                            },
+                            complete: function() {
+                                // Clear the QR code input after processing
+                                $('#qrcode').val('').focus();
+                            }
+                        });
+                    }
+                }
             });
         });
     </script>

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
@@ -35,8 +35,14 @@ class LoginController extends Controller
         if(Auth::attempt($credentials))
         {
             $request->session()->regenerate();
+            
+            if(auth()->user()->role == 'visitor'){
+                return redirect()->intended('/portal');
+            }else{
+                return redirect()->intended('/dashboard');
+                
+            }
 
-            return redirect()->intended('/dashboard');
         }
 
         return redirect()->back()->with('error', 'Email or password do not match our records!');

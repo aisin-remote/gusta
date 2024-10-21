@@ -15,9 +15,19 @@
                     </button>
                 </div>
             @endif
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-5">Ticket List <small class="text-muted"> / Daftar Tiket / チケット一覧</small></h4>
+                    <h4 class="card-title mb-5">Appointment List <small class="text-muted"> / Daftar Janji Temu /
+                            チケット一覧</small>
+                    </h4>
                     <table class="table table-responsive-lg" id="allTicket">
                         <thead>
                             <tr>
@@ -25,7 +35,7 @@
                                 <th class="text-center">PIC</th>
                                 <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
                                 <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
-                                <th class="text-center">Approval</th>
+                                <th class="text-center">Status</th>
                                 <th class="text-center">QR Code</th>
                             </tr>
                         </thead>
@@ -33,7 +43,7 @@
                             @if (!$appointments->isEmpty())
                                 @foreach ($appointments as $appointment)
                                     <tr>
-                                        <td class="display-4">{{ $appointment->id }} </td>
+                                        <td class="display-4">{{ $loop->iteration }} </td>
                                         <td class="display-4">{{ $appointment->pic->name }}</td>
                                         <td class="display-4">{{ $appointment->purpose }}</td>
                                         <td class="display-4">
@@ -52,8 +62,8 @@
                                             </td>
                                         @elseif($appointment->pic_approval === 'approved' && $appointment->dh_approval === 'pending')
                                             <td>
-                                                <span
-                                                    class="badge badge-pill badge-warning p-2 text-light">{{ $appointment->dh_approval }}</span>
+                                                <span class="badge badge-pill badge-warning p-2 text-light">Pending Dept.
+                                                    Head</span>
                                             </td>
                                             <td>
                                                 <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
@@ -119,8 +129,7 @@
                                             <div class="col-md-12 text-center py-5 px-sm-5 ">
                                                 <h2>Your Barcode is Here!</h2>
                                                 <p class="text-muted">show this barcode to the security guard</p>
-                                                <span>{!! \QrCode::size(200)->generate($appointment->id) !!}</span>
-                                                <h5 class="mt-3">id={{ $appointment->id }}</h5>
+                                                <span>{!! \QrCode::size(200)->generate($appointment->qr_code) !!}</span>
                                                 <form class="pt-5">
                                                     <button type="submit" class="btn btn-primary" data-dismiss="modal"
                                                         aria-label="Close">close modal</button>
