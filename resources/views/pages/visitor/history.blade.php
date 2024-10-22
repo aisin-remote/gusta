@@ -51,8 +51,8 @@
 
                                         @if ($appointment->pic_approval === 'pending' && $appointment->dh_approval === 'pending')
                                             <td>
-                                                <span
-                                                    class="badge badge-pill badge-warning p-2 text-light">{{ $appointment->dh_approval }}</span>
+                                                <span class="badge badge-pill badge-warning p-2 text-light">Waiting
+                                                    Approval</span>
                                             </td>
                                             <td>
                                                 <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
@@ -62,8 +62,8 @@
                                             </td>
                                         @elseif($appointment->pic_approval === 'approved' && $appointment->dh_approval === 'pending')
                                             <td>
-                                                <span class="badge badge-pill badge-warning p-2 text-light">Pending Dept.
-                                                    Head</span>
+                                                <span class="badge badge-pill badge-warning p-2 text-light">Waiting Approval
+                                                </span>
                                             </td>
                                             <td>
                                                 <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"

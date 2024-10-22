@@ -238,72 +238,75 @@ function has_all_null_values($array)
                                         有効なチケット</small></h4>
                             </div>
                         </div>
-                        <table class="table" id="allTicket">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">No</th>
-                                    <th class="text-center">Visitor Name <small class="text-muted"> / 訪問者名</small></th>
-                                    <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
-                                    <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
-                                    <th class="text-center">PIC <small class="text-muted"> / 担当者</small></th>
-                                    <th class="text-center">Checkin Status</th>
-                                    <th class="text-center">Facility Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
+                        <div class="table-responsive">
+                            <table class="table table-hover w-100" id="allTicket">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">No</th>
+                                        <th class="text-center">Visitor Name <small class="text-muted"> / 訪問者名</small></th>
+                                        <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
+                                        <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
+                                        <th class="text-center">PIC <small class="text-muted"> / 担当者</small></th>
+                                        <th class="text-center">Checkin Status</th>
+                                        <th class="text-center">Facility Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
 
 
-                                @if (!$appointments->isEmpty())
-                                    @foreach ($appointments as $appointment)
-                                        <?php
-                                        $appointmentDateTime = Carbon\Carbon::parse($appointment->date . ' ' . $appointment->time);
-                                        ?>
-                                        <tr>
-                                            <td class="display-4">{{ $loop->iteration }}</td>
-                                            <td class="display-4">{{ $appointment->user->name }}</td>
-                                            <td class="display-4">{{ $appointment->purpose }}</td>
-                                            <td class="display-4">
+                                    @if (!$appointments->isEmpty())
+                                        @foreach ($appointments as $appointment)
+                                            <?php
+                                            $appointmentDateTime = Carbon\Carbon::parse($appointment->date . ' ' . $appointment->time);
+                                            ?>
+                                            <tr>
+                                                <td class="display-4">{{ $loop->iteration }}</td>
+                                                <td class="display-4">{{ $appointment->user->name }}</td>
+                                                <td class="display-4">{{ $appointment->purpose }}</td>
+                                                <td class="display-4">
 
-                                                {{ Carbon\Carbon::parse($appointment->date . ' ' . $appointment->time) }}
+                                                    {{ Carbon\Carbon::parse($appointment->date . ' ' . $appointment->time) }}
 
-                                            </td>
-                                            <td class="display-4">{{ $appointment->pic->name }}</td>
-
-                                            @if ($appointment->checkin->status === 'in')
-                                                <td>
-                                                    <span
-                                                        class="badge badge-pill badge-success p-2 text-light">{{ $appointment->checkin->status }}</span>
                                                 </td>
-                                            @else
-                                                <td>
-                                                    <span
-                                                        class="badge badge-pill badge-danger p-2 text-light">{{ $appointment->checkin->status }}</span>
-                                                </td>
-                                            @endif
+                                                <td class="display-4">{{ $appointment->pic->name }}</td>
 
-                                            @if ($appointment->facility_status == 'done')
-                                                <td>
-                                                    <span class="badge badge-pill badge-success p-2 text-light">Prepared</span>
-                                                </td>
-                                            @else
-                                                @if (!$appointmentDateTime->isPast())
+                                                @if ($appointment->checkin->status === 'in')
                                                     <td>
                                                         <span
-                                                            class="badge badge-pill badge-warning p-2 text-light">Unprepared</span>
+                                                            class="badge badge-pill badge-success p-2 text-light">{{ $appointment->checkin->status }}</span>
                                                     </td>
                                                 @else
                                                     <td>
-                                                        <span class="badge badge-pill badge-danger p-2 text-light">Tidak
-                                                            Disiapkan</span>
+                                                        <span
+                                                            class="badge badge-pill badge-danger p-2 text-light">{{ $appointment->checkin->status }}</span>
                                                     </td>
                                                 @endif
-                                            @endif
 
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                        </table>
+                                                @if ($appointment->facility_status == 'done')
+                                                    <td>
+                                                        <span
+                                                            class="badge badge-pill badge-success p-2 text-light">Prepared</span>
+                                                    </td>
+                                                @else
+                                                    @if (!$appointmentDateTime->isPast())
+                                                        <td>
+                                                            <span
+                                                                class="badge badge-pill badge-warning p-2 text-light">Unprepared</span>
+                                                        </td>
+                                                    @else
+                                                        <td>
+                                                            <span class="badge badge-pill badge-danger p-2 text-light">Tidak
+                                                                Disiapkan</span>
+                                                        </td>
+                                                    @endif
+                                                @endif
+
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -402,47 +405,50 @@ function has_all_null_values($array)
                                 </form>
                             </div>
                         </div>
-                        <table class="table table-responsive-lg" id="allTicket">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">No</th>
-                                    <th class="text-center">Visitor Name</th>
-                                    <th class="text-center">Visitor Company</th>
-                                    <th class="text-center">Visit Purpose</th>
-                                    <th class="text-center">Visit Date</th>
-                                    <th class="text-center">PIC</th>
-                                    <th class="text-center">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-                                @if (!$appointments->isEmpty())
-                                    @foreach ($appointments as $appointment)
-                                        <tr>
-                                            <td class="display-4">{{ $loop->iteration }}</td>
-                                            <td class="display-4">{{ $appointment->user->name }}</td>
-                                            <td class="display-4">{{ $appointment->user->company }}</td>
-                                            <td class="display-4">{{ $appointment->purpose }}</td>
-                                            <td class="display-4">
-                                                {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
-                                            <td class="display-4">{{ $appointment->pic->name }}</td>
-
-                                            @if ($appointment->checkin->status === 'in')
-                                                <td>
-                                                    <span
-                                                        class="badge badge-pill badge-success p-2 text-light">{{ $appointment->checkin->status }}</span>
+                        <div class="table-responsive">
+                            <table class="table table-hover w-100" id="allTicket">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">No</th>
+                                        <th class="text-center">Visitor Name</th>
+                                        <th class="text-center">Visitor Company</th>
+                                        <th class="text-center">Visit Purpose</th>
+                                        <th class="text-center">Visit Date</th>
+                                        <th class="text-center">PIC</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    @if (!$appointments->isEmpty())
+                                        @foreach ($appointments as $appointment)
+                                            <tr>
+                                                <td class="display-4">{{ $loop->iteration }}</td>
+                                                <td class="display-4">{{ $appointment->user->name }}</td>
+                                                <td class="display-4">{{ $appointment->user->company }}</td>
+                                                <td class="display-4">{{ $appointment->purpose }}</td>
+                                                <td class="display-4">
+                                                    {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}
                                                 </td>
-                                            @else
-                                                <td>
-                                                    <span
-                                                        class="badge badge-pill badge-danger p-2 text-light">{{ $appointment->checkin->status }}</span>
-                                                </td>
-                                            @endif
+                                                <td class="display-4">{{ $appointment->pic->name }}</td>
 
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                        </table>
+                                                @if ($appointment->checkin->status === 'in')
+                                                    <td>
+                                                        <span
+                                                            class="badge badge-pill badge-success p-2 text-light">{{ $appointment->checkin->status }}</span>
+                                                    </td>
+                                                @else
+                                                    <td>
+                                                        <span
+                                                            class="badge badge-pill badge-danger p-2 text-light">{{ $appointment->checkin->status }}</span>
+                                                    </td>
+                                                @endif
+
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -494,37 +500,41 @@ function has_all_null_values($array)
                                         今日の予定</small></h4>
                             </div>
                         </div>
-                        <table class="table table-responsive-lg" id="allTicket">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">No</th>
-                                    <th class="text-center">PIC <small class="text-muted"> / 担当者</small></th>
-                                    <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
-                                    <th class="text-center">Visit Date<small class="text-muted"> / 訪問日</small></th>
-                                    <th class="text-center">QR <small class="text-muted"> / QRコード</small></th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-                                @if (!$appointments->isEmpty())
-                                    @foreach ($appointments as $appointment)
-                                        <tr>
-                                            <td class="display-4">{{ $loop->iteration }}</td>
-                                            <td class="display-4">{{ $appointment->pic->name }}</td>
-                                            <td class="display-4">{{ $appointment->purpose }}</td>
-                                            <td class="display-4">
-                                                {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
-                                            <td>
-                                                <button data-toggle="modal"
-                                                    data-target="#demoModal-{{ $appointment->id }}"data-toggle="tooltip"
-                                                    title="QR Code" type="submit" class="btn btn-icons btn-inverse-info">
-                                                    <i class="mdi mdi-qrcode"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-hover w-100" id="allTicket">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">No</th>
+                                        <th class="text-center">PIC <small class="text-muted"> / 担当者</small></th>
+                                        <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
+                                        <th class="text-center">Visit Date<small class="text-muted"> / 訪問日</small></th>
+                                        <th class="text-center">QR <small class="text-muted"> / QRコード</small></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    @if (!$appointments->isEmpty())
+                                        @foreach ($appointments as $appointment)
+                                            <tr>
+                                                <td class="display-4">{{ $loop->iteration }}</td>
+                                                <td class="display-4">{{ $appointment->pic->name }}</td>
+                                                <td class="display-4">{{ $appointment->purpose }}</td>
+                                                <td class="display-4">
+                                                    {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}
+                                                </td>
+                                                <td>
+                                                    <button data-toggle="modal"
+                                                        data-target="#demoModal-{{ $appointment->id }}"data-toggle="tooltip"
+                                                        title="QR Code" type="submit"
+                                                        class="btn btn-icons btn-inverse-info">
+                                                        <i class="mdi mdi-qrcode"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

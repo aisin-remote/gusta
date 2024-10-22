@@ -34,7 +34,8 @@ class AppointmentController extends Controller
 
     public function create(Request $request)
     {
-        $pic = User::select('occupation')->where('id', $request->pic_id)->first();
+        $pic = User::select('phone_number','occupation')->where('id', $request->pic_id)->first();
+        $user_company = auth()->user()->company;
 
         $request->validate([
             'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
@@ -74,9 +75,9 @@ class AppointmentController extends Controller
 
         // get cards_id
         $card = Card::select('id')
-                        ->where('area_id', $request->area_id)
-                        ->where('category', session()->get('category'))
-                        ->first();
+                ->where('area_id', $request->area_id)
+                ->where('category', session()->get('category'))
+                ->first();
                         
         try {
             DB::beginTransaction();
@@ -111,6 +112,38 @@ class AppointmentController extends Controller
                     'id_card' => $request->cardId[$index],
                 ]);
             }
+
+            // send Wa notif to pic
+            $token = 'v2n49drKeWNoRDN4jgqcdsR8a6bcochcmk6YphL6vLcCpRZdV1';
+            $phone = $pic->phone_number;
+            // Pass array elements as additional arguments to sprintf
+            $message = sprintf(
+                "```----GUEST ALERT-------\n\n1) %s : \nAgenda : %s\nWaktu : %s\nStatus : %s\n\nPlease confirm your guest!\nThank You```",
+                $user_company,         // Assuming $guestName holds the guest's name or identifier
+                $purpose,              // The agenda of the guest visit
+                $request->date,           // The date of the visit
+                $appointment->dh_approval               // The current status (e.g., 'Not Confirmed')
+            );
+        
+            $curl = curl_init();
+            curl_setopt_array($curl, [
+                CURLOPT_URL => 'https://app.ruangwa.id/api/send_message',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                // Use http_build_query to properly encode the POST fields
+                CURLOPT_POSTFIELDS => http_build_query([
+                    'token' => $token,
+                    'number' => $phone,
+                    'message' => $message
+                ]),
+            ]);
+            $response = curl_exec($curl);
+            curl_close($curl); // Don't forget to close the cURL session once done
 
             DB::commit();
             

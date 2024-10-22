@@ -29,93 +29,102 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-5">Ticket list <small class="text-muted"> / チケット一覧</small></h4>
-                    <table class="table table-responsive" id="allTicket">
-                        <thead>
-                            <tr>
-                                <th class="text-center">PIC</th>
-                                <th class="text-center">Visitor Company <small class="text-muted"> / 合計ゲスト</small></th>
-                                <th class="text-center">Total Guest <small class="text-muted"> / 会社</small></th>
-                                <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
-                                <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
-                                <th class="text-center">Status</th>
-                                <th class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-center">
-                            @if (!$appointments->isEmpty())
-                                @foreach ($appointments as $appointment)
-                                    <tr>
-                                        <td class="display-4">{{ $appointment->pic->name }}</td>
-                                        <td class="display-4">{{ $appointment->user->company }}</td>
-                                        <td class="display-4">{{ count($appointment->guests) }}</td>
-                                        <td class="display-4">{{ $appointment->purpose }}</td>
-                                        <td class="display-4">
-                                            {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
-                                        @if ($appointment->pic_approval == 'pending' && $appointment->dh_approval == 'pending')
+                    <div class="table-responsive">
+                        <table class="table table-hover w-100" id="allTicket">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">PIC</th>
+                                    <th class="text-center">Visitor Company <small class="text-muted"> / 合計ゲスト</small></th>
+                                    <th class="text-center">Total Guest <small class="text-muted"> / 会社</small></th>
+                                    <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
+                                    <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                @if (!$appointments->isEmpty())
+                                    @foreach ($appointments as $appointment)
+                                        <tr>
+                                            <td class="display-4">{{ $appointment->pic->name }}</td>
+                                            <td class="display-4">{{ $appointment->user->company }}</td>
+                                            <td class="display-4">{{ count($appointment->guests) }}</td>
+                                            <td class="display-4">{{ $appointment->purpose }}</td>
                                             <td class="display-4">
-                                                <span class="badge badge-pill badge-warning p-2 text-light">Pending</span>
-                                            </td>
-                                        @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'pending')
-                                            <td class="display-4">
-                                                <span class="badge badge-secondary">Pending Dept. Head</span>
-                                            </td>
-                                        @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'approved')
-                                            <td class="display-4">
-                                                <span class="badge badge-pill badge-success p-2 text-light">Approved</span>
-                                            </td>
-                                        @elseif($appointment->pic_approval == 'rejected' && $appointment->dh_approval == 'rejected')
-                                            <td class="display-4">
-                                                <span class="badge badge-pill badge-danger p-2 text-light">Rejected</span>
-                                            </td>
-                                        @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'rejected')
-                                            <td class="display-4">
-                                                <span class="badge badge-danger">Rejected by Dept. Head</span>
-                                            </td>
-                                        @endif
-                                        <td>
-                                            {{-- detail --}}
-                                            <button data-toggle="modal" data-target="#detailModal-{{ $appointment->id }}"
-                                                class="btn btn-icons btn-inverse-info" data-toggle="tooltip" title="Detail">
-                                                <i class="mdi mdi-information"></i>
-                                            </button>
-                                            {{-- apporval --}}
-                                            {{-- if the pic of ticket is spv down (1) and the auth user is manager up, then show the approval button modal, because the ticket is appear when already approved by the pic , when the ticket not approved yet by the pic, the ticket should not appear in the list --}}
-                                            @if ($appointment->pic->occupation == 1 && auth()->user()->occupation == 2)
-                                                <button data-toggle="modal"
-                                                    data-target="#approveModal-{{ $appointment->id }}" type="submit"
-                                                    class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
-                                                    title="Approve">
-                                                    <i class="mdi mdi-check-circle"></i>
-                                                </button>
-                                                {{-- if the pic of the ticket is spv down and the auth user is spv (the pic itself) then show the facility button modal --}}
-                                            @elseif($appointment->pic->occupation == 1 && auth()->user()->occupation == 1)
-                                                <button data-toggle="modal"
-                                                    data-target="#facilityModal-{{ $appointment->id }}" type="submit"
-                                                    class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
-                                                    title="Approve">
-                                                    <i class="mdi mdi-check-circle"></i>
-                                                </button>
-                                                {{-- if the pic of the ticket is manager up and the auth user is manager (the pic itself) then show the facility button modal --}}
-                                            @elseif($appointment->pic->occupation == 2 && auth()->user()->occupation == 2)
-                                                <button data-toggle="modal"
-                                                    data-target="#facilityModal-{{ $appointment->id }}" type="submit"
-                                                    class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
-                                                    title="Approve">
-                                                    <i class="mdi mdi-check-circle"></i>
-                                                </button>
+                                                {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
+                                            @if ($appointment->pic_approval == 'pending' && $appointment->dh_approval == 'pending')
+                                                <td class="display-4">
+                                                    <span class="badge badge-pill badge-warning p-2 text-light">
+                                                        Waiting Approval
+                                                    </span>
+                                                </td>
+                                            @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'pending')
+                                                <td class="display-4">
+                                                    <span class="badge badge-secondary">Waiting Approval</span>
+                                                </td>
+                                            @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'approved')
+                                                <td class="display-4">
+                                                    <span
+                                                        class="badge badge-pill badge-success p-2 text-light">Approved</span>
+                                                </td>
+                                            @elseif($appointment->pic_approval == 'rejected' && $appointment->dh_approval == 'rejected')
+                                                <td class="display-4">
+                                                    <span
+                                                        class="badge badge-pill badge-danger p-2 text-light">Rejected</span>
+                                                </td>
+                                            @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'rejected')
+                                                <td class="display-4">
+                                                    <span class="badge badge-danger">Rejected</span>
+                                                </td>
                                             @endif
-                                            {{-- reject --}}
-                                            <button data-toggle="modal" data-target="#rejectModal-{{ $appointment->id }}"
-                                                type="submit" class="btn btn-icons btn-inverse-danger"
-                                                data-toggle="tooltip" title="Reject">
-                                                <i class="mdi mdi-close-circle"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
+                                            <td>
+                                                {{-- detail --}}
+                                                <button data-toggle="modal"
+                                                    data-target="#detailModal-{{ $appointment->id }}"
+                                                    class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
+                                                    title="Detail">
+                                                    <i class="mdi mdi-information"></i>
+                                                </button>
+                                                {{-- apporval --}}
+                                                {{-- if the pic of ticket is spv down (1) and the auth user is manager up, then show the approval button modal, because the ticket is appear when already approved by the pic , when the ticket not approved yet by the pic, the ticket should not appear in the list --}}
+                                                @if ($appointment->pic->occupation == 1 && auth()->user()->occupation == 2)
+                                                    <button data-toggle="modal"
+                                                        data-target="#approveModal-{{ $appointment->id }}" type="submit"
+                                                        class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
+                                                        title="Approve">
+                                                        <i class="mdi mdi-check-circle"></i>
+                                                    </button>
+                                                    {{-- if the pic of the ticket is spv down and the auth user is spv (the pic itself) then show the facility button modal --}}
+                                                @elseif($appointment->pic->occupation == 1 && auth()->user()->occupation == 1)
+                                                    <button data-toggle="modal"
+                                                        data-target="#facilityModal-{{ $appointment->id }}" type="submit"
+                                                        class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
+                                                        title="Approve">
+                                                        <i class="mdi mdi-check-circle"></i>
+                                                    </button>
+                                                    {{-- if the pic of the ticket is manager up and the auth user is manager (the pic itself) then show the facility button modal --}}
+                                                @elseif($appointment->pic->occupation == 2 && auth()->user()->occupation == 2)
+                                                    <button data-toggle="modal"
+                                                        data-target="#facilityModal-{{ $appointment->id }}" type="submit"
+                                                        class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
+                                                        title="Approve">
+                                                        <i class="mdi mdi-check-circle"></i>
+                                                    </button>
+                                                @endif
+                                                {{-- reject --}}
+                                                <button data-toggle="modal"
+                                                    data-target="#rejectModal-{{ $appointment->id }}" type="submit"
+                                                    class="btn btn-icons btn-inverse-danger" data-toggle="tooltip"
+                                                    title="Reject">
+                                                    <i class="mdi mdi-close-circle"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
 
                     <!-- Modal -->
                     {{-- Detail Modal --}}

@@ -12,7 +12,7 @@
                     </ul>
                 </div>
             @endif
-            <div class="auth-form-light text-left p-5 card-animate" id="login">
+            <div class="auth-form-light text-left p-5 card-animate login" id="login">
                 <h4>New here?</h4>
                 <h6 class="font-weight-light pb-4">Signing up is easy. It only takes a few steps</h6>
                 <form action="{{ route('register.store') }}" method="POST">
@@ -26,7 +26,7 @@
                             name="email" required>
                     </div>
                     <div class="form-group">
-                        <input type="phone" class="form-control form-control-lg" placeholder="08xxx" name="email"
+                        <input type="phone" class="form-control form-control-lg" placeholder="08xxx" name="phone_number"
                             required>
                     </div>
                     <div class="form-group">
