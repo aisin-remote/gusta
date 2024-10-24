@@ -60,8 +60,7 @@
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <!-- Row to wrap the cards -->
         <div class="row justify-content-center w-100">
-            <div class="col-lg-12 col-md-4 col-sm-6 col-12 mb-4 card-animate login card-click mb-5" id="aisin-card"
-                data-company="aisin">
+            <div class="col-lg-12 col-md-4 col-sm-6 col-12 mb-4 card-animate login mb-5">
                 <h2 class="text-center">Select a Category to Continue</h2>
             </div>
             <!-- Visitor Card -->
