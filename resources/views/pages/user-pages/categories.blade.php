@@ -45,7 +45,7 @@
     #back-button {
         position: absolute;
         top: 20px;
-        left: 100px;
+        left: 50px;
         z-index: 1000;
     }
 </style>
@@ -60,8 +60,12 @@
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <!-- Row to wrap the cards -->
         <div class="row justify-content-center w-100">
+            <div class="col-lg-12 col-md-4 col-sm-6 col-12 mb-4 card-animate login card-click mb-5" id="aisin-card"
+                data-company="aisin">
+                <h2 class="text-center">Select a Category to Continue</h2>
+            </div>
             <!-- Visitor Card -->
-            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4 animate-card card-click">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-4 animate-card card-click login">
                 <div class="btn text-center p-5 h-100 d-flex flex-column justify-content-center card-hover"
                     style="background-color: #FF8C8A;">
                     <i class="mdi mdi-account-circle mdi-48px mb-3" style="color: #ffffff;"></i>
@@ -70,29 +74,11 @@
             </div>
 
             <!-- Contractor Card -->
-            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4 animate-card card-click">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-4 animate-card card-click login">
                 <div class="btn text-center p-5 h-100 d-flex flex-column justify-content-center card-hover"
                     style="background-color: #FFB97F;">
                     <i class="mdi mdi-hammer mdi-48px mb-3" style="color: #ffffff;"></i>
                     <h3 style="font-weight: bolder; color: #ffffff;">Contractor</h3>
-                </div>
-            </div>
-
-            <!-- Delivery Card -->
-            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4 animate-card card-click">
-                <div class="btn text-center p-5 h-100 d-flex flex-column justify-content-center card-hover"
-                    style="background-color: #8CE0B3;">
-                    <i class="mdi mdi-truck-fast mdi-48px mb-3" style="color: #ffffff;"></i>
-                    <h3 style="font-weight: bolder; color: #ffffff;">Delivery</h3>
-                </div>
-            </div>
-
-            <!-- User Card -->
-            <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4 animate-card card-click">
-                <div class="btn text-center p-5 h-100 d-flex flex-column justify-content-center card-hover"
-                    style="background-color: #7BB9FF;">
-                    <i class="mdi mdi-account-key mdi-48px mb-3" style="color: #ffffff;"></i>
-                    <h3 style="font-weight: bolder; color: #ffffff;">User</h3>
                 </div>
             </div>
         </div>
