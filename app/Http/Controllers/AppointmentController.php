@@ -179,8 +179,10 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::with(['user', 'guests', 'pic', 'approval_history'])->findOrFail($id);
     
-         // Filter approval history for rejected entries and get notes
-        $rejectedHistory = $appointment->approval_history ? $appointment->approval_history->where('status', 'rejected')->pluck('note')->filter() : collect(); 
+        $rejectedHistory = $appointment->approval_history 
+                            ? $appointment->approval_history->firstWhere('status', 'rejected')->note 
+                            : null; // Return null if there's no rejected approval history
+
         
         return response()->json([
             'purpose' => $appointment->purpose,
@@ -190,7 +192,7 @@ class AppointmentController extends Controller
             'user' => $appointment->user,
             'pic' => $appointment->pic,
             // Include rejection reasons only if they exist
-            'rejection_reasons' => $rejectedHistory->isNotEmpty() ? $rejectedHistory : null,
+            'rejection_reason' => $rejectedHistory, // This will be a single reason or null,
         ]);
     }
 
