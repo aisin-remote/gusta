@@ -371,7 +371,7 @@
                         </div>`;
 
                         // Add rejection reasons if they are present
-                        if (data.rejection_reasons) {
+                        if (data.rejection_reason) {
                             modalContent += `
                             <hr class="new1">
                             <div class="d-flex justify-content-center mb-3">
