@@ -375,9 +375,10 @@
                             modalContent += `
                             <hr class="new1">
                             <div class="d-flex justify-content-between">
-                                <button class="btn btn-inverse-danger"></button>
-                                <span class="font-weight-bold">Reject Reason</span>
-                                <span class="font-weight-bold">${data.rejection_reasons.join(', ')}</span>
+                                <button class="btn btn-inverse-danger">
+                                    <span class="font-weight-bold">Reject Reason</span>
+                                    <span class="font-weight-bold">${data.rejection_reasons.join(', ')}</span>
+                                </button>
                             </div>`;
                         }
 
