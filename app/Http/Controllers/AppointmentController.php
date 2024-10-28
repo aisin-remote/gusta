@@ -179,10 +179,9 @@ class AppointmentController extends Controller
     {
         $appointment = Appointment::with(['user', 'guests', 'pic', 'approval_history'])->findOrFail($id);
     
-        $rejectedHistory = $appointment->approval_history 
-                            ? $appointment->approval_history->firstWhere('status', 'rejected')->note 
-                            : null; // Return null if there's no rejected approval history
-
+        $rejectedHistory = $appointment->approval_history()
+                        ->where('status', 'rejected')
+                        ->first();
         
         return response()->json([
             'purpose' => $appointment->purpose,
