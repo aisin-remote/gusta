@@ -27,73 +27,76 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-5">Ticket History <small class="text-muted"> / チケット履歴</small></h4>
-                    <div class="table-responsive">
-                        <table class="table table-hover w-100" id="allTicket">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">PIC</th>
-                                    <th class="text-center">Visitor Company <small class="text-muted"> / 合計ゲスト</small></th>
-                                    <th class="text-center">Total Guest <small class="text-muted"> / 会社</small></th>
-                                    <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
-                                    <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
-                                    <th class="text-center">Status</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-center">
-                                @if (!$appointments->isEmpty())
-                                    @foreach ($appointments as $appointment)
-                                        <tr>
-                                            <td class="display-4">{{ $appointment->pic->name }}</td>
-                                            <td class="display-4">{{ $appointment->user->company }}</td>
-                                            <td class="display-4">{{ count($appointment->guests) }}</td>
-                                            <td class="display-4">{{ $appointment->purpose }}</td>
-                                            <td class="display-4">
-                                                {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
-                                            {{-- <td class="display-4">{{ $appointment->guest }}</td> --}}
+                    {{-- <div class="table-responsive"> --}}
+                    <table class="table table-responsive-lg table-hover w-100" id="allTicket">
+                        <thead>
+                            <tr>
+                                <th class="text-center">PIC</th>
+                                <th class="text-center">Visitor Company <small class="text-muted"> / 合計ゲスト</small></th>
+                                <th class="text-center">Total Guest <small class="text-muted"> / 会社</small></th>
+                                <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
+                                <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
+                                <th class="text-center">Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            @if (!$appointments->isEmpty())
+                                @foreach ($appointments as $appointment)
+                                    <tr>
+                                        <td class="display-4">{{ $appointment->pic->name }}</td>
+                                        <td class="display-4">{{ $appointment->user->company }}</td>
+                                        <td class="display-4">{{ count($appointment->guests) }}</td>
+                                        <td class="display-4">{{ $appointment->purpose }}</td>
+                                        <td class="display-4">
+                                            {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
+                                        {{-- <td class="display-4">{{ $appointment->guest }}</td> --}}
 
-                                            @if ($appointment->pic_approval == 'pending' && $appointment->dh_approval == 'pending')
-                                                <td class="display-4">
-                                                    <span class="badge badge-pill badge-warning p-2 text-light">Waiting
-                                                        Approval
-                                                    </span>
-                                                </td>
-                                            @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'pending')
-                                                <td class="display-4">
+                                        @if ($appointment->pic_approval == 'pending' && $appointment->dh_approval == 'pending')
+                                            <td class="display-4">
+                                                <h4>
                                                     <span class="badge badge-secondary">Waiting Approval</span>
-                                                </td>
-                                            @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'approved')
-                                                <td class="display-4">
-                                                    <span
-                                                        class="badge badge-pill badge-success p-2 text-light">Approved</span>
-                                                </td>
-                                            @elseif($appointment->pic_approval == 'rejected' && $appointment->dh_approval == 'rejected')
-                                                <td class="display-4">
-                                                    <span
-                                                        class="badge badge-pill badge-danger p-2 text-light">Rejected</span>
-                                                </td>
-                                            @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'rejected')
-                                                <td class="display-4">
-                                                    <span class="badge badge-danger">Rejected</span>
-                                                </td>
-                                            @endif
-
-
-                                            <td class="display-4">
-                                                {{-- detail --}}
-                                                <button data-toggle="modal"
-                                                    data-target="#detailModal-{{ $appointment->id }}"
-                                                    class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
-                                                    title="Detail">
-                                                    <i class="mdi mdi-information"></i>
-                                                </button>
+                                                </h4>
                                             </td>
-                                        </tr>
-                                    @endforeach
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
+                                        @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'pending')
+                                            <td class="display-4">
+                                                <h4>
+                                                    <span class="badge badge-secondary">Waiting Approval</span>
+                                                </h4>
+                                            </td>
+                                        @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'approved')
+                                            <td class="display-4">
+                                                <h4>
+                                                    <span class="badge badge-success p-2 text-light">Approved</span>
+                                                </h4>
+                                            </td>
+                                        @elseif($appointment->pic_approval == 'rejected' && $appointment->dh_approval == 'rejected')
+                                            <td class="display-4">
+                                                <h4>
+                                                    <span class="badge badge-danger p-2 text-light">Rejected</span>
+                                                </h4>
+                                            </td>
+                                        @elseif($appointment->pic_approval == 'approved' && $appointment->dh_approval == 'rejected')
+                                            <td class="display-4">
+                                                <h4>
+                                                    <span class="badge badge-danger p-2">Rejected</span>
+                                                </h4>
+                                            </td>
+                                        @endif
+
+                                        <td class="display-4">
+                                            {{-- detail --}}
+                                            <button data-toggle="modal" data-target="#detailModal-{{ $appointment->id }}"
+                                                class="btn btn-icons btn-inverse-info" data-toggle="tooltip" title="Detail">
+                                                <i class="mdi mdi-information"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+                        </tbody>
+                    </table>
+                    {{-- </div> --}}
 
                     <!-- Modal -->
                     {{-- Detail Modal --}}

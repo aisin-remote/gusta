@@ -3,16 +3,16 @@
 @section('main')
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="row justify-content-center w-100">
-            <div class="col-lg-12 col-md-4 col-sm-6 col-12 mb-4 card-animate login mb-5">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-4 card-animate login mb-5">
                 <h2 class="text-center">Select a Company to Continue</h2>
             </div>
-            <div class="col-lg-6 col-md-4 col-sm-6 col-12 mb-4 card-animate login card-click mb-4" id="aisin-card"
-                data-company="aisin">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-4 card-animate login card-click mb-4" id="aisin-card"
+                data-company="AIIA">
                 <div class="auth-form-light text-center p-5">
                     <img class="mb-4" src="{{ url('assets/images/aiia-logo.png') }}" alt="logo" width="200" />
                 </div>
             </div>
-            <div class="col-lg-6 col-md-4 col-sm-6 col-12 mb-4 card-animate login card-click mb-4" id="advics-card"
+            <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-4 card-animate login card-click mb-4" id="advics-card"
                 data-company="advics">
                 <div class="auth-form-light text-center p-1">
                     <img class="mb-4" src="{{ url('assets/images/advics-logo.png') }}" alt="logo" width="200" />

@@ -7,6 +7,9 @@
 @section('content')
     <div class="row">
         <div class="col-lg-12 grid-margin">
+            <div id="duplicateAlert" class="alert alert-danger d-none" role="alert">
+                <strong>Error!</strong> <span id="duplicateMessage"></span>
+            </div>
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-5">Create Appointment <small class="text-muted pl-0">/ Buat Janji Temu /
@@ -30,7 +33,9 @@
                             </div>
                             <div class="col-md-3">
                                 <input type="text" class="form-control mt-1" id="jumlahTamu" name="cardId[]"
-                                    placeholder="ID Card Number" value="{{ old('cardId.0') }}" required>
+                                    placeholder="ID Card Number" value="{{ old('cardId.0') }}" required maxlength="16"
+                                    pattern="\d{16}" title="Card ID must be exactly 16 digits">
+                                <small id="emailHelp" class="form-text text-danger">*KTP</small>
                                 @if ($errors->has('cardId'))
                                     <span class="text-danger"><small>{{ $errors->first('cardId') }}</small></span>
                                 @endif
@@ -196,6 +201,8 @@
 @push('custom-scripts')
     {!! Html::script('/assets/js/dashboard.js') !!}
     <script>
+        var category = "{{ session()->get('category') }}";
+        var company = "{{ session()->get('company') }}";
         $(document).ready(function() {
             var today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
             $('#date').attr('min', today); // Set the 'min' attribute of the date input
@@ -233,7 +240,8 @@
                     url: '/get-pic',
                     type: 'GET',
                     data: {
-                        dept: $(this).val()
+                        dept: $(this).val(),
+                        company: company,
                     },
                     success: function(pic) {
                         $('#pic_id').empty();
@@ -265,6 +273,50 @@
                     }
                 });
             });
+        });
+
+        // Function to check for duplicate entries
+        function hasDuplicates(selector) {
+            let values = [];
+            let hasDuplicate = false;
+
+            $(selector).each(function() {
+                let value = $(this).val();
+                if (values.includes(value)) {
+                    hasDuplicate = true;
+                    return false; // Stop the loop if duplicate is found
+                }
+                values.push(value);
+            });
+
+            return hasDuplicate;
+        }
+
+        // On form submission
+        $('form').on('submit', function(e) {
+            let duplicateMessage = '';
+            let hasError = false;
+
+            // Check for duplicate card IDs
+            if (hasDuplicates('input[name="cardId[]"]')) {
+                duplicateMessage = 'ID Card numbers cant be same.';
+                hasError = true;
+            }
+
+            if (hasError) {
+                e.preventDefault(); // Prevent form submission
+                $('#duplicateMessage').text(duplicateMessage);
+                $('#duplicateAlert').removeClass('d-none'); // Show alert
+
+                // Set a timeout to hide the alert after 4 seconds (4000 milliseconds)
+                setTimeout(function() {
+                    $('#duplicateAlert').addClass('d-none');
+                }, 4000);
+
+                return false; // Stop execution
+            } else {
+                $('#duplicateAlert').addClass('d-none'); // Hide alert if no error
+            }
         });
 
         var oldGuests = @json(old('name', [])); // Assuming old guest names are in an array
@@ -314,6 +366,9 @@
                             name: 'cardId[]', // Name as an array for multiple ID Cards
                             placeholder: 'ID Card Number',
                             required: true,
+                            maxlength: 16, // Limit the input to 16 characters
+                            pattern: '\\d{16}', // Regex pattern to enforce exactly 16 digits
+                            title: 'Card ID must be exactly 16 digits', // Tooltip message for validation
                             value: oldCardIds[guestIndex] || '' // Set old value if available
                         })
                     )

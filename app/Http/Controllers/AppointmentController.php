@@ -11,6 +11,7 @@ use App\Checkin;
 use App\Department;
 use App\RoomDetail;
 use Ramsey\Uuid\Uuid;
+use App\ApprovalHistory;
 use App\Models\Appointment;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -36,6 +37,7 @@ class AppointmentController extends Controller
     {
         $pic = User::select('phone_number','occupation')->where('id', $request->pic_id)->first();
         $user_company = auth()->user()->company;
+        $user_name = auth()->user()->name;
 
         $request->validate([
             'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
@@ -43,7 +45,7 @@ class AppointmentController extends Controller
             'purpose-3' => 'required_without_all:purpose-1,purpose-2,purpose-4',
             'purpose-4' => 'required_without_all:purpose-1,purpose-2,purpose-3',
             'name.*' => 'required|string', // Validate all guest names
-            'cardId.*' => 'required|string', // Validate all card IDs
+            'cardId.*' => 'required|string|min:16|max:16', // Validate all card IDs
             'date' => 'required|date', // Ensure valid date format
             'time' => 'required', // Ensure time is provided
             'area_id' => 'required|exists:areas,id', // Ensure area exists
@@ -113,16 +115,24 @@ class AppointmentController extends Controller
                 ]);
             }
 
+            // insert approval history data
+            ApprovalHistory::create([
+                'appointment_id' => $appointment->id,
+            ]);
+
+            $date = $request->date . ' at ' . $request->time;
+
             // send Wa notif to pic
             $token = 'v2n49drKeWNoRDN4jgqcdsR8a6bcochcmk6YphL6vLcCpRZdV1';
             $phone = $pic->phone_number;
             // Pass array elements as additional arguments to sprintf
             $message = sprintf(
-                "```----GUEST ALERT-------\n\n1) %s : \nAgenda : %s\nWaktu : %s\nStatus : %s\n\nPlease confirm your guest!\nThank You```",
-                $user_company,         // Assuming $guestName holds the guest's name or identifier
-                $purpose,              // The agenda of the guest visit
-                $request->date,           // The date of the visit
-                $appointment->dh_approval               // The current status (e.g., 'Not Confirmed')
+                "```----GUEST ALERT-------\n\nCompany : %s\nName    : %s\nAgenda  : %s\nDate    : %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You```",
+                $user_company,              // Assuming $user_company holds the company name
+                $user_name,              // Assuming $user_company holds the company name
+                $purpose,                   // The agenda of the guest visit
+                $date,                          // The date of the visit
+                $appointment->dh_approval   // The current status (e.g., 'pending')
             );
         
             $curl = curl_init();
@@ -153,6 +163,83 @@ class AppointmentController extends Controller
             return redirect()->route('appointment.history')->with('error', $e->getMessage());
         }
     }
+    
+    public function edit($id)
+    {
+        $company = session()->get('company'); 
+        $appointment = Appointment::findOrFail($id);
+        $areas = Area::all();  // Assuming Area model exists
+        $pics = User::where('company', $company)->where('role', 'approver')->get(); // Assuming User model exists
+        $departments = Department::all();  // Assuming Department model exists
+
+        return view('pages.visitor.edit', compact('appointment', 'areas', 'departments', 'pics'));
+    }
+
+    public function show($id)
+    {
+        $appointment = Appointment::with(['user', 'guests', 'pic', 'approval_history'])->findOrFail($id);
+    
+         // Filter approval history for rejected entries and get notes
+        $rejectedHistory = $appointment->approval_history ? $appointment->approval_history->where('status', 'rejected')->pluck('note')->filter() : collect(); 
+        
+        return response()->json([
+            'purpose' => $appointment->purpose,
+            'formatted_date' => $appointment->date,
+            'formatted_time' => $appointment->time,
+            'guests' => $appointment->guests,
+            'user' => $appointment->user,
+            'pic' => $appointment->pic,
+            // Include rejection reasons only if they exist
+            'rejection_reasons' => $rejectedHistory->isNotEmpty() ? $rejectedHistory : null,
+        ]);
+    }
+
+    // Update the appointment
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
+            'purpose-2' => 'required_without_all:purpose-1,purpose-3,purpose-4',
+            'purpose-3' => 'required_without_all:purpose-1,purpose-2,purpose-4',
+            'purpose-4' => 'required_without_all:purpose-1,purpose-2,purpose-3',
+            'name.*' => 'required|string',
+            'cardId.*' => 'required|digits:16',
+            'date' => 'required|date',
+            'time' => 'required',
+            'area_id' => 'required|exists:areas,id',
+            'pic_dept' => 'required|exists:departments,id',
+            'pic_id' => 'required|exists:users,id',
+            // Additional validations as needed
+        ]);
+        
+        // Build the purpose string
+        $purposes = [];
+        if ($request->has('purpose-1')) $purposes[] = 'Company Visit';
+        if ($request->has('purpose-2')) $purposes[] = 'Benchmarking';
+        if ($request->has('purpose-3')) $purposes[] = 'Trial';
+        if ($request->has('purpose-4')) $purposes[] = $request->other_purpose;
+        $purpose = implode(', ', $purposes);
+
+        $appointment = Appointment::findOrFail($id);
+        $appointment->update([
+            'purpose' => $purpose,
+            'date' => $request->input('date'),
+            'time' => $request->input('time'),
+            'area_id' => $request->input('area_id'),
+            'pic_dept' => $request->input('pic_dept'),
+            'pic_id' => $request->input('pic_id'),
+            // Additional fields as required
+        ]);
+
+        foreach ($request->name as $index => $guestName) {
+            Guest::where('appointment_id', $appointment->id)->update([
+                'name' => $guestName,
+                'id_card' => $request->cardId[$index],
+            ]);
+        }
+
+        return redirect()->route('appointment.history')->with('success', 'Appointment updated successfully.');
+    }
 
     public function history(\App\Models\Appointment $appointment)
     {
@@ -171,8 +258,9 @@ class AppointmentController extends Controller
 
     public function getPic(Request $request)
     {
+        $company = $request->company == 'aisin' ? 'AIIA' : $request->company;
         // get all pic where dept_id is dept
-        $pic = User::select('name','id')->where('department_id', $request->dept)->get();
+        $pic = User::select('name','id')->where('department_id', $request->dept)->where('company', $company)->get();
 
         return $pic;
     }
@@ -195,5 +283,16 @@ class AppointmentController extends Controller
     {
         // export ticket
         return Excel::download(new ExportTicket, 'appointment.xlsx');
+    }
+
+    public function destroy($id)
+    {
+        $appointment = Appointment::findOrFail($id);
+
+        // Perform the delete operation
+        $appointment->delete();
+
+        // Redirect back with a success message
+        return redirect()->route('appointment.history')->with('success', 'Appointment deleted successfully.');
     }
 }

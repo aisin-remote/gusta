@@ -77,6 +77,11 @@ Route::middleware(['auth'])->group(function () {
     // visitor (create,history)
     Route::get('/appointment', 'AppointmentController@index')->name('appointment.index');
     Route::post('/appointment/create-ticket', 'AppointmentController@create')->name('appointment.create');
+    Route::get('/appointment/{id}/edit', 'AppointmentController@edit')->name('appointment.edit');
+    Route::post('/appointment/{id}', 'AppointmentController@update')->name('appointment.update');
+    Route::get('/appointment/modal/{id}', 'AppointmentController@show');
+    Route::post('/appointment/{id}/destroy', 'AppointmentController@destroy')->name('appointment.destroy');
+
     Route::get('/appointment/history', 'AppointmentController@history')->name('appointment.history');
     Route::get('/get-pic', 'AppointmentController@getPic')->name('appointment.getPic');
     Route::get('/get-room', 'AppointmentController@getRoom')->name('appointment.getRoom');

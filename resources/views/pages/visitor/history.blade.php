@@ -25,18 +25,21 @@
             @endif
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-5">Appointment List <small class="text-muted"> / Daftar Janji Temu /
-                            チケット一覧</small>
+                    <h4 class="card-title mb-5">Appointment History <small class="text-muted"> / Histori Janji Temu /
+                            予約履歴
+                        </small>
                     </h4>
                     <table class="table table-responsive-lg" id="allTicket">
                         <thead>
                             <tr>
                                 <th class="text-center">No</th>
                                 <th class="text-center">PIC</th>
+                                <th class="text-center">Destination Company <small class="text-muted"> / 宛先会社</small></th>
                                 <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
                                 <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">QR Code</th>
+                                <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody class="text-center">
@@ -45,14 +48,17 @@
                                     <tr>
                                         <td class="display-4">{{ $loop->iteration }} </td>
                                         <td class="display-4">{{ $appointment->pic->name }}</td>
+                                        <td class="display-4">{{ $appointment->pic->company }}</td>
                                         <td class="display-4">{{ $appointment->purpose }}</td>
                                         <td class="display-4">
                                             {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}</td>
 
                                         @if ($appointment->pic_approval === 'pending' && $appointment->dh_approval === 'pending')
                                             <td>
-                                                <span class="badge badge-pill badge-warning p-2 text-light">Waiting
-                                                    Approval</span>
+                                                <h5>
+                                                    <span class="badge badge-warning p-2 text-light">Waiting
+                                                        Approval</span>
+                                                </h5>
                                             </td>
                                             <td>
                                                 <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
@@ -62,8 +68,10 @@
                                             </td>
                                         @elseif($appointment->pic_approval === 'approved' && $appointment->dh_approval === 'pending')
                                             <td>
-                                                <span class="badge badge-pill badge-warning p-2 text-light">Waiting Approval
-                                                </span>
+                                                <h5>
+                                                    <span class="badge badge-warning p-2 text-light">Waiting
+                                                        Approval</span>
+                                                </h5>
                                             </td>
                                             <td>
                                                 <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
@@ -73,9 +81,11 @@
                                             </td>
                                         @elseif($appointment->pic_approval === 'approved' && $appointment->dh_approval === 'approved')
                                             <td>
-                                                <span
-                                                    class="badge badge-pill badge-success p-2 text-light">{{ $appointment->dh_approval }}
-                                                </span>
+                                                <h5>
+                                                    <span
+                                                        class="badge badge-success p-2 text-light">{{ $appointment->dh_approval }}
+                                                    </span>
+                                                </h5>
                                             </td>
                                             @php
 
@@ -103,11 +113,41 @@
                                                 </td>
                                             @endif
                                         @else
-                                            <td><span
-                                                    class="badge badge-pill badge-danger p-2 text-light">{{ $appointment->dh_approval }}</span>
+                                            <td>
+                                                <h5>
+                                                    <span
+                                                        class="badge badge-danger p-2 text-light">{{ $appointment->dh_approval }}</span>
+                                                </h5>
                                             </td>
-                                            <td><button hidden>QR code</button></td>
+                                            <td>
+                                                <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
+                                                    title="Rejected" disabled>
+                                                    <i class="mdi mdi-qrcode"></i>
+                                                </button>
+                                            </td>
                                         @endif
+                                        <td>
+                                            <button data-toggle="modal" class="btn btn-icons btn-inverse-info openModalBtn"
+                                                data-appointment-id="{{ $appointment->id }}" data-toggle="tooltip"
+                                                title="Detail">
+                                                <i class="mdi mdi-information"></i>
+                                            </button>
+
+
+                                            @if ($appointment->pic_approval == 'pending' || $appointment->dh_approval == 'pending')
+                                                <a href="{{ route('appointment.edit', $appointment->id) }}" type="submit"
+                                                    class="btn btn-icons btn-inverse-warning" data-toggle="tooltip"
+                                                    title="edit">
+                                                    <i class="mdi mdi-pencil"></i>
+                                                </a>
+                                                <a href="javascript:void(0);"
+                                                    class="btn btn-icons btn-inverse-danger deleteButton"
+                                                    data-toggle="tooltip" data-appointment-id="{{ $appointment->id }}"
+                                                    title="delete">
+                                                    <i class="mdi mdi-delete"></i>
+                                                </a>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             @endif
@@ -173,6 +213,52 @@
                         </div>
                     @endforeach
                     <!-- Modal Ends -->
+
+                    <!-- Detail Modal Template -->
+                    <div class="modal fade" id="detailModal" data-backdrop="static" data-keyboard="false"
+                        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Ticket Details</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="px-4 py-1" id="modalContent">
+                                        <!-- Content will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Modal -->
+                    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog"
+                        aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this appointment?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <form id="deleteForm" method="POST">
+                                        {{ csrf_field() }}
+                                        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -203,6 +289,109 @@
                     [0, "desc"]
                 ],
                 "lengthChange": false
+            });
+
+            $('.deleteButton').on('click', function() {
+                // Get the appointment ID from the button's data attribute
+                var appointmentId = $(this).data('appointment-id');
+
+                // Set the form action to the delete route with the appointment ID
+                $('#deleteForm').attr('action', '/appointment/' + appointmentId + '/destroy');
+
+                // Show the confirmation modal
+                $('#deleteConfirmationModal').modal('show');
+            });
+
+            $('.openModalBtn').on('click', function() {
+                // Get the appointment ID from the button's data attribute
+                var appointmentId = $(this).data('appointment-id');
+
+                // Use AJAX to fetch the appointment details
+                $.ajax({
+                    url: '/appointment/modal/' + appointmentId,
+                    type: 'GET',
+                    success: function(data) {
+                        console.log(data);
+                        // Start generating modal content
+                        var modalContent = `
+                        <div class="d-flex justify-content-between pt-4">
+                            <span class="font-weight-bold h4">Plan Visit</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Visit Purpose</span>
+                            <span class="font-weight-bold">${data.purpose}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Visit Date</span>
+                            <span class="font-weight-bold">${data.formatted_date}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Visit Time</span>
+                            <span class="font-weight-bold">${data.formatted_time}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Total Visitor</span>
+                            <span class="font-weight-bold">${data.guests.length}</span>
+                        </div>
+                        <hr class="new1">
+                        <div class="d-flex justify-content-between">
+                            <span class="font-weight-bold h4">Visitor Data</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="text-muted">Visitor Company</span>
+                            <span class="font-weight-bold">${data.user.company}</span>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">No</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col" class="text-right">ID Card</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+
+                        // Loop through guests to populate the table rows
+                        data.guests.forEach((guest, index) => {
+                            modalContent += `
+                            <tr>
+                                <th scope="row">${index + 1}</th>
+                                <td>${guest.name}</td>
+                                <td class="text-right">${guest.id_card}</td>
+                            </tr>`;
+                        });
+
+                        modalContent += `
+                            </tbody>
+                        </table>
+                        <hr class="new1">
+                        <div class="d-flex justify-content-between">
+                            <span class="font-weight-bold">PIC</span>
+                            <span class="font-weight-bold">${data.pic.name}</span>
+                        </div>`;
+
+                        // Add rejection reasons if they are present
+                        if (data.rejection_reasons) {
+                            modalContent += `
+                            <hr class="new1">
+                            <div class="d-flex justify-content-between">
+                                <button class="btn btn-inverse-danger"></button>
+                                <span class="font-weight-bold">Reject Reason</span>
+                                <span class="font-weight-bold">${data.rejection_reasons.join(', ')}</span>
+                            </div>`;
+                        }
+
+                        // Insert the generated content into the modal
+                        $('#modalContent').html(modalContent);
+
+                        // Show the modal
+                        $('#detailModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        console.error('Error loading appointment details:', xhr);
+                    }
+                });
+
             });
         });
     </script>

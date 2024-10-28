@@ -61,8 +61,11 @@ class ApprovalController extends Controller
         $userDept = auth()->user()->department_id;
         $user = User::select('occupation')->where('id', $userId)->first();
 
-        $appointments = Appointment::with('guests')->latest();
-
+        $appointments = Appointment::with('guests','pic')
+                                    ->whereHas('pic', function($q){
+                                        $q->where('company', auth()->user()->company);
+                                    })
+                                    ->latest();
 
         if ($user->occupation == 2) {
             $appointments->where('pic_approval', 'approved')->where('pic_dept', $userDept);
@@ -179,7 +182,7 @@ class ApprovalController extends Controller
                 'signed_by' => auth()->user()->id,
                 'appointment_id' =>  $ticket->id,
                 'note' => $request->note,
-                'status' => 'PIC rejected'
+                'status' => 'rejected'
             ]);
 
             // update appointment status, if the pic reject then dept head automatically reject
@@ -193,7 +196,7 @@ class ApprovalController extends Controller
             ApprovalHistory::where('appointment_id', $ticket->id)->update([
                 'signed_by' => auth()->user()->id,
                 'note' => $request->note,
-                'status' => 'Dept Head rejected'
+                'status' => 'rejected'
             ]);
 
             // update appointment status, if the pic reject then dept head automatically reject
@@ -206,7 +209,7 @@ class ApprovalController extends Controller
             ApprovalHistory::where('appointment_id', $ticket->id)->update([
                 'signed_by' => auth()->user()->id,
                 'note' => $request->note,
-                'status' => 'Dept Head rejected'
+                'status' => 'rejected'
             ]);
 
             // update appointment status
