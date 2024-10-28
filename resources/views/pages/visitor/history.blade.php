@@ -371,13 +371,13 @@
                         </div>`;
 
                         // Add rejection reasons if they are present
-                        if (data.rejection_reason) {
+                        if (data.rejection_reason.note) {
                             modalContent += `
                             <hr class="new1">
                             <div class="d-flex justify-content-center mb-3">
                             <button class="btn btn-inverse-danger w-100 d-flex justify-content-between align-items-center p-3">
                                 <span class="font-weight-bold text-left">Reject Reason</span>
-                                <span class="font-weight-bold text-right">${data.rejection_reason.note || 'N/A'}</span>
+                                <span class="font-weight-bold text-right">${data.rejection_reason.note}</span>
                             </button>`;
                         }
 
