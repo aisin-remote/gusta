@@ -197,10 +197,10 @@
                         <div class="row mt-5">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <button type="submit" class="btn btn-lg btn-primary submit-btn">
-                                    <i class="mdi mdi-near-me pr-3"></i>Submit
+                                    Submit
+                                    <span class="spinner-border spinner-border-sm text-light ml-2 d-none"
+                                        id="loadingSpinner" role="status" aria-hidden="true"></span>
                                 </button>
-                                <span class="spinner-border spinner-border-sm text-primary ml-2 d-none"
-                                    id="loadingSpinner" role="status" aria-hidden="true"></span>
                             </div>
                         </div>
                     </form>
@@ -315,14 +315,6 @@
             let duplicateMessage = '';
             let hasError = false;
 
-            $('#loadingSpinner').removeClass('d-none');
-
-            // Disable the submit button
-            $(this).prop('disabled', true);
-
-            // Submit the form after showing spinner and disabling button
-            $(this).closest('form').submit();
-
             // Check for duplicate card IDs
             if (hasDuplicates('input[name="cardId[]"]')) {
                 duplicateMessage = 'ID Card numbers cant be same.';
@@ -343,6 +335,16 @@
             } else {
                 $('#duplicateAlert').addClass('d-none'); // Hide alert if no error
             }
+
+            $(this).html(
+                'Loading <span class="spinner-border spinner-border-sm text-light ml-2" role="status" aria-hidden="true"></span>'
+            );
+
+            // Disable the submit button
+            $(this).prop('disabled', true);
+
+            // Submit the form after changing the button text
+            $(this).closest('form').submit();
         });
 
         var oldGuests = @json(old('name', [])); // Assuming old guest names are in an array
