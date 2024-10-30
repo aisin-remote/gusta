@@ -172,7 +172,8 @@
                                 </div>
                                 <div class="col-md-8">
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="ipk" name="ipk_form">
+                                        <input type="file" class="custom-file-input" id="ipk" name="ipk_form"
+                                            required>
                                         <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
                                     </div>
                                 </div>
