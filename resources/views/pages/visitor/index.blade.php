@@ -198,9 +198,9 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <button type="submit" class="btn btn-lg btn-primary submit-btn">
                                     <i class="mdi mdi-near-me pr-3 icon-btn"></i>
-                                    <span class="spinner-border spinner-border-sm d-none pr-3" role="status"
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"
                                         aria-hidden="true"></span>
-                                    <span class="btn-text">Submit</span>
+                                    <span class="btn-text pl-3">Submit</span>
                                 </button>
                             </div>
                         </div>
