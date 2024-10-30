@@ -128,6 +128,7 @@
                                         @endif
                                         <td>
                                             @php
+                                                $style = '';
                                                 if (
                                                     $appointment->pic_approval !== 'pending' ||
                                                     $appointment->dh_approval !== 'pending'
