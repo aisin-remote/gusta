@@ -10,6 +10,14 @@
             <div id="duplicateAlert" class="alert alert-danger d-none" role="alert">
                 <strong>Error!</strong> <span id="duplicateMessage"></span>
             </div>
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            @endif
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-5">Create Appointment <small class="text-muted pl-0">/ Buat Janji Temu /
@@ -97,7 +105,8 @@
 
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Select Time <small class="text-muted pl-0">/
+                                <label for="inputEmail3" class="col-form-label">Select Time <small
+                                        class="text-muted pl-0">/
                                         Pilih Waktu / 時間を選択</small></label>
                             </div>
                             <div class="col-md-8">
