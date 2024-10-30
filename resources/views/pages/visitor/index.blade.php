@@ -197,8 +197,8 @@
                         <div class="row mt-5">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <button type="submit" class="btn btn-lg btn-primary submit-btn">
-                                    <i class="mdi mdi-near-me pr-3"></i>
-                                    <span class="spinner-border spinner-border-sm d-none" role="status"
+                                    <i class="mdi mdi-near-me pr-3 icon-btn"></i>
+                                    <span class="spinner-border spinner-border-sm d-none pr-3" role="status"
                                         aria-hidden="true"></span>
                                     <span class="btn-text">Submit</span>
                                 </button>
@@ -318,9 +318,11 @@
             const submitButton = $(this).find('.submit-btn');
             const spinner = submitButton.find('.spinner-border');
             const buttonText = submitButton.find('.btn-text');
+            const iconBtn = submitButton.find('.icon-btn');
 
             submitButton.prop('disabled', true);
             spinner.removeClass('d-none');
+            iconBtn.addClass('d-none');
             buttonText.text('Loading...');
 
             // Check for duplicate card IDs
