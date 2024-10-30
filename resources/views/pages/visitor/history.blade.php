@@ -34,13 +34,10 @@
                             <tr>
                                 <th class="text-center">No</th>
                                 <th class="text-center">PIC</th>
-                                <th class="text-center">Phone Number<small class="text-muted"> / Nomor Telepon</small></th>
-                                <th class="text-center">Destination Company <small class="text-muted"> / Perusahaan
-                                        Tujuan</small></th>
-                                <th class="text-center">Visit Purpose <small class="text-muted"> / Tujuan Kunjungan</small>
-                                </th>
-                                <th class="text-center">Visit Date <small class="text-muted"> / Tanggal Kunjungan</small>
-                                </th>
+                                <th class="text-center">Phone Number</th>
+                                <th class="text-center">Destination Company</th>
+                                <th class="text-center">Visit Purpose</th>
+                                <th class="text-center">Visit Date</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">QR Code</th>
                                 <th class="text-center">Action</th>
