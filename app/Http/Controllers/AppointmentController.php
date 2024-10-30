@@ -244,7 +244,7 @@ class AppointmentController extends Controller
     {
         if(auth()->user()->role === 'visitor')
         {
-            $appointments = Appointment::latest()->where('user_id', auth()->user()->id)->get();
+            $appointments = Appointment::where('user_id', auth()->user()->id)->get();
             //get the pic name laravel 5
             $appointments->load('pic')->toArray();
 
