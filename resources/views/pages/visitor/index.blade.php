@@ -168,13 +168,14 @@
                                     <label for="inputEmail3" class="col-form-label">IPK Form <small
                                             class="text-muted pl-0">/
                                             Form IPK / 安全フォーム
-                                        </small> <small class="text-danger">*JPG/PNG/PDF/XLXS</small> </label>
+                                        </small></label>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" id="ipk" name="ipk_form"
                                             required>
                                         <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
+                                        <small class="text-danger">*JPG/PNG/PDF/XLXS</small>
                                     </div>
                                 </div>
                             </div>
