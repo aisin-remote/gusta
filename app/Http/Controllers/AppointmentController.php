@@ -39,6 +39,8 @@ class AppointmentController extends Controller
         $user_company = auth()->user()->company;
         $user_name = auth()->user()->name;
 
+        dd(session()->get('category') === 'Contractor');
+
         $request->validate([
             'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
             'purpose-2' => 'required_without_all:purpose-1,purpose-3,purpose-4',
