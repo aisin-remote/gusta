@@ -288,7 +288,7 @@
             $('#allTicket').DataTable({
                 //order by desc
                 "order": [
-                    [0, "desc"]
+                    [5, "desc"]
                 ],
                 "lengthChange": false
             });
