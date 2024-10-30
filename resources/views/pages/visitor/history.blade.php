@@ -29,7 +29,7 @@
                             予約履歴
                         </small>
                     </h4>
-                    <table class="table table-responsive-lg" id="allTicket">
+                    <table class="table table-responsive-lg table-hover w-100" id="allTicket">
                         <thead>
                             <tr>
                                 <th class="text-center">No</th>
