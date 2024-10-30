@@ -199,9 +199,9 @@
                                 <button type="submit" class="btn btn-lg btn-primary submit-btn">
                                     <i class="mdi mdi-near-me pr-3"></i>
                                     <span class="btn-text">Submit</span>
-                                    <span class="spinner-border spinner-border-sm text-primary ml-2 d-none"
-                                        id="loadingSpinner" role="status" aria-hidden="true"></span>
                                 </button>
+                                <span class="spinner-border spinner-border-sm text-primary ml-2 d-none"
+                                    id="loadingSpinner" role="status" aria-hidden="true"></span>
                             </div>
                         </div>
                     </form>
