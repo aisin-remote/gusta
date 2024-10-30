@@ -184,9 +184,10 @@
                                         <input type="file" class="custom-file-input" id="ipk" name="ipk_form"
                                             required>
                                         <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
-                                        @error('ipk_form')
-                                            <div class="alert alert-danger">{{ session('error') }}</div>
-                                        @enderror
+                                        @if ($errors->has('ipk_form'))
+                                            <span
+                                                class="text-danger"><small>{{ $errors->first('ipk_form') }}</small></span>
+                                        @endif
                                         <small class="text-danger">*JPG/PNG/PDF/XLXS</small>
                                     </div>
                                 </div>

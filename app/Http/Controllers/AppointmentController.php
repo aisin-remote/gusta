@@ -51,11 +51,16 @@ class AppointmentController extends Controller
             'area_id' => 'required|exists:areas,id', // Ensure area exists
             'pic_id' => 'required|exists:users,id', // Ensure PIC exists
             'pic_dept' => 'required|string',
+            'ipk_form' => [
+                'sometimes', 
+                function ($attribute, $value, $fail) {
+                    // Check if the session category is Contractor and no file was uploaded
+                    if (session()->get('category') === 'Contractor' && !$value) {
+                        $fail('The IPK form document is required for contractors.');
+                    }
+                }
+            ],
         ]);
-        
-        if (session()->get('category') === 'Contractor' && !$request->hasFile('ipk_form')) {
-            return redirect()->back()->with(['error' => 'The IPK form document is required for contractors.']);
-        }
 
         // Build the purpose string
         $purposes = [];
