@@ -39,8 +39,6 @@ class AppointmentController extends Controller
         $user_company = auth()->user()->company;
         $user_name = auth()->user()->name;
 
-        dd(session()->get('category') === 'Contractor');
-
         $request->validate([
             'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
             'purpose-2' => 'required_without_all:purpose-1,purpose-3,purpose-4',
@@ -56,7 +54,7 @@ class AppointmentController extends Controller
             'ipk_form' => [
                 'required_if:category,Contractor',
                 function ($attribute, $value, $fail) {
-                    if (session()->get('category') === 'Contractor' && !$value) {
+                    if (session()->get('category') === 'Contractor') {
                         $fail('The IPK form document is required for contractors.');
                     }
                 }
