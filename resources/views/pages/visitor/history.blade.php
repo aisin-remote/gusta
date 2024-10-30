@@ -32,7 +32,6 @@
                     <table class="table table-responsive-lg table-hover w-100" id="allTicket">
                         <thead>
                             <tr>
-                                <th class="text-center">No</th>
                                 <th class="text-center">PIC</th>
                                 <th class="text-center">Phone Number</th>
                                 <th class="text-center">Destination Company</th>
@@ -47,7 +46,6 @@
                             @if (!$appointments->isEmpty())
                                 @foreach ($appointments as $appointment)
                                     <tr>
-                                        <td class="display-4">{{ $loop->iteration }} </td>
                                         <td class="display-4">{{ $appointment->pic->name }}</td>
                                         <td class="display-4">{{ $appointment->pic->phone_number }}</td>
                                         <td class="display-4">{{ $appointment->pic->company }}</td>
@@ -129,26 +127,30 @@
                                             </td>
                                         @endif
                                         <td>
+                                            @php
+                                                if (
+                                                    $appointment->pic_approval !== 'pending' ||
+                                                    $appointment->dh_approval !== 'pending'
+                                                ) {
+                                                    $styke = 'opacity: 0.5; cursor: not-allowed; pointer-events: none;';
+                                                }
+                                            @endphp
                                             <button data-toggle="modal" class="btn btn-icons btn-inverse-info openModalBtn"
                                                 data-appointment-id="{{ $appointment->id }}" data-toggle="tooltip"
                                                 title="Detail">
                                                 <i class="mdi mdi-information"></i>
                                             </button>
-
-
-                                            @if ($appointment->pic_approval == 'pending' || $appointment->dh_approval == 'pending')
-                                                <a href="{{ route('appointment.edit', $appointment->id) }}" type="submit"
-                                                    class="btn btn-icons btn-inverse-warning" data-toggle="tooltip"
-                                                    title="edit">
-                                                    <i class="mdi mdi-pencil"></i>
-                                                </a>
-                                                <a href="javascript:void(0);"
-                                                    class="btn btn-icons btn-inverse-danger deleteButton"
-                                                    data-toggle="tooltip" data-appointment-id="{{ $appointment->id }}"
-                                                    title="delete">
-                                                    <i class="mdi mdi-delete"></i>
-                                                </a>
-                                            @endif
+                                            <a href="{{ route('appointment.edit', $appointment->id) }}" type="submit"
+                                                class="btn btn-icons btn-inverse-warning" data-toggle="tooltip"
+                                                title="edit" style="{{ $style }}">
+                                                <i class="mdi mdi-pencil"></i>
+                                            </a>
+                                            <a href="javascript:void(0);"
+                                                class="btn btn-icons btn-inverse-danger deleteButton" data-toggle="tooltip"
+                                                data-appointment-id="{{ $appointment->id }}" title="delete"
+                                                style="{{ $style }}">
+                                                <i class="mdi mdi-delete"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
