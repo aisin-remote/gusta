@@ -130,9 +130,11 @@
                                             @php
                                                 $style = '';
                                                 if (
-                                                    $appointment->pic_approval !== 'pending' ||
-                                                    $appointment->dh_approval !== 'pending'
+                                                    $appointment->pic_approval == 'pending' ||
+                                                    $appointment->dh_approval == 'pending'
                                                 ) {
+                                                    $style = ';';
+                                                } else {
                                                     $style = 'opacity: 0.5; cursor: not-allowed; pointer-events: none;';
                                                 }
                                             @endphp
