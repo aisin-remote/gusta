@@ -128,26 +128,24 @@
                                         @endif
                                         <td>
                                             @php
-                                                $style = '';
-                                                if (
-                                                    $appointment->pic_approval == 'pending' ||
-                                                    $appointment->dh_approval == 'pending'
-                                                ) {
-                                                    $style = ';';
-                                                } else {
-                                                    $style = 'opacity: 0.5; cursor: not-allowed; pointer-events: none;';
-                                                }
+                                                $style =
+                                                    $appointment->pic_approval != 'pending' &&
+                                                    $appointment->dh_approval != 'pending'
+                                                        ? 'opacity: 0.5; cursor: not-allowed; pointer-events: none;'
+                                                        : '';
                                             @endphp
                                             <button data-toggle="modal" class="btn btn-icons btn-inverse-info openModalBtn"
                                                 data-appointment-id="{{ $appointment->id }}" data-toggle="tooltip"
                                                 title="Detail">
                                                 <i class="mdi mdi-information"></i>
                                             </button>
-                                            <a href="{{ route('appointment.edit', $appointment->id) }}" type="submit"
+
+                                            <a href="{{ route('appointment.edit', $appointment->id) }}"
                                                 class="btn btn-icons btn-inverse-warning" data-toggle="tooltip"
                                                 title="edit" style="{{ $style }}">
                                                 <i class="mdi mdi-pencil"></i>
                                             </a>
+
                                             <a href="javascript:void(0);"
                                                 class="btn btn-icons btn-inverse-danger deleteButton" data-toggle="tooltip"
                                                 data-appointment-id="{{ $appointment->id }}" title="delete"
