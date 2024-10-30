@@ -168,7 +168,7 @@
                                     <label for="inputEmail3" class="col-form-label">IPK Form <small
                                             class="text-muted pl-0">/
                                             Form IPK / 安全フォーム
-                                        </small> <span class="text-danger">*PNG/PDF/XLXS</span> </label>
+                                        </small> <small class="text-danger">*JPG/PNG/PDF/XLXS</small> </label>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="custom-file">
