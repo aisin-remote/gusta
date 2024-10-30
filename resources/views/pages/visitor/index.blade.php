@@ -198,10 +198,10 @@
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <button type="submit" class="btn btn-lg btn-primary submit-btn">
                                     <i class="mdi mdi-near-me pr-3"></i>
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"
+                                        aria-hidden="true"></span>
                                     <span class="btn-text">Submit</span>
                                 </button>
-                                <span class="spinner-border spinner-border-sm text-primary ml-2 d-none"
-                                    id="loadingSpinner" role="status" aria-hidden="true"></span>
                             </div>
                         </div>
                     </form>
