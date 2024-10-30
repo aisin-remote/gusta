@@ -56,7 +56,7 @@ class AppointmentController extends Controller
         // Additional validation rule for 'ipk_form' if the category is 'contractor'
         $request->validate([
             'ipk_form' => ['sometimes', function ($attribute, $value, $fail) {
-                if (session()->get('category') === 'contractor' && !$value) {
+                if (session()->get('category') == 'Contractor' || session()->get('category') == 'contractor'&& !$value) {
                     $fail('The IPK form document is required for contractors.');
                 }
             }],
