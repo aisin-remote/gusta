@@ -45,21 +45,20 @@ class AppointmentController extends Controller
             'purpose-3' => 'required_without_all:purpose-1,purpose-2,purpose-4',
             'purpose-4' => 'required_without_all:purpose-1,purpose-2,purpose-3',
             'name.*' => 'required|string', // Validate all guest names
+            'ipk_form' => [
+                'sometimes', 
+                function ($attribute, $value, $fail) {
+                    if (session()->get('category') === 'Contractor' && !$value) {
+                        $fail('The IPK form document is required for contractors.');
+                    }
+                }
+            ],
             'cardId.*' => 'required|string|min:16|max:16', // Validate all card IDs
             'date' => 'required|date', // Ensure valid date format
             'time' => 'required', // Ensure time is provided
             'area_id' => 'required|exists:areas,id', // Ensure area exists
             'pic_id' => 'required|exists:users,id', // Ensure PIC exists
             'pic_dept' => 'required|string',
-            'ipk_form' => [
-                'sometimes', 
-                function ($attribute, $value, $fail) {
-                    // Check if the session category is Contractor and no file was uploaded
-                    if (session()->get('category') === 'Contractor' && !$value) {
-                        $fail('The IPK form document is required for contractors.');
-                    }
-                }
-            ],
         ]);
 
         // Build the purpose string
