@@ -39,8 +39,6 @@ class AppointmentController extends Controller
         $user_company = auth()->user()->company;
         $user_name = auth()->user()->name;
 
-        dd($request);
-
         $request->validate([
             'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
             'purpose-2' => 'required_without_all:purpose-1,purpose-3,purpose-4',
@@ -53,16 +51,11 @@ class AppointmentController extends Controller
             'area_id' => 'required|exists:areas,id', // Ensure area exists
             'pic_id' => 'required|exists:users,id', // Ensure PIC exists
             'pic_dept' => 'required|string',
-            'ipk_form' => [
-                'required_if:category,Contractor',
-                function ($attribute, $value, $fail) {
-                    if (session()->get('category') === 'Contractor') {
-                        $fail('The IPK form document is required for contractors.');
-                    }
-                }
-            ],
         ]);
         
+        if (session()->get('category') === 'Contractor' && !$request->hasFile('ipk_form')) {
+            return redirect()->back()->with(['error' => 'The IPK form document is required for contractors.']);
+        }
 
         // Build the purpose string
         $purposes = [];
