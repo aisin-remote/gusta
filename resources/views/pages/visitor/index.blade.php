@@ -197,8 +197,9 @@
                         <div class="row mt-5">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <button type="submit" class="btn btn-lg btn-primary submit-btn">
-                                    Submit
-                                    <span class="spinner-border spinner-border-sm text-light ml-2 d-none"
+                                    <i class="mdi mdi-near-me pr-3"></i>
+                                    <span class="btn-text">Submit</span>
+                                    <span class="spinner-border spinner-border-sm text-primary ml-2 d-none"
                                         id="loadingSpinner" role="status" aria-hidden="true"></span>
                                 </button>
                             </div>
@@ -314,6 +315,13 @@
         $('form').on('submit', function(e) {
             let duplicateMessage = '';
             let hasError = false;
+            const submitButton = $(this).find('.submit-btn');
+            const spinner = submitButton.find('.spinner-border');
+            const buttonText = submitButton.find('.btn-text');
+
+            submitButton.prop('disabled', true);
+            spinner.removeClass('d-none');
+            buttonText.text('Loading...');
 
             // Check for duplicate card IDs
             if (hasDuplicates('input[name="cardId[]"]')) {
@@ -335,16 +343,6 @@
             } else {
                 $('#duplicateAlert').addClass('d-none'); // Hide alert if no error
             }
-
-            $(this).html(
-                'Loading <span class="spinner-border spinner-border-sm text-light ml-2" role="status" aria-hidden="true"></span>'
-            );
-
-            // Disable the submit button
-            $(this).prop('disabled', true);
-
-            // Submit the form after changing the button text
-            $(this).closest('form').submit();
         });
 
         var oldGuests = @json(old('name', [])); // Assuming old guest names are in an array
