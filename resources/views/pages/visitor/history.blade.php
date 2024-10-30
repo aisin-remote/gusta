@@ -134,7 +134,7 @@
                                             </button>
 
 
-                                            @if ($appointment->pic_approval == 'approved' || $appointment->dh_approval == 'approved')
+                                            @if ($appointment->pic_approval == 'pending' || $appointment->dh_approval == 'pending')
                                                 <a href="{{ route('appointment.edit', $appointment->id) }}" type="submit"
                                                     class="btn btn-icons btn-inverse-warning" data-toggle="tooltip"
                                                     title="edit"
