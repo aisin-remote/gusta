@@ -518,6 +518,7 @@ function has_all_null_values($array)
                                 <tr>
                                     <th class="text-center">No</th>
                                     <th class="text-center">PIC <small class="text-muted"> / 担当者</small></th>
+                                    <th class="text-center">Phone Number <small class="text-muted"> / 電話番号 </small></th>
                                     <th class="text-center">Destination Company <small class="text-muted"> / 宛先会社</small></th>
                                     <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
                                     <th class="text-center">Visit Date<small class="text-muted"> / 訪問日</small></th>
@@ -530,6 +531,7 @@ function has_all_null_values($array)
                                         <tr>
                                             <td class="display-4">{{ $loop->iteration }}</td>
                                             <td class="display-4">{{ $appointment->pic->name }}</td>
+                                            <td class="display-4">{{ $appointment->pic->phone_number }}</td>
                                             <td class="display-4">{{ $appointment->pic->company }}</td>
                                             <td class="display-4">{{ $appointment->purpose }}</td>
                                             <td class="display-4">

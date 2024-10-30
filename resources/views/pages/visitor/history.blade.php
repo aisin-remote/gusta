@@ -34,9 +34,13 @@
                             <tr>
                                 <th class="text-center">No</th>
                                 <th class="text-center">PIC</th>
-                                <th class="text-center">Destination Company <small class="text-muted"> / 宛先会社</small></th>
-                                <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
-                                <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
+                                <th class="text-center">Phone Number<small class="text-muted"> / Nomor Telepon</small></th>
+                                <th class="text-center">Destination Company <small class="text-muted"> / Perusahaan
+                                        Tujuan</small></th>
+                                <th class="text-center">Visit Purpose <small class="text-muted"> / Tujuan Kunjungan</small>
+                                </th>
+                                <th class="text-center">Visit Date <small class="text-muted"> / Tanggal Kunjungan</small>
+                                </th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">QR Code</th>
                                 <th class="text-center">Action</th>
@@ -48,6 +52,7 @@
                                     <tr>
                                         <td class="display-4">{{ $loop->iteration }} </td>
                                         <td class="display-4">{{ $appointment->pic->name }}</td>
+                                        <td class="display-4">{{ $appointment->pic->phone_number }}</td>
                                         <td class="display-4">{{ $appointment->pic->company }}</td>
                                         <td class="display-4">{{ $appointment->purpose }}</td>
                                         <td class="display-4">
