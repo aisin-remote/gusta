@@ -133,7 +133,7 @@
                                                     $appointment->pic_approval !== 'pending' ||
                                                     $appointment->dh_approval !== 'pending'
                                                 ) {
-                                                    $styke = 'opacity: 0.5; cursor: not-allowed; pointer-events: none;';
+                                                    $style = 'opacity: 0.5; cursor: not-allowed; pointer-events: none;';
                                                 }
                                             @endphp
                                             <button data-toggle="modal" class="btn btn-icons btn-inverse-info openModalBtn"
