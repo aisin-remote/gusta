@@ -196,8 +196,11 @@
 
                         <div class="row mt-5">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                <button type="submit" class="btn btn-lg btn-primary"><i
-                                        class="mdi mdi-near-me pr-3"></i>Submit</button>
+                                <button type="submit" class="btn btn-lg btn-primary submit-btn">
+                                    <i class="mdi mdi-near-me pr-3"></i>Submit
+                                </button>
+                                <span class="spinner-border spinner-border-sm text-primary ml-2 d-none"
+                                    id="loadingSpinner" role="status" aria-hidden="true"></span>
                             </div>
                         </div>
                     </form>
@@ -311,6 +314,14 @@
         $('form').on('submit', function(e) {
             let duplicateMessage = '';
             let hasError = false;
+
+            $('#loadingSpinner').removeClass('d-none');
+
+            // Disable the submit button
+            $(this).prop('disabled', true);
+
+            // Submit the form after showing spinner and disabling button
+            $(this).closest('form').submit();
 
             // Check for duplicate card IDs
             if (hasDuplicates('input[name="cardId[]"]')) {
