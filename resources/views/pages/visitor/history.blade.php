@@ -137,13 +137,15 @@
                                             @if ($appointment->pic_approval == 'approved' || $appointment->dh_approval == 'approved')
                                                 <a href="{{ route('appointment.edit', $appointment->id) }}" type="submit"
                                                     class="btn btn-icons btn-inverse-warning" data-toggle="tooltip"
-                                                    title="edit" disabled>
+                                                    title="edit"
+                                                    style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
                                                     <i class="mdi mdi-pencil"></i>
                                                 </a>
                                                 <a href="javascript:void(0);"
                                                     class="btn btn-icons btn-inverse-danger deleteButton"
                                                     data-toggle="tooltip" data-appointment-id="{{ $appointment->id }}"
-                                                    title="delete" disabled>
+                                                    title="delete"
+                                                    style="opacity: 0.5; cursor: not-allowed; pointer-events: none;">
                                                     <i class="mdi mdi-delete"></i>
                                                 </a>
                                             @endif
