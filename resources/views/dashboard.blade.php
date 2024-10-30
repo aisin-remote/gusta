@@ -233,9 +233,10 @@ function has_all_null_values($array)
                     <div class="card-body p-5">
                         <div class="row">
                             <div class="col-10">
-                                <h4 class="card-title mb-5">Active Tickets <small class="text-muted"> / Tiket yang masih berlaku
+                                <h4 class="card-title mb-5">Today's Appointment <small class="text-muted"> / Janji temu hari ini
                                         /
-                                        有効なチケット</small></h4>
+                                        今日の予定</small>
+                                </h4>
                             </div>
                         </div>
                         {{-- <div class="table-responsive"> --}}
