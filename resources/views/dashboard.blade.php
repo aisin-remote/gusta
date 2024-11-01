@@ -421,11 +421,12 @@ function has_all_null_values($array)
                         <table class="table table-responsive-lg table-hover w-100" id="allTicket">
                             <thead>
                                 <tr>
-                                    <th class="text-center">No</th>
                                     <th class="text-center">Visitor Name</th>
                                     <th class="text-center">Visitor Company</th>
                                     <th class="text-center">Visit Purpose</th>
                                     <th class="text-center">Visit Date</th>
+                                    <th class="text-center">Time in</th>
+                                    <th class="text-center">Time Out</th>
                                     <th class="text-center">PIC</th>
                                     <th class="text-center">Status</th>
                                 </tr>
@@ -434,13 +435,14 @@ function has_all_null_values($array)
                                 @if (!$appointments->isEmpty())
                                     @foreach ($appointments as $appointment)
                                         <tr>
-                                            <td class="display-4">{{ $loop->iteration }}</td>
                                             <td class="display-4">{{ $appointment->user->name }}</td>
                                             <td class="display-4">{{ $appointment->user->company }}</td>
                                             <td class="display-4">{{ $appointment->purpose }}</td>
                                             <td class="display-4">
                                                 {{ Carbon\Carbon::parse($appointment->date)->toFormattedDateString() }}
                                             </td>
+                                            <td class="display-4">{{ $appointment->checkin->checkin_at ?? '--:--' }}</td>
+                                            <td class="display-4">{{ $appointment->checkin->checkout_at ?? '--:--' }}</td>
                                             <td class="display-4">{{ $appointment->pic->name }}</td>
 
                                             @if ($appointment->checkin->status === 'in')

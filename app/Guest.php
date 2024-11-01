@@ -15,4 +15,9 @@ class Guest extends Model
     {
         return $this->belongsTo(Appointment::class);
     }
+
+    public function card_status()
+    {
+        return $this->hasMany(CardStatus::class);
+    }
 }

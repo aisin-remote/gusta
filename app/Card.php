@@ -20,4 +20,9 @@ class Card extends Model
     {
         return $this->hasMany(Appointment::class);
     }
+
+    public function card_status()
+    {
+        return $this->hasMany(CardStatus::class);
+    }
 }

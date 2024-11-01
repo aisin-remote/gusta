@@ -34,6 +34,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center">PIC</th>
+                                <th class="text-center">Category</th>
                                 <th class="text-center">Visitor Company <small class="text-muted"> / 合計ゲスト</small></th>
                                 <th class="text-center">Total Guest <small class="text-muted"> / 会社</small></th>
                                 <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
@@ -45,8 +46,12 @@
                         <tbody class="text-center">
                             @if (!$appointments->isEmpty())
                                 @foreach ($appointments as $appointment)
+                                    @php
+                                        $category = $appointment->ipk_form !== null ? 'Contractor' : 'Visitor';
+                                    @endphp
                                     <tr>
                                         <td class="display-4">{{ $appointment->pic->name }}</td>
+                                        <td class="display-4">{{ $category }}</td>
                                         <td class="display-4">{{ $appointment->user->company }}</td>
                                         <td class="display-4">{{ count($appointment->guests) }}</td>
                                         <td class="display-4">{{ $appointment->purpose }}</td>
@@ -139,8 +144,7 @@
                                     <div class="modal-body">
                                         <div class="modal-header">
                                             <h5 class="modal-title">Ticket Details</h5>
-                                            <button type="button px-4" class="close" data-dismiss="modal"
-                                                aria-label="Close">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -208,6 +212,51 @@
                                                 <span class="font-weight-bold">PIC</span>
                                                 <span class="font-weight-bold">{{ $appointment->pic->name }}</span>
                                             </div>
+
+                                            {{-- Additional Section for Contractor Category --}}
+                                            @if ($appointment->ipk_form !== null)
+                                                <div class="mb-3">
+                                                    <hr class="new1">
+                                                </div>
+                                                <div class="mt-4 text-center">
+                                                    @if (pathinfo($appointment->ipk_form, PATHINFO_EXTENSION) === 'xlsx')
+                                                        <a href="{{ asset('uploads/documents/' . $appointment->ipk_form) }}"
+                                                            class="btn btn-primary mx-2 p-3" download>
+                                                            Download File
+                                                        </a>
+                                                    @else
+                                                        <button class="btn btn-secondary mx-2 p-3 view-document"
+                                                            data-file-path="{{ asset('uploads/doc/' . $appointment->ipk_form) }}"
+                                                            data-toggle="modal"
+                                                            data-target="#viewDocumentModal-{{ $appointment->id }}">
+                                                            View Document
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Modal for Viewing Document --}}
+                        <div class="modal fade" id="viewDocumentModal-{{ $appointment->id }}" tabindex="-1"
+                            aria-labelledby="viewDocumentLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="viewDocumentLabel">View Document</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="text-center">
+                                            <iframe id="documentContent" style="width: 100%; height: 500px;"
+                                                frameborder="0"></iframe>
+                                            <img id="imageContent" style="display: none; max-width: 100%; height: auto;"
+                                                class="img-fluid" />
                                         </div>
                                     </div>
                                 </div>
@@ -602,6 +651,7 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -788,6 +838,28 @@
                 }
             });
 
+            $('.view-document').on('click', function() {
+                var filePath = $(this).data(
+                    'file-path'); // Get the file path from data attribute
+                var fileExtension = filePath.split('.').pop()
+                    .toLowerCase(); // Get file extension
+
+                if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension ===
+                    'png' || fileExtension === 'gif') {
+                    $('#documentContent').hide(); // Hide iframe
+                    $('#imageContent').attr('src', filePath).show(); // Show image
+                } else {
+                    $('#imageContent').hide(); // Hide image
+                    $('#documentContent').attr('src', filePath).show(); // Show iframe
+                }
+            });
+
+            // Optional: Reset the iframe and image src when modal is closed
+            $('#viewDocumentModal-{{ $appointment->id }}').on('hidden.bs.modal', function() {
+                $('#documentContent').attr('src', '')
+                    .hide(); // Clear the iframe src and hide it
+                $('#imageContent').attr('src', '').hide(); // Clear the image src and hide it
+            });
         });
     </script>
 @endpush

@@ -68,7 +68,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', 'DashboardController@index')
         ->name('dashboard.index')
         ->middleware('check.role.session');
-    
+
+    Route::get('/card', 'DashboardController@card')->name('card.index');
     Route::get('/update-password', 'UpdatePasswordController@index')->name('password.index');
     Route::get('/book-room', 'BookingController@index')->name('room.index');
     Route::get('/detail-room', 'BookingController@roomDetail')->name('room.detail');
@@ -95,8 +96,9 @@ Route::middleware(['auth'])->group(function () {
     // admin (scan qr)
     Route::post('/appointment/export-appointment', 'AppointmentController@export')->name('appointment.export');
     Route::get('/qrScanView', 'ApprovalController@qrScanView')->name('qrScanView.index');
-    Route::get('/qrScan', 'ApprovalController@qrScan')->name('qrScan.validate');
-
+    Route::post('/qrScan', 'ApprovalController@qrScan')->name('qrScan.validate');
+    Route::get('/cardScan', 'ApprovalController@cardScan')->name('cardScan.validate');
+    
     // GA
     Route::get('/facility/history', 'ApprovalController@facilityHistory')->name('facility.history');
     Route::post('/facility-done/{facility}', 'ApprovalController@facilityDone')->name('facility.done');

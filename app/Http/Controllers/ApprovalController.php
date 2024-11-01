@@ -6,6 +6,7 @@ use App\User;
 use App\Guest;
 use App\Checkin;
 use Carbon\Carbon;
+use App\CardStatus;
 use App\FacilityDetail;
 use App\ApprovalHistory;
 use App\Models\Appointment;
@@ -261,10 +262,7 @@ class ApprovalController extends Controller
         $appointments = Appointment::with('card')->where('qr_code', $qrId)->first();
 
         if(!$appointments || empty($appointments) || $appointments == null){
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Invalid QR Code',
-            ]);
+            return redirect()->back()->with('error', 'Invalid QR Code!');
         }
 
         $checkin_status = Checkin::where('appointment_id', $appointments->id)->first();
@@ -272,7 +270,6 @@ class ApprovalController extends Controller
         $now = Carbon::now();
         // update checkin status
         //$appointments->time - 10 minutes
-
         
         $appointments10minutes = Carbon::parse($appointments->time)->subMinutes(10);
 
@@ -280,10 +277,7 @@ class ApprovalController extends Controller
             //not allow if it's not 10 minutes before the appointment
 
             if ($appointments->date != $now->format('Y-m-d') && $appointments10minutes >= $now->format('H:i:s')) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Not yet time to visit!',
-                ]);
+                return redirect()->back()->with('error', 'Not yet time to visit!');
             } else {
                 if ($appointments !== null || $checkin_status !== null) {
                     if ($checkin_status->status === 'out') {
@@ -302,10 +296,7 @@ class ApprovalController extends Controller
                 }
             }
         } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Ticket Expired!',
-            ]);
+            return redirect()->back()->with('error', 'Ticket Expired!');
         }
 
         $guests = Guest::where('appointment_id', $appointments->id)->get(); // Fetch guests associated with the appointment
@@ -313,6 +304,8 @@ class ApprovalController extends Controller
         $cardDetails = [];
         foreach ($guests as $guest) {
             $cardDetails[] = [
+                'card_id' => $appointments->card->id,
+                'guest_id' => $guest->id,
                 'guest_name' => $guest->name, // You can adjust this based on your Guest model fields
                 'guest_id_card' => $guest->id_card, // You can adjust this based on your Guest model fields
                 'card_title' => $appointments->card->title ?? 'No Title', // Fetching the card title associated with the appointment
@@ -320,10 +313,78 @@ class ApprovalController extends Controller
             ];
         }
 
-        return response()->json([
+        return view('pages.admin.scan-card', [
             'status' => 'success',
             'checkin_status' => $status,
             'details' => $cardDetails
         ]);
+    }
+
+    public function cardScan(Request $request)
+    {
+        $card_id = $request->card_id;
+        $guest_id = $request->guest_id;
+        $serial = $request->serial;
+        $current_status = $request->current_status;
+
+        // cek card status
+        $card = CardStatus::where('card_id', $card_id)
+                    ->where('serial', $serial)
+                    ->first();
+        
+        if(!$card){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kartu tidak terdftar!'
+            ]);
+        }
+
+        if($card->status == 'used' && $card->guest_id !== null && $current_status == 'sukses_in'){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Kartu sudah digunakan!'
+            ]);
+        }
+        
+        if($card->status == 'ready' && $card->guest_id == null && $current_status == 'sukses_out'){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Salah Kartu!'
+            ]);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // update status
+            if($card->status == 'used' && $card->guest_id !== null && $current_status == 'sukses_out'){
+                CardStatus::where('card_id', $card_id)
+                        ->where('serial', $serial)
+                        ->update([
+                            'guest_id' => null,
+                            'status' => 'ready'
+                        ]);
+            }elseif($card->status == 'ready' && $card->guest_id == null && $current_status == 'sukses_in'){
+                CardStatus::where('card_id', $card_id)
+                        ->where('serial', $serial)
+                        ->update([
+                            'guest_id' => $guest_id,
+                            'status' => 'used'
+                        ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' =>'success',
+                'message' => 'Kartu berhasil discan, silahkan masuk!'
+            ]);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'error',
+                'message' => $th->getMessage()
+            ]);
+        }        
     }
 }

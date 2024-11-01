@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Card;
 use App\User;
 use App\Checkin;
+use App\CardStatus;
 use App\FacilityDetail;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
@@ -112,5 +114,24 @@ class DashboardController extends Controller
                 'facilities' => $appt
             ]);
         }
+    }
+
+    public function card()
+    {
+        $cards = Card::all();
+        $totalCards = CardStatus::selectRaw('card_id, COUNT(card_id) as total')
+                            ->groupBy('card_id')
+                            ->get();
+                            
+        $availableCards = CardStatus::selectRaw('card_id, COUNT(card_id) as total')
+                            ->where('status', 'ready')
+                            ->groupBy('card_id')
+                            ->get();
+
+        return view('pages.admin.dashboard-card', [
+            'cards' => $cards,
+            'totalCards' => $totalCards,
+            'availableCards' => $availableCards,
+        ]);
     }
 }

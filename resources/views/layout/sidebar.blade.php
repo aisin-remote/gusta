@@ -50,7 +50,13 @@
         @endcan
 
         @can('admin')
-            <li class="nav-item {{ active_class(['qrScanView', 'qrScan']) }}">
+            <li class="nav-item {{ active_class(['card']) }}">
+                <a class="nav-link" href="{{ route('card.index') }}">
+                    <i class="menu-icon mdi mdi-id-card"></i>
+                    <span class="menu-title">Card Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item {{ active_class(['qrScanView', 'qrScan', 'cardScan']) }}">
                 <a class="nav-link" href="{{ route('qrScanView.index') }}">
                     <i class="menu-icon mdi mdi-qrcode-scan"></i>
                     <span class="menu-title">Scan QR Code</span>
