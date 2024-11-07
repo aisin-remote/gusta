@@ -27,24 +27,27 @@ class LoginController extends Controller
 
     public function authenticate(Request $request)
     {
+        // Validate the incoming request
         $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
+            'g-recaptcha-response' => 'required|captcha', // Validate CAPTCHA field
         ]);
 
-        if(Auth::attempt($credentials))
-        {
+        // Attempt to log the user in
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            // Regenerate the session to prevent session fixation attacks
             $request->session()->regenerate();
-            
-            if(auth()->user()->role == 'visitor'){
-                return redirect()->intended('/portal');
-            }else{
-                return redirect()->intended('/dashboard');
-                
-            }
 
+            // Redirect based on user role
+            if (auth()->user()->role == 'visitor') {
+                return redirect()->intended('/portal');
+            } else {
+                return redirect()->intended('/dashboard');
+            }
         }
 
+        // If authentication fails, redirect back with an error message
         return redirect()->back()->with('error', 'Email or password do not match our records!');
     }
 

@@ -23,6 +23,7 @@
     {!! Html::style('assets/plugins/@mdi/font/css/materialdesignicons.min.css') !!}
     <link rel="stylesheet" href="../../css/style.css" />
     <link rel="shortcut icon" href="../../images/favicon.png" />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>

@@ -32,6 +32,7 @@
                         <input type="password" class="form-control form-control-lg" id="exampleInputPassword1"
                             placeholder="Password" name="password" required>
                     </div>
+                    <div class="g-recaptcha" data-sitekey="{{ env('NOCAPTCHA_SITEKEY') }}"></div>
                     <div class="mt-3">
                         <button type="submit"
                             class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">SIGN
@@ -45,3 +46,18 @@
         </div>
     </div>
 @endsection
+
+<script>
+    grecaptcha.ready(function() {
+        grecaptcha.execute('{{ env('NOCAPTCHA_SITEKEY') }}', {
+            action: 'login'
+        }).then(function(token) {
+            // Append token to the form
+            var recaptchaResponse = document.createElement('input');
+            recaptchaResponse.setAttribute('type', 'hidden');
+            recaptchaResponse.setAttribute('name', 'g-recaptcha-response');
+            recaptchaResponse.setAttribute('value', token);
+            document.getElementById('loginForm').appendChild(recaptchaResponse);
+        });
+    });
+</script>
