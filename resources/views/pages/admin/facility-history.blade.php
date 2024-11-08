@@ -17,7 +17,8 @@
             @endif
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-5">Ticket List <small class="text-muted"> / Daftar Tiket / チケット一覧</small></h4>
+                    <h4 class="card-title mb-5">List Approval <small class="text-muted"> / Daftar Persetujuan /
+                            リスト承認</small></h4>
                     <table class="table table-responsive-lg" id="allTicket">
                         <thead>
                             <tr>

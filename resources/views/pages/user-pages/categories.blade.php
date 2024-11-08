@@ -69,6 +69,7 @@
                     style="background-color: #FF8C8A;">
                     <i class="mdi mdi-account-circle mdi-48px mb-3" style="color: #ffffff;"></i>
                     <h3 style="font-weight: bolder; color: #ffffff;">Visitor</h3>
+                    <small style="color: white;">ini keterangan visitor</small>
                 </div>
             </div>
 
@@ -78,6 +79,7 @@
                     style="background-color: #FFB97F;">
                     <i class="mdi mdi-hammer mdi-48px mb-3" style="color: #ffffff;"></i>
                     <h3 style="font-weight: bolder; color: #ffffff;">Contractor</h3>
+                    <small style="color: white;">ini keterangan visitor</small>
                 </div>
             </div>
         </div>

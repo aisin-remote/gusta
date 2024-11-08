@@ -28,11 +28,12 @@
 
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-5">Ticket list <small class="text-muted"> / チケット一覧</small></h4>
+                    <h4 class="card-title mb-5">List Approval <small class="text-muted"> / リスト承認</small></h4>
                     {{-- <div class="table-responsive"> --}}
                     <table class="table table-responsive-lg table-hover w-100" id="allTicket">
                         <thead>
                             <tr>
+                                <th class="text-center">No</th>
                                 <th class="text-center">PIC</th>
                                 <th class="text-center">Category</th>
                                 <th class="text-center">Visitor Company <small class="text-muted"> / 合計ゲスト</small></th>
@@ -50,6 +51,7 @@
                                         $category = $appointment->ipk_form !== null ? 'Contractor' : 'Visitor';
                                     @endphp
                                     <tr>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td class="display-4">{{ $appointment->pic->name }}</td>
                                         <td class="display-4">{{ $category }}</td>
                                         <td class="display-4">{{ $appointment->user->company }}</td>

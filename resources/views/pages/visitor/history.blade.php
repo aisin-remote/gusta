@@ -32,6 +32,7 @@
                     <table class="table table-responsive-lg table-hover w-100" id="allTicket">
                         <thead>
                             <tr>
+                                <th class="text-center">No</th>
                                 <th class="text-center">PIC</th>
                                 <th class="text-center">Phone Number</th>
                                 <th class="text-center">Destination Company</th>
@@ -46,6 +47,7 @@
                             @if (!$appointments->isEmpty())
                                 @foreach ($appointments as $appointment)
                                     <tr>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td class="display-4">{{ $appointment->pic->name }}</td>
                                         <td class="display-4">{{ $appointment->pic->phone_number }}</td>
                                         <td class="display-4">{{ $appointment->pic->company }}</td>
