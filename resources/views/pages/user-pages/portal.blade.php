@@ -1,10 +1,11 @@
 @extends('layout.auth')
 
 @section('main')
-    <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="container d-flex justify-content-center align-items-center">
         <div class="row justify-content-center w-100">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-4 card-animate login mb-5">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12 mb-2 card-animate login mb-5">
                 <h2 class="text-center">Select a Company to Continue</h2>
+                <p class="text-center">select the company you want to go to</p>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-12 mb-4 card-animate login card-click mb-4" id="aisin-card"
                 data-company="AIIA">

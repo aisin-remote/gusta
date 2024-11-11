@@ -57,11 +57,12 @@
         <i class="mdi mdi-arrow-left"></i> Back
     </a>
 
-    <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="container d-flex justify-content-center align-items-center">
         <!-- Row to wrap the cards -->
         <div class="row justify-content-center w-100">
             <div class="col-lg-12 col-md-4 col-sm-6 col-12 mb-4 card-animate login mb-5">
                 <h2 class="text-center">Select a Category to Continue</h2>
+                <p class="text-center">Select the category according to your visit purpose</p>
             </div>
             <!-- Visitor Card -->
             <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-4 animate-card card-click login">
@@ -69,7 +70,7 @@
                     style="background-color: #FF8C8A;">
                     <i class="mdi mdi-account-circle mdi-48px mb-3" style="color: #ffffff;"></i>
                     <h3 style="font-weight: bolder; color: #ffffff;">Visitor</h3>
-                    <small style="color: white;">ini keterangan visitor</small>
+                    <small style="color: white;">to make an appointment with employees</small>
                 </div>
             </div>
 
@@ -79,7 +80,7 @@
                     style="background-color: #FFB97F;">
                     <i class="mdi mdi-hammer mdi-48px mb-3" style="color: #ffffff;"></i>
                     <h3 style="font-weight: bolder; color: #ffffff;">Contractor</h3>
-                    <small style="color: white;">ini keterangan visitor</small>
+                    <small style="color: white;">for delivery of goods and materials, make sure you have an IPK form</small>
                 </div>
             </div>
         </div>
