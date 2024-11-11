@@ -67,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
         $request->validate(['category' => 'required']);
         session(['category' => $request->input('category')]);
     
-        return redirect('/dashboard');
+        return redirect('/appointment');
     })->name('setCategory');
 
     Route::get('/dashboard', 'DashboardController@index')

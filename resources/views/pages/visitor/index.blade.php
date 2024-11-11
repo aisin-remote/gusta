@@ -327,8 +327,14 @@
 
             // Check for duplicate card IDs
             if (hasDuplicates('input[name="cardId[]"]')) {
-                duplicateMessage = 'ID Card numbers cant be same.';
+                duplicateMessage = 'ID Card numbers can\'t be the same.';
                 hasError = true;
+
+                // Reset button state
+                submitButton.prop('disabled', false);
+                spinner.addClass('d-none');
+                iconBtn.removeClass('d-none');
+                buttonText.text('Submit');
             }
 
             if (hasError) {

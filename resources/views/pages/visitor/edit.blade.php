@@ -207,8 +207,12 @@
 
                         <div class="row mt-5">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                <button type="submit" class="btn btn-lg btn-primary"><i
-                                        class="mdi mdi-near-me pr-3"></i>Update</button>
+                                <button type="submit" class="btn btn-lg btn-primary submit-btn">
+                                    <i class="mdi mdi-near-me pr-3 icon-btn"></i>
+                                    <span class="spinner-border spinner-border-sm d-none" role="status"
+                                        aria-hidden="true"></span>
+                                    <span class="btn-text pl-3">Update</span>
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -243,6 +247,64 @@
 
             let guestIndex =
                 {{ count($appointment->guests) }}; // Start from the current count of guests
+
+            function hasDuplicates(selector) {
+                let values = [];
+                let hasDuplicate = false;
+
+                $(selector).each(function() {
+                    let value = $(this).val();
+                    if (values.includes(value)) {
+                        hasDuplicate = true;
+                        return false; // Stop the loop if duplicate is found
+                    }
+                    values.push(value);
+                });
+
+                return hasDuplicate;
+            }
+
+            // On form submission
+            $('form').on('submit', function(e) {
+                let duplicateMessage = '';
+                let hasError = false;
+                const submitButton = $(this).find('.submit-btn');
+                const spinner = submitButton.find('.spinner-border');
+                const buttonText = submitButton.find('.btn-text');
+                const iconBtn = submitButton.find('.icon-btn');
+
+                submitButton.prop('disabled', true);
+                spinner.removeClass('d-none');
+                iconBtn.addClass('d-none');
+                buttonText.text('Loading...');
+
+                // Check for duplicate card IDs
+                if (hasDuplicates('input[name="cardId[]"]')) {
+                    duplicateMessage = 'ID Card numbers can\'t be the same.';
+                    hasError = true;
+
+                    // Reset button state
+                    submitButton.prop('disabled', false);
+                    spinner.addClass('d-none');
+                    iconBtn.removeClass('d-none');
+                    buttonText.text('Submit');
+                }
+
+                if (hasError) {
+                    e.preventDefault(); // Prevent form submission
+                    $('#duplicateMessage').text(duplicateMessage);
+                    $('#duplicateAlert').removeClass('d-none'); // Show alert
+
+                    // Set a timeout to hide the alert after 4 seconds (4000 milliseconds)
+                    setTimeout(function() {
+                        $('#duplicateAlert').addClass('d-none');
+                    }, 4000);
+
+                    return false; // Stop execution
+                } else {
+                    $('#duplicateAlert').addClass('d-none'); // Hide alert if no error
+                }
+            });
 
             $('#addGuestBtn').click(function() {
                 // Create a new row

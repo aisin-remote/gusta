@@ -9,7 +9,7 @@
 
         @can('visitor')
             <li class="nav-item {{ active_class(['appointment']) }}">
-                <a class="nav-link" href="{{ route('appointment.index') }}">
+                <a class="nav-link" href="{{ route('portal') }}">
                     <i class="menu-icon mdi mdi-comment-plus-outline"></i>
                     <span class="menu-title">Create Appointment</span>
                 </a>
@@ -18,12 +18,6 @@
                 <a class="nav-link" href="{{ route('appointment.history') }}">
                     <i class="menu-icon mdi mdi-ticket-confirmation"></i>
                     <span class="menu-title">My Appointment</span>
-                </a>
-            </li>
-            <li class="nav-item {{ active_class(['portal']) }}">
-                <a class="nav-link" href="{{ route('portal') }}">
-                    <i class="menu-icon mdi mdi-web"></i>
-                    <span class="menu-title">Portal</span>
                 </a>
             </li>
         @endcan
