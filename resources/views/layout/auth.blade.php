@@ -24,6 +24,25 @@
     <link rel="stylesheet" href="../../css/style.css" />
     <link rel="shortcut icon" href="../../images/favicon.png" />
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        #password-strength ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 10px;
+        }
+
+        #password-strength li {
+            color: red;
+        }
+
+        #password-strength li.valid {
+            color: green;
+        }
+
+        #password-strength li.invalid {
+            color: red;
+        }
+    </style>
 </head>
 
 <body>

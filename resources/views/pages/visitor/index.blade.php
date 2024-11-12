@@ -254,6 +254,25 @@
                 }
             });
 
+            // disable past time
+            const $timeInput = $('#time');
+            const now = new Date();
+
+            // Format current time to "HH:MM"
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const currentTime = `${hours}:${minutes}`;
+
+            $timeInput.attr('min', currentTime);
+
+            // Optional: prevent selecting a past time when the page is loaded or refreshed
+            $timeInput.on('change', function() {
+                if ($(this).val() < $(this).attr('min')) {
+                    alert("Please select a future time.");
+                    $(this).val('');
+                }
+            });
+
             $('#dept').change(function() {
                 $.ajax({
                     url: '/get-pic',

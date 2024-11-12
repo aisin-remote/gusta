@@ -43,7 +43,14 @@ class RegisterController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'company' => 'required|string|max:255',
             'phone_number' => 'required|string|max:255',
-            'password' => 'required|string|min:8',
+            'password' => [
+                'required',
+                'confirmed', // Confirms that password matches password_confirmation
+                'min:8', // Minimum length of 8 characters
+                'regex:/[A-Z]/', // Requires at least one uppercase letter
+                'regex:/[0-9]/', // Requires at least one number
+                'regex:/[@$!%*?&]/', // Requires at least one special character
+            ],
         ]);
 
         // verification token
