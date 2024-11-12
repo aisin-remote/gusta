@@ -71,6 +71,6 @@ class RegisterController extends Controller
         $user->verification_token = null;
         $user->save();
 
-        return redirect('/verify-success');
+        return view('emails.success');
     }
 }

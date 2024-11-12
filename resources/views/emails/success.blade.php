@@ -49,7 +49,7 @@
         </div>
         <h1>Success</h1>
         <p>Your Email has been <strong>Verified</strong></p>
-        <a href="{{ route('verify.success') }}" class="btn btn-info mt-4">Back to Login</a>
+        <a href="{{ route('login') }}" class="btn btn-info mt-4">Back to Login</a>
     </div>
 </body>
 
