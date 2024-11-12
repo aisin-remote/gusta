@@ -41,8 +41,11 @@ Route::get('/delivery', 'DeliveryController@index')->name('delivery.index');
 Route::post('/delivery/create-ticket', 'DeliveryController@create')->name('delivery.create');
 Route::get('/delivery/history', 'DeliveryController@history')->name('delivery.history');
 
+// verifiy email
+Route::get('/verify-email/{token}', 'Auth\RegisterController@verifyEmail')->name('verify.email');
+
 // auth route
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/portal', function () {
         return view('pages.user-pages.portal');
     })->name('portal');
