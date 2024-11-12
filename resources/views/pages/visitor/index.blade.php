@@ -268,7 +268,7 @@
             // Optional: prevent selecting a past time when the page is loaded or refreshed
             $timeInput.on('change', function() {
                 if ($(this).val() < $(this).attr('min')) {
-                    alert("Please select a future time.");
+                    alert("Please select current or future time.");
                     $(this).val('');
                 }
             });
