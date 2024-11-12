@@ -29,7 +29,7 @@
             @endif
 
             <div class="auth-form-light text-center p-5 card-animate login" id="login">
-                <h2 class="text-left" style="font-weight: bold;">Login to gusta</h2>
+                <h1 class="text-left" style="font-weight: bold;">Login to gusta</h1>
                 <p class="text-left mb-4">Guest App for making appointments and delivery contractors</p>
                 <form class="pt-3" action="{{ route('login.auth') }}" method="POST">
                     {{ csrf_field() }}

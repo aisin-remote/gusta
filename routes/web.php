@@ -117,4 +117,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // logout
     Route::post('/logout-auth', 'Auth\LoginController@logout')->name('logout.auth');
+
+    Route::get('/verify-success', function(){
+        return view('emails.success');
+    })->name('verify.success');
 });
