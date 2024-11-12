@@ -26,8 +26,11 @@ class DashboardController extends Controller
         $today_appointment = $today_appointments->get();
         $visitor_inside = Checkin::with('appointment')
             ->join('appointments', 'appointments.id', '=', 'checkin.appointment_id')
+            ->join('guests', 'guests.appointment_id', '=', 'appointments.id')
             ->where('date', $current_date)
-            ->where('checkin.status', 'in')->count();
+            ->where('checkin.status', 'in')
+            ->count();
+
         $today_visitor = $today_appointment->sum('guest');
         $current_time = date("H:i:s");
 
@@ -133,5 +136,11 @@ class DashboardController extends Controller
             'totalCards' => $totalCards,
             'availableCards' => $availableCards,
         ]);
+    }
+
+    public function show($id)
+    {
+        $card = Card::with('card_status')->findOrFail($id);
+        return view('pages.admin.card-detail', compact('card'));
     }
 }

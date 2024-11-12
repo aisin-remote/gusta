@@ -78,6 +78,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('check.role.session');
 
     Route::get('/card', 'DashboardController@card')->name('card.index');
+    Route::get('/card/{id}', 'DashboardController@show')->name('cards.show');
+    
     Route::get('/update-password', 'UpdatePasswordController@index')->name('password.index');
     Route::post('/update-password/update', 'UpdatePasswordController@update')->name('password.update');  // Changed to POST
 

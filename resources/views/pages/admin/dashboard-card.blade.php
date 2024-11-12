@@ -13,8 +13,10 @@
                         <strong>{{ ucfirst($card->category) }} {{ $card->area->area }} Card</strong>
                     </div>
                     <div class="card-body text-center">
-                        <img src="{{ asset('uploads/cards/' . $card->card) }}" class="img-fluid mb-3" alt="Card Image"
-                            style="width: 150px;">
+                        <a href="/card/{{ $card->id }}">
+                            <img src="{{ asset('uploads/cards/' . $card->card) }}" class="img-fluid mb-3" alt="Card Image"
+                                style="width: 150px;">
+                        </a>
                     </div>
                     <div class="card-footer text-center">
                         @php
