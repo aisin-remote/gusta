@@ -119,13 +119,35 @@
                             @php
                                 $badgeClass = $detailCards->status == 'ready' ? 'available' : 'unavailable';
                             @endphp
-                            <div class="col-1 seat {{ $badgeClass }}">
+                            <div class="col-1 seat {{ $badgeClass }}" data-serial="{{ $detailCards->serial }}"
+                                data-status="{{ $detailCards->status }}" data-id="{{ $detailCards->id }}"
+                                data-guest="{{ optional($detailCards->guest)->name }}"
+                                data-card="{{ optional($detailCards->guest)->id_card }}" style="cursor: pointer;">
                                 <span class="seat-number">{{ $detailCards->serial }}</span>
                                 <div class="seat-tooltip">
                                     {{ $detailCards->status == 'ready' ? 'Available' : 'Unavailable' }}
                                 </div>
                             </div>
                         @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="detailModal" data-backdrop="static" data-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Card Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="px-4 py-1" id="modalContent">
+                        <!-- Content will be loaded here -->
                     </div>
                 </div>
             </div>
@@ -163,6 +185,49 @@
         }
 
         $(document).ready(function() {
+            // Function to handle the click event on a seat and show the modal
+            $('.seat').on('click', function() {
+                // Get seat details from the clicked seat element
+                var serial = $(this).data('serial');
+                var status = $(this).data('status');
+                var seatId = $(this).data('id');
+                var card = $(this).data('card');
+                var guest = $(this).data('guest');
+
+                // Prepare the modal content dynamically
+                var modalContent = `
+                    <div class="d-flex justify-content-between pt-4">
+                        <span class="font-weight-bold h4">Card number : ${serial}</span>
+                    </div>
+                    <p>Status: ${status === 'used' ? '<span style="color:red">Unavailable</span>' : '<span style="color:green">Available</span>'}</p>
+                `;
+
+                // Conditionally add the "Guest Details" section if the status is 'used'
+                if (status === 'used') {
+                    modalContent += `
+                        <div class="mb-3">
+                            <hr class="new1">
+                        </div>
+                        <div class="d-flex justify-content-between pt-4">
+                            <span class="font-weight-bold h4">Guest Details</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Guest Name</span>
+                            <span class="font-weight-bold">${guest}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">ID Card</span>
+                            <span class="font-weight-bold">${card}</span>
+                        </div>
+                    `;
+                }
+
+                // Set the modal content dynamically
+                $('#modalContent').html(modalContent);
+
+                // Show the modal
+                $('#detailModal').modal('show');
+            });
 
         });
     </script>

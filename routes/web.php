@@ -44,6 +44,12 @@ Route::get('/delivery/history', 'DeliveryController@history')->name('delivery.hi
 // verifiy email
 Route::get('/verify-email/{token}', 'Auth\RegisterController@verifyEmail')->name('verify.email');
 
+// forgot password
+Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+Route::post('password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail')->name('password.email');
+Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm')->name('password.reset');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('password.hardReset');
+
 // auth route
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/portal', function () {

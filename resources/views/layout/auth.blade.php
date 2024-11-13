@@ -42,6 +42,19 @@
         #password-strength li.invalid {
             color: red;
         }
+
+        .forgot-password-link {
+            color: #007bff;
+            font-weight: normal;
+            font-size: 0.8rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .forgot-password-link:hover {
+            color: #0056b3;
+            text-decoration: none;
+        }
     </style>
 </head>
 

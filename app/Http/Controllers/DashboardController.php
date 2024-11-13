@@ -140,7 +140,7 @@ class DashboardController extends Controller
 
     public function show($id)
     {
-        $card = Card::with('card_status')->findOrFail($id);
+        $card = Card::with('card_status.guest')->findOrFail($id);
         return view('pages.admin.card-detail', compact('card'));
     }
 }

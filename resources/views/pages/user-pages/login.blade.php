@@ -29,7 +29,7 @@
             @endif
 
             <div class="auth-form-light text-center p-5 card-animate login" id="login">
-                <h1 class="text-left" style="font-weight: bold;">Login to gusta</h1>
+                <h1 class="text-left" style="font-weight: bold;">Login to GUSTA</h1>
                 <p class="text-left mb-4">Guest App for making appointments and delivery contractors</p>
                 <form class="pt-3" action="{{ route('login.auth') }}" method="POST">
                     {{ csrf_field() }}
@@ -41,11 +41,15 @@
                         <input type="password" class="form-control form-control-lg" id="exampleInputPassword1"
                             placeholder="Password" name="password" required>
                     </div>
+                    <div class="form-group text-right">
+                        <a href="{{ route('password.request') }}" class="forgot-password-link" data-toggle="tooltip"
+                            data-placement="right" title="Click here to reset your password if you've forgotten it.">Forgot
+                            Password?</a>
+                    </div>
                     <div class="g-recaptcha" data-sitekey="{{ env('NOCAPTCHA_SITEKEY') }}"></div>
                     <div class="mt-3">
                         <button type="submit"
-                            class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">SIGN
-                            IN</button>
+                            class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">SIGN IN</button>
                     </div>
                     <div class="text-center mt-4 font-weight-light"> Don't have an account? <a
                             href="{{ route('register.index') }}" class="text-primary">Create</a>

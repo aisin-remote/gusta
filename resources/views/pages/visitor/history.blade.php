@@ -179,7 +179,7 @@
                                                 <span>{!! \QrCode::size(200)->generate($appointment->qr_code) !!}</span>
                                                 <form class="pt-5">
                                                     <button type="submit" class="btn btn-primary" data-dismiss="modal"
-                                                        aria-label="Close">close modal</button>
+                                                        aria-label="Close">close</button>
                                                 </form>
                                             </div>
                                         </div>
