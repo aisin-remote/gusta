@@ -106,10 +106,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/get-room', 'AppointmentController@getRoom')->name('appointment.getRoom');
 
     // approver (approve, history)
-    Route::get('/approval', 'ApprovalController@index')->name('ticket.index');
-    Route::get('/approval/history', 'ApprovalController@history')->name('ticket.history');
-    Route::post('/approval/approve/{ticket}', 'ApprovalController@ticketApproval')->name('ticket.approval');
-    Route::post('/approval/reject/{ticket}', 'ApprovalController@ticketRejection')->name('ticket.rejection');
+    Route::middleware(['approver'])->group(function () {
+        Route::get('/approval', 'ApprovalController@index')->name('ticket.index');
+        Route::get('/approval/history', 'ApprovalController@history')->name('ticket.history');
+        Route::post('/approval/approve/{ticket}', 'ApprovalController@ticketApproval')->name('ticket.approval');
+        Route::post('/approval/reject/{ticket}', 'ApprovalController@ticketRejection')->name('ticket.rejection');
+    });
 
     // admin (scan qr)
     Route::post('/appointment/export-appointment', 'AppointmentController@export')->name('appointment.export');
