@@ -135,12 +135,13 @@ class AppointmentController extends Controller
             $phone = $pic->phone_number;
             // Pass array elements as additional arguments to sprintf
             $message = sprintf(
-                "```----GUEST ALERT-------\n\nCompany : %s\nName    : %s\nAgenda  : %s\nDate    : %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You```",
-                $user_company,              // Assuming $user_company holds the company name
-                $user_name,              // Assuming $user_company holds the company name
+                "```----GUEST ALERT-------\n\nCompany : %s\nName    : %s\nAgenda  : %s\nDate    : %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You\n\nPlease click the link below:\n%s```",
+                $user_company,              // The company name
+                $user_name,                 // The guest's name
                 $purpose,                   // The agenda of the guest visit
-                $date,                          // The date of the visit
-                $appointment->dh_approval   // The current status (e.g., 'pending')
+                $date,                      // The date of the visit
+                $appointment->dh_approval,  // The current status (e.g., 'pending')
+                'https://gusta-qa.aiia.co.id/approval' // The link to click
             );
         
             $curl = curl_init();
