@@ -52,58 +52,59 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('passw
 
 // auth route
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/portal', function () {
-        return view('pages.user-pages.portal');
-    })->name('portal');
-    
-    Route::post('/set-company', function (Request $request) {
-        $request->validate(['company' => 'required']);
-        session(['company' => $request->input('company')]);
-    
-        return redirect('/category');
-    })->name('setCompany');
-    
-    Route::post('/remove-company', function () {
-        session()->forget('company'); // Remove the 'company' session key
-        return response()->json(['success' => true]);
-    })->name('removeCompany');
-    
-    Route::get('/category', function () {
-        return view('pages.user-pages.categories');
-    })->middleware('checkCompanyType');
-
-    Route::post('/set-category', function (Request $request) {
-        $request->validate(['category' => 'required']);
-        session(['category' => $request->input('category')]);
-    
-        return redirect('/appointment');
-    })->name('setCategory');
-
     Route::get('/dashboard', 'DashboardController@index')
         ->name('dashboard.index')
         ->middleware('check.role.session');
-
-    Route::get('/card', 'DashboardController@card')->name('card.index');
-    Route::get('/card/{id}', 'DashboardController@show')->name('cards.show');
-    
-    Route::get('/update-password', 'UpdatePasswordController@index')->name('password.index');
-    Route::post('/update-password/update', 'UpdatePasswordController@update')->name('password.update');  // Changed to POST
 
     // booking
     Route::get('/book-room', 'BookingController@index')->name('room.index');
     Route::get('/detail-room', 'BookingController@roomDetail')->name('room.detail');
 
     // visitor (create, history)
-    Route::get('/appointment', 'AppointmentController@index')->name('appointment.index');
-    Route::post('/appointment/create-ticket', 'AppointmentController@create')->name('appointment.create');
-    Route::get('/appointment/{id}/edit', 'AppointmentController@edit')->name('appointment.edit');
-    Route::post('/appointment/{id}', 'AppointmentController@update')->name('appointment.update');
-    Route::get('/appointment/modal/{id}', 'AppointmentController@show');
-    Route::post('/appointment/{id}/destroy', 'AppointmentController@destroy')->name('appointment.destroy');
+    Route::middleware(['visitor'])->group(function () {
+        Route::get('/appointment', 'AppointmentController@index')->name('appointment.index');
+        Route::post('/appointment/create-ticket', 'AppointmentController@create')->name('appointment.create');
+        Route::get('/appointment/{id}/edit', 'AppointmentController@edit')->name('appointment.edit');
+        Route::post('/appointment/{id}', 'AppointmentController@update')->name('appointment.update');
+        Route::get('/appointment/modal/{id}', 'AppointmentController@show');
+        Route::post('/appointment/{id}/destroy', 'AppointmentController@destroy')->name('appointment.destroy');
+    
+        Route::get('/appointment/history', 'AppointmentController@history')->name('appointment.history');
+        Route::get('/get-pic', 'AppointmentController@getPic')->name('appointment.getPic');
+        Route::get('/get-room', 'AppointmentController@getRoom')->name('appointment.getRoom');
 
-    Route::get('/appointment/history', 'AppointmentController@history')->name('appointment.history');
-    Route::get('/get-pic', 'AppointmentController@getPic')->name('appointment.getPic');
-    Route::get('/get-room', 'AppointmentController@getRoom')->name('appointment.getRoom');
+        // update password
+        Route::get('/update-password', 'UpdatePasswordController@index')->name('password.index');
+        Route::post('/update-password/update', 'UpdatePasswordController@update')->name('password.update');  // Changed to POST
+
+        // Portal
+        Route::get('/portal', function () {
+            return view('pages.user-pages.portal');
+        })->name('portal');
+        
+        Route::post('/set-company', function (Request $request) {
+            $request->validate(['company' => 'required']);
+            session(['company' => $request->input('company')]);
+        
+            return redirect('/category');
+        })->name('setCompany');
+        
+        Route::post('/remove-company', function () {
+            session()->forget('company'); // Remove the 'company' session key
+            return response()->json(['success' => true]);
+        })->name('removeCompany');
+        
+        Route::get('/category', function () {
+            return view('pages.user-pages.categories');
+        })->middleware('checkCompanyType');
+    
+        Route::post('/set-category', function (Request $request) {
+            $request->validate(['category' => 'required']);
+            session(['category' => $request->input('category')]);
+        
+            return redirect('/appointment');
+        })->name('setCategory');
+    });
 
     // approver (approve, history)
     Route::middleware(['approver'])->group(function () {
@@ -114,11 +115,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // admin (scan qr)
-    Route::post('/appointment/export-appointment', 'AppointmentController@export')->name('appointment.export');
-    Route::post('/delivery/export-delivery', 'DeliveryController@export')->name('delivery.export');
-    Route::get('/qrScanView', 'ApprovalController@qrScanView')->name('qrScanView.index');
-    Route::post('/qrScan', 'ApprovalController@qrScan')->name('qrScan.validate');
-    Route::get('/cardScan', 'ApprovalController@cardScan')->name('cardScan.validate');
+    Route::middleware(['admin'])->group(function () {
+        Route::post('/appointment/export-appointment', 'AppointmentController@export')->name('appointment.export');
+        Route::post('/delivery/export-delivery', 'DeliveryController@export')->name('delivery.export');
+        Route::get('/qrScanView', 'ApprovalController@qrScanView')->name('qrScanView.index');
+        Route::post('/qrScan', 'ApprovalController@qrScan')->name('qrScan.validate');
+        Route::get('/cardScan', 'ApprovalController@cardScan')->name('cardScan.validate');
+
+        Route::get('/card', 'DashboardController@card')->name('card.index');
+        Route::get('/card/{id}', 'DashboardController@show')->name('cards.show');
+    });
     
     // GA
     Route::get('/facility/history', 'ApprovalController@facilityHistory')->name('facility.history');

@@ -15,7 +15,7 @@ class Visitor
      */
     public function handle($request, Closure $next)
     {
-        if(auth()->guest() || auth()->user()->role === 'admin' ){
+        if(auth()->guest() || auth()->user()->role !== 'visitor' ){
             abort(403);
         }
         
