@@ -15,7 +15,7 @@ class Approver
      */
     public function handle($request, Closure $next)
     {
-        if(auth()->guest() || auth()->user()->role === 'approver' ){
+        if(auth()->guest() || auth()->user()->role !== 'approver' ){
             abort(403);
         }
         
