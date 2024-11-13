@@ -30,7 +30,7 @@
                 <div class="card-body">
                     <h4 class="card-title mb-5">List Approval <small class="text-muted"> / リスト承認</small></h4>
                     {{-- <div class="table-responsive"> --}}
-                    <table class="table table-responsive-lg table-hover w-100" id="allTicket">
+                    <table class="table table-responsive table-hover w-100" id="allTicket">
                         <thead>
                             <tr>
                                 <th class="text-center">No</th>
