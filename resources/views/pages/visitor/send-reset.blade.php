@@ -9,6 +9,15 @@
                         {{ session('status') }}
                     </div>
                 @endif
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li><small>{{ $error }}</small></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div class="card card-animate login">
                     <div class="card-header">Reset Password</div>
 
