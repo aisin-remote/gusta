@@ -60,13 +60,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/book-room', 'BookingController@index')->name('room.index');
     Route::get('/detail-room', 'BookingController@roomDetail')->name('room.detail');
 
+    Route::get('/appointment/modal/{id}', 'AppointmentController@show');
+
     // visitor (create, history)
     Route::middleware(['visitor'])->group(function () {
         Route::get('/appointment', 'AppointmentController@index')->name('appointment.index');
         Route::post('/appointment/create-ticket', 'AppointmentController@create')->name('appointment.create');
         Route::get('/appointment/{id}/edit', 'AppointmentController@edit')->name('appointment.edit');
         Route::post('/appointment/{id}', 'AppointmentController@update')->name('appointment.update');
-        Route::get('/appointment/modal/{id}', 'AppointmentController@show');
         Route::post('/appointment/{id}/destroy', 'AppointmentController@destroy')->name('appointment.destroy');
     
         Route::get('/appointment/history', 'AppointmentController@history')->name('appointment.history');
