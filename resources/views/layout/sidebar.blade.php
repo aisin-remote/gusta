@@ -42,7 +42,32 @@
                 </a>
             </li> --}}
         @endcan
-
+        @can('superadmin')
+            <li class="nav-item {{ active_class(['user']) }}">
+                <a class="nav-link" href="{{ route('user.index') }}">
+                    <i class="menu-icon mdi mdi-account"></i>
+                    <span class="menu-title">User Management</span>
+                </a>
+            </li>
+            <li class="nav-item {{ active_class(['approval']) }}">
+                <a class="nav-link" href="{{ route('ticket.index') }}">
+                    <i class="menu-icon mdi mdi-comment-check-outline"></i>
+                    <span class="menu-title">Ticket Approval</span>
+                </a>
+            </li>
+            <li class="nav-item {{ active_class(['approval/history']) }}">
+                <a class="nav-link" href="{{ route('ticket.history') }}">
+                    <i class="menu-icon mdi mdi-history"></i>
+                    <span class="menu-title">History</span>
+                </a>
+            </li>
+            {{-- <li class="nav-item {{ active_class(['book-room']) }}">
+            <a class="nav-link" href="{{ route('room.index') }}">
+                <i class="menu-icon mdi mdi-door"></i>
+                <span class="menu-title">Book Room</span>
+            </a>
+        </li> --}}
+        @endcan
         @can('admin')
             <li class="nav-item {{ active_class(['card']) }}">
                 <a class="nav-link" href="{{ route('card.index') }}">

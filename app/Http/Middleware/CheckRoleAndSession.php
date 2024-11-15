@@ -17,9 +17,9 @@ class CheckRoleAndSession
     {
         $user = auth()->user();
         $role = $user->role; // Assuming the 'role' field exists in the user table
-        
+
         // Check if the user is an approver or admin
-        if (in_array($role, ['approver', 'admin'])) {
+        if (in_array($role, ['approver', 'admin', 'superadmin'])) {
             return $next($request);
         }
 

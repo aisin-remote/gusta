@@ -40,21 +40,20 @@ class DashboardController extends Controller
 
 
             $faciliti = DB::table('facility_details')
-                ->select('snack_kering', 'snack_basah', 'makan_siang', 'permen', 'kopi', 'teh', 'soft_drink', 'air_mineral', 'helm', 'handuk', 'speaker', 'speaker_wireless', 'mobil', 'motor', 'mini_bus', 'bus','other')
+                ->select('snack_kering', 'snack_basah', 'makan_siang', 'permen', 'kopi', 'teh', 'soft_drink', 'air_mineral', 'helm', 'handuk', 'speaker', 'speaker_wireless', 'mobil', 'motor', 'mini_bus', 'bus', 'other')
                 ->leftJoin('appointments', 'appointments.id', '=', 'facility_details.appointment_id')
                 //where appointment date and time more than current date, it's a date
-                ->where(function($query) use ($current_date, $current_time) {
+                ->where(function ($query) use ($current_date, $current_time) {
                     $query->where('appointments.date', '>', $current_date)
-                          ->orWhere(function($query) use ($current_date, $current_time) {
-                                $query->where('appointments.date', '=', $current_date)
-                                      ->where('appointments.time', '>', $current_time);
-                          });
+                        ->orWhere(function ($query) use ($current_date, $current_time) {
+                            $query->where('appointments.date', '=', $current_date)
+                                ->where('appointments.time', '>', $current_time);
+                        });
                 })
                 ->where('status', 'pending')
                 ->where('appointment_id', $appt[$key]->id)
                 ->first();
-            if($faciliti == null)
-            {
+            if ($faciliti == null) {
                 $faciliti = [];
             }
 
@@ -66,12 +65,12 @@ class DashboardController extends Controller
 
 
         if ($user_role === 'admin') {
-            $appointmentFacility =$appointments
-            ->select('appointments.*', 'facility_details.status as facility_status')
-            ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
-            ->where('date', $current_date)
-            ->where('pic_approval', 'approved')
-            ->where('dh_approval', 'approved');
+            $appointmentFacility = $appointments
+                ->select('appointments.*', 'facility_details.status as facility_status')
+                ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
+                ->where('date', $current_date)
+                ->where('pic_approval', 'approved')
+                ->where('dh_approval', 'approved');
 
             return view('dashboard', [
                 'appointments' => $appointmentFacility->get(),
@@ -82,12 +81,29 @@ class DashboardController extends Controller
             ]);
         } elseif ($user_role === 'approver') {
             $appointmentFacility = $appointments
-            ->select('appointments.*', 'facility_details.status as facility_status')
-            ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
-            ->where('appointments.date', $current_date)
-            ->where('pic_approval', 'approved')
-            ->where('dh_approval', 'approved')
-            ->where('pic_dept', $user_dept);
+                ->select('appointments.*', 'facility_details.status as facility_status')
+                ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
+                ->where('appointments.date', $current_date)
+                ->where('pic_approval', 'approved')
+                ->where('dh_approval', 'approved')
+                ->where('pic_dept', $user_dept);
+
+            return view('dashboard', [
+                // showing appointment by department
+                'appointments' => $appointmentFacility->get(),
+                'total_appointment' => $appointments->get()->count(),
+                'today_visitor' => $today_visitor,
+                'today_appointment' => $appointmentFacility->get()->count(),
+                'visitor_inside' => $visitor_inside,
+            ]);
+        } elseif ($user_role === 'superadmin') {
+            $appointmentFacility = $appointments
+                ->select('appointments.*', 'facility_details.status as facility_status')
+                ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
+                ->where('appointments.date', $current_date)
+                ->where('pic_approval', 'approved')
+                ->where('dh_approval', 'approved')
+                ->where('pic_dept', $user_dept);
 
             return view('dashboard', [
                 // showing appointment by department
@@ -99,14 +115,14 @@ class DashboardController extends Controller
             ]);
         } elseif ($user_role === 'visitor') {
             $appointmentFacility = $appointments
-            ->select('appointments.*', 'facility_details.status as facility_status')
-            ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
-            ->where('date', $current_date)
-            ->where('pic_approval', 'approved')
-            ->where('dh_approval', 'approved')
-            ->where('user_id', $user_id);
+                ->select('appointments.*', 'facility_details.status as facility_status')
+                ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
+                ->where('date', $current_date)
+                ->where('pic_approval', 'approved')
+                ->where('dh_approval', 'approved')
+                ->where('user_id', $user_id);
             return view('dashboard', [
-                'appointments' =>$appointmentFacility->get(),
+                'appointments' => $appointmentFacility->get(),
                 'total_appointment' => $appointments->get()->count(),
                 'today_visitor' => $today_visitor,
                 'today_appointment' => $appointmentFacility->get()->count(),
@@ -123,13 +139,13 @@ class DashboardController extends Controller
     {
         $cards = Card::all();
         $totalCards = CardStatus::selectRaw('card_id, COUNT(card_id) as total')
-                            ->groupBy('card_id')
-                            ->get();
-                            
+            ->groupBy('card_id')
+            ->get();
+
         $availableCards = CardStatus::selectRaw('card_id, COUNT(card_id) as total')
-                            ->where('status', 'ready')
-                            ->groupBy('card_id')
-                            ->get();
+            ->where('status', 'ready')
+            ->groupBy('card_id')
+            ->get();
 
         return view('pages.admin.dashboard-card', [
             'cards' => $cards,

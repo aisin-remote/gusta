@@ -12,8 +12,7 @@
             </div>
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-5">Edit Appointment <small class="text-muted pl-0">/ Ubah Janji Temu /
-                            チケットを編集する</small></h4>
+                    <h4 class="card-title mb-5">Edit User Management</h4>
 
                     <form action="{{ route('appointment.update', $appointment->id) }}"
                         method="POST"enctype="multipart/form-data" id="appointmentEditForm">

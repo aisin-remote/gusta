@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\Admin;
+use App\Http\Middleware\SuperAdmin;
 use App\Http\Middleware\Visitor;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -68,6 +69,7 @@ class Kernel extends HttpKernel
         'checkCompanyType' => \App\Http\Middleware\CheckCompany::class,
         'check.role.session' => \App\Http\Middleware\CheckRoleAndSession::class,
         'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+        'superadmin'=> \App\Http\Middleware\SuperAdmin::class,
     ];
 
     /**
