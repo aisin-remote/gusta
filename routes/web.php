@@ -97,7 +97,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/appointment/{id}/edit', 'AppointmentController@edit')->name('appointment.edit');
         Route::post('/appointment/{id}', 'AppointmentController@update')->name('appointment.update');
         Route::post('/appointment/{id}/destroy', 'AppointmentController@destroy')->name('appointment.destroy');
-    
+
         Route::get('/appointment/history', 'AppointmentController@history')->name('appointment.history');
         Route::get('/get-pic', 'AppointmentController@getPic')->name('appointment.getPic');
         Route::get('/get-room', 'AppointmentController@getRoom')->name('appointment.getRoom');
@@ -110,27 +110,27 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/portal', function () {
             return view('pages.user-pages.portal');
         })->name('portal');
-        
+
         Route::post('/set-company', function (Request $request) {
             $request->validate(['company' => 'required']);
             session(['company' => $request->input('company')]);
-        
+
             return redirect('/category');
         })->name('setCompany');
-        
+
         Route::post('/remove-company', function () {
             session()->forget('company'); // Remove the 'company' session key
             return response()->json(['success' => true]);
         })->name('removeCompany');
-        
+
         Route::get('/category', function () {
             return view('pages.user-pages.categories');
         })->middleware('checkCompanyType');
-    
+
         Route::post('/set-category', function (Request $request) {
             $request->validate(['category' => 'required']);
             session(['category' => $request->input('category')]);
-        
+
             return redirect('/appointment');
         })->name('setCategory');
     });
@@ -161,6 +161,9 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['superadmin'])->group(function () {
     Route::get('/user', 'UserController@index')->name('user.index');
-    Route::get('/user/{id}/edit', 'UserController@edit')->name('user.edit');
-    Route::delete('/user/{id}', 'UserController@destroy')->name('user.destroy');
+    Route::get('/user/create', 'UserController@create')->name('user.create');
+    Route::post('/user/store', 'UserController@store')->name('user.store');
+    Route::get('/user/edit/{id}', 'UserController@edit')->name('user.edit');
+    Route::post('/user/update/{id}', 'UserController@update')->name('user.update');
+    Route::delete('/user/delete/{id}', 'UserController@destroy')->name('user.destroy');
 });

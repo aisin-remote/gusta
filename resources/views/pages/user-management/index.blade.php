@@ -15,7 +15,7 @@
                         <div class="col-10">
                             <h4 class="card-title mb-5">User Management</h4>
                         </div>
-                    </div>  
+                    </div>
                     {{-- Tabel dengan DataTables --}}
                     <table class="table table-responsive-lg table-hover w-100" id="allTicket">
                         <thead>
@@ -40,19 +40,15 @@
                                     <td>{{ $user->role }}</td>
                                     <td>
                                         <!-- Action buttons -->
-                                        <a href="{{ route('user.edit', $user->id) }}"
-                                            class="btn btn-warning btn-sm d-inline-block">
-                                            <i class="mdi mdi-pencil"></i>
-                                        </a>
-
+                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm mr-2"><i
+                                                class="mdi mdi-pencil"></i>Edit</a>
                                         <form action="{{ route('user.destroy', $user->id) }}" method="POST"
                                             class="d-inline-block">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                            {{ csrf_field() }}
                                             <input type="hidden" name="_method" value="DELETE">
                                             <button type="submit" class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Are you sure you want to delete this user?')">
-                                                <i class="mdi mdi-delete"></i>
-                                            </button>
+                                                onclick="return confirm('Are you sure you want to delete this user?')"><i
+                                                    class="mdi mdi-delete"></i>Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -78,11 +74,18 @@
             $('#allTicket').DataTable({
                 "order": [
                     [0, 'asc']
-                ], // Mengurutkan berdasarkan kolom pertama (No)
-                "lengthChange": false, // Menghilangkan opsi jumlah baris per halaman
-                "paging": true, // Menampilkan pagination
-                "searching": true, // Menampilkan fitur pencarian
-                "info": true, // Menampilkan informasi jumlah data
+                ],
+                "lengthChange": false,
+                "paging": true,
+                "searching": true,
+                "info": true,
+                "dom": '<"d-flex justify-content-between mb-2"<"btn-container"><"search-container"f>>t<"d-flex justify-content-between"ip>',
+                initComplete: function() {
+                    // Tambahkan tombol ke dalam container
+                    $("div.btn-container").html(
+                        `<a href="{{ route('user.create') }}" class="btn btn-primary">+ Tambah User</a>`
+                    );
+                }
             });
         });
     </script>

@@ -26,7 +26,7 @@
                 <div class="card-body p-5">
                     <div class="row">
                         <div class="col-10">
-                            <h4 class="card-title mb-5">Edit User</h4>
+                            <h4 class="card-title mb-5">Add User</h4>
                         </div>
                     </div>
                     @if (session('errors'))
@@ -42,37 +42,33 @@
                         </div>
                     @endif
                     <!-- Form untuk Edit User -->
-                    <form action="{{ route('user.update', $users->id) }}" method="POST">
+                    <form action="{{ route('user.store') }}" method="POST">
                         {{ csrf_field() }}
                         <div class="form-group row">
                             <label for="name" class="col-sm-2 col-form-label">Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="name" name="name"
-                                    value="{{ old('name', $users->name) }}" required>
+                                <input type="text" class="form-control" id="name" name="name" required>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="email" class="col-sm-2 col-form-label">Email</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" id="email" name="email"
-                                    value="{{ old('email', $users->email) }}" required>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="phone_number" class="col-sm-2 col-form-label">Phone Number</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="phone_number" name="phone_number"
-                                    value="{{ old('email', $users->phone_number) }}">
+                                <input type="text" class="form-control" id="phone_number" name="phone_number">
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="company" class="col-sm-2 col-form-label">Company</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="company" name="company"
-                                    value="{{ old('email', $users->company) }}">
+                                <input type="text" class="form-control" id="company" name="company">
                             </div>
                         </div>
 
@@ -80,12 +76,12 @@
                             <label for="role" class="col-sm-2 col-form-label">Role</label>
                             <div class="col-sm-10">
                                 <select class="form-control" id="role" name="role" required>
-                                    <option value="admin" {{ old('role', $users->role) == 'admin' ? 'selected' : '' }}>
-                                        Admin</option>
-                                    <option value="visitor" {{ old('role', $users->role) == 'visitor' ? 'selected' : '' }}>
-                                        Visitor</option>
-                                    <option value="approver"
-                                        {{ old('role', $users->role) == 'approver' ? 'selected' : '' }}>Approver</option>
+                                    <option value="" selected disabled></option>
+                                    <option value="admin">Admin</option>
+                                    <option value="visitor">Visitor
+                                    </option>
+                                    <option value="approver">Approver
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -93,8 +89,7 @@
                         <div class="form-group row">
                             <label for="password" class="col-sm-2 col-form-label">Password</label>
                             <div class="col-sm-10 position-relative">
-                                <input type="password" class="form-control" id="password" name="password"
-                                    value="{{ old('email', $users->password) }}" required>
+                                <input type="password" class="form-control" id="password" name="password" required>
                                 <span class="toggle-password" onclick="togglePasswordVisibility('password')">
                                     <i class="mdi mdi-eye"></i>
                                 </span>
