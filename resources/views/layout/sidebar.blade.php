@@ -43,6 +43,12 @@
             </li> --}}
         @endcan
         @can('superadmin')
+            <li class="nav-item {{ active_class(['department']) }}">
+                <a class="nav-link" href="{{ route('department.index') }}">
+                    <i class="menu-icon mdi mdi-account-group"></i>
+                    <span class="menu-title">Departement</span>
+                </a>
+            </li>
             <li class="nav-item {{ active_class(['user']) }}">
                 <a class="nav-link" href="{{ route('user.index') }}">
                     <i class="menu-icon mdi mdi-account"></i>

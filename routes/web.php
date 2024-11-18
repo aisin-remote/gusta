@@ -166,4 +166,14 @@ Route::middleware(['superadmin'])->group(function () {
     Route::get('/user/edit/{id}', 'UserController@edit')->name('user.edit');
     Route::post('/user/update/{id}', 'UserController@update')->name('user.update');
     Route::delete('/user/delete/{id}', 'UserController@destroy')->name('user.destroy');
+    Route::get('/department', 'DepartmentController@index')->name('department.index');
+    Route::get('/department/create', 'DepartmentController@create')->name('department.create');
+    Route::post('/department/store', 'DepartmentController@store')->name('department.store');
+    Route::get('/department/edit/{id}', 'DepartmentController@edit')->name('department.edit');
+    Route::post('/department/update/{id}', 'DepartmentController@update')->name('department.update');
+    Route::delete('/department/delete/{id}', 'DepartmentController@destroy')->name('department.destroy');
+    Route::get('/approval', 'ApprovalController@index')->name('ticket.index');
+    Route::get('/approval/history', 'ApprovalController@history')->name('ticket.history');
+    Route::post('/approval/approve/{ticket}', 'ApprovalController@ticketApproval')->name('ticket.approval');
+    Route::post('/approval/reject/{ticket}', 'ApprovalController@ticketRejection')->name('ticket.rejection');
 });

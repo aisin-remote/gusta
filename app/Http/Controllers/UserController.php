@@ -18,7 +18,7 @@ class UserController extends Controller
     }
     public function store(Request $request)
     {
-        // Validasi input dengan pesan kustom
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -28,30 +28,25 @@ class UserController extends Controller
             'password' => [
                 'required',
                 'string',
-                'min:8',  // Minimal 8 karakter
-                'confirmed',  // Harus sesuai dengan password_confirmation
-                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/', // Harus mengandung huruf dan angka
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/',
             ],
         ]);
 
-        // Jika validasi gagal, simpan error dalam sesi
-        if ($errors = $validated->errors()) {
-            session()->flash('errors', $errors);
-        }
-
-        // Menyimpan user baru, password di-hash sebelum disimpan
+        // Simpan user baru
         User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'company' => $request->company,
-            'role' => $request->role,
-            'password' => bcrypt($request->password), // Hash password sebelum disimpan
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone_number' => $validated['phone_number'],
+            'company' => $validated['company'],
+            'role' => $validated['role'],
+            'password' => bcrypt($validated['password']),
         ]);
 
-        // Redirect ke halaman user index dengan pesan sukses
         return redirect()->route('user.index')->with('success', 'User created successfully.');
     }
+
     public function edit($id)
     {
         $users = User::findOrFail($id);
