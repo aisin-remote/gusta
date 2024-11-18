@@ -62,6 +62,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/appointment/modal/{id}', 'AppointmentController@show');
 
+    // update password
+    Route::get('/update-password', 'UpdatePasswordController@index')->name('password.index');
+    Route::post('/update-password/update', 'UpdatePasswordController@update')->name('password.update');  // Changed to POST
+
     // visitor (create, history)
     Route::middleware(['visitor'])->group(function () {
         Route::get('/appointment', 'AppointmentController@index')->name('appointment.index');
@@ -73,10 +77,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/appointment/history', 'AppointmentController@history')->name('appointment.history');
         Route::get('/get-pic', 'AppointmentController@getPic')->name('appointment.getPic');
         Route::get('/get-room', 'AppointmentController@getRoom')->name('appointment.getRoom');
-
-        // update password
-        Route::get('/update-password', 'UpdatePasswordController@index')->name('password.index');
-        Route::post('/update-password/update', 'UpdatePasswordController@update')->name('password.update');  // Changed to POST
 
         // Portal
         Route::get('/portal', function () {
