@@ -19,7 +19,7 @@ class LoginController extends Controller
     | to conveniently provide its functionality to your applications.
     |
     */
-    
+
     public function index()
     {
         return view('pages.user-pages.login');
@@ -31,7 +31,7 @@ class LoginController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            // 'g-recaptcha-response' => 'required|captcha', // Validate CAPTCHA field
+            'g-recaptcha-response' => 'required|captcha', // Validate CAPTCHA field
         ]);
 
         // Attempt to log the user in
@@ -60,5 +60,4 @@ class LoginController extends Controller
 
         return redirect()->route('login');
     }
-
 }
