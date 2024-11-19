@@ -66,6 +66,19 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="department" class="col-sm-2 col-form-label">Department</label>
+                            <div class="col-sm-10">
+                                @foreach ($departments as $department)
+                                    <select class="form-control" id="departments" name="departments" required>
+                                        <option value="" selected disabled></option>
+                                        <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                        </option>
+                                    </select>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="company" class="col-sm-2 col-form-label">Company</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="company" name="company">
@@ -78,8 +91,6 @@
                                 <select class="form-control" id="role" name="role" required>
                                     <option value="" selected disabled></option>
                                     <option value="admin">Admin</option>
-                                    <option value="visitor">Visitor
-                                    </option>
                                     <option value="approver">Approver
                                     </option>
                                 </select>

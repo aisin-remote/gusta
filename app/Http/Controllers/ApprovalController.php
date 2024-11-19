@@ -22,27 +22,41 @@ class ApprovalController extends Controller
         $userId = auth()->user()->id;
         $userDept = auth()->user()->department_id;
         $occupation = User::select('occupation')->where('id', $userId)->first();
+        $role = auth()->user()->role; // Ambil role dari pengguna yang login
 
         $appointments = Appointment::latest();
-        //load facitily detail
+        // Load facility detail dan guests
         $appointments->with('facility_detail', 'guests');
 
-
-        if ($occupation->occupation == 2) {
-            $appointments->where('pic_approval', 'approved')->where('dh_approval', 'pending')->where('pic_dept', $userDept);
+        // Logika berdasarkan role
+        if ($role == 'superadmin') {
+            // Jika role "superadmin", ambil semua appointment
+            $appointments = $appointments->where('dh_approval', 'pending')->get();
         } else {
-            $appointments->where('pic_approval', 'pending')->where('dh_approval', 'pending')->where('pic_id', $userId);
+            // Jika occupation adalah 2, filter berdasarkan dept dan status approval
+            if ($occupation->occupation == 2) {
+                $appointments->where('pic_approval', 'approved')
+                    ->where('dh_approval', 'pending')
+                    ->where('pic_dept', $userDept);
+            } else {
+                // Jika occupation bukan 2, filter berdasarkan pic_id (userId)
+                $appointments->where('pic_approval', 'pending')
+                    ->where('dh_approval', 'pending')
+                    ->where('pic_id', $userId);
+            }
+
+            // Ambil appointments yang sudah difilter
+            $appointments = $appointments->get();
         }
-        $appointments = $appointments->get();
-        //if appointment date is tomorrow then add new key  facility_eligble false,if the day after tomorrow or later then true
+
+        // Tambahkan logika facility eligible berdasarkan tanggal
         foreach ($appointments as $key => $appointment) {
             $date = Carbon::parse($appointment['date']);
-
             $now = Carbon::now();
             $now->setTime(0, 0, 0);
-            //add 2 day
-            $now->addDays(2);
+            $now->addDays(2); // Tambahkan 2 hari untuk perhitungan eligibility
 
+            // Tentukan apakah facility eligible berdasarkan tanggal
             if ($date >= $now) {
                 $appointments[$key]['facility_eligble'] = true;
             } else {
@@ -50,37 +64,50 @@ class ApprovalController extends Controller
             }
         }
 
+        // Kembalikan view dengan appointments dan occupation
         return view('pages.admin.index', [
             'appointments' => $appointments,
             'occupation' => $occupation
         ]);
     }
 
+
     public function history()
     {
         $userId = auth()->user()->id;
         $userDept = auth()->user()->department_id;
         $user = User::select('occupation')->where('id', $userId)->first();
+        $role = auth()->user()->role; // Ambil role dari pengguna yang login
 
-        $appointments = Appointment::with('guests','pic')
-                                    ->whereHas('pic', function($q){
-                                        $q->where('company', auth()->user()->company);
-                                    })
-                                    ->latest();
+        $appointments = Appointment::with('guests', 'pic', 'facility_detail')
+            ->whereHas('pic', function ($q) {
+                $q->where('company', auth()->user()->company);
+            })
+            ->latest();
 
-        if ($user->occupation == 2) {
-            $appointments->where('pic_approval', 'approved')->where('pic_dept', $userDept);
+        // Logika berdasarkan role
+        if ($role == 'superadmin') {
+            // Jika role "superadmin", ambil semua appointment
+            $appointments = $appointments->whereIn('dh_approval', ['approved', 'rejected'])->get();
         } else {
-            $appointments->where('pic_id', $userId);
+            // Jika occupation adalah 2, filter berdasarkan dept dan status approval
+            if ($user->occupation == 2) {
+                $appointments->where('pic_approval', 'approved')
+                    ->where('pic_dept', $userDept);
+            } else {
+                // Jika occupation bukan 2, filter berdasarkan pic_id (userId)
+                $appointments->where('pic_id', $userId);
+            }
+            // Ambil appointments yang sudah difilter
+            $appointments = $appointments->get();
         }
-                // load facility_detail
-                $appointments->get()->load('facility_detail');
 
         return view('pages.admin.history', [
-            'appointments' => $appointments->get(),
+            'appointments' => $appointments,
             'user' => $user
         ]);
     }
+
 
     public function ticketApproval(Request $request, Appointment $ticket)
     {
@@ -156,7 +183,7 @@ class ApprovalController extends Controller
                 'motor' => $request->get('motor-quantity'),
                 'mini_bus' => $request->get('mini-bus-quantity'),
                 'bus' => $request->get('bus-quantity'),
-                'other'=> $request->get('other-value'),
+                'other' => $request->get('other-value'),
                 'appointment_id' => $ticket->id
             ]);
 
@@ -235,15 +262,15 @@ class ApprovalController extends Controller
     public function facilityHistory()
     {
         $appointment = DB::table('facility_details')
-            ->join('appointments', 'facility_details.appointment_id', '=' , 'appointments.id')
+            ->join('appointments', 'facility_details.appointment_id', '=', 'appointments.id')
             ->join('users', 'appointments.pic_id', '=', 'users.id')
-            ->select('appointments.id','users.name', 'appointments.purpose', 'appointments.date' ,'facility_details.status')
+            ->select('appointments.id', 'users.name', 'appointments.purpose', 'appointments.date', 'facility_details.status')
             ->where('pic_approval', 'approved')
             ->where('dh_approval', 'approved')
             ->get();
 
         // dd($appointment);   
-        return view('pages.admin.facility-history',[
+        return view('pages.admin.facility-history', [
             'appointments' => $appointment
         ]);
     }
@@ -261,7 +288,7 @@ class ApprovalController extends Controller
         $status = null;
         $appointments = Appointment::with('card')->where('qr_code', $qrId)->first();
 
-        if(!$appointments || empty($appointments) || $appointments == null){
+        if (!$appointments || empty($appointments) || $appointments == null) {
             return redirect()->back()->with('error', 'Invalid QR Code!');
         }
 
@@ -270,7 +297,7 @@ class ApprovalController extends Controller
         $now = Carbon::now();
         // update checkin status
         //$appointments->time - 10 minutes
-        
+
         $appointments10minutes = Carbon::parse($appointments->time)->subMinutes(10);
 
         if ($appointments->date >= $now->format('Y-m-d') && $appointments->time >= $now->format('H:i:s')) {
@@ -329,24 +356,24 @@ class ApprovalController extends Controller
 
         // cek card status
         $card = CardStatus::where('card_id', $card_id)
-                    ->where('serial', $serial)
-                    ->first();
-        
-        if(!$card){
+            ->where('serial', $serial)
+            ->first();
+
+        if (!$card) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Kartu tidak terdftar!'
             ]);
         }
 
-        if($card->status == 'used' && $card->guest_id !== null && $current_status == 'sukses_in'){
+        if ($card->status == 'used' && $card->guest_id !== null && $current_status == 'sukses_in') {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Kartu sudah digunakan!'
             ]);
         }
-        
-        if($card->status == 'ready' && $card->guest_id == null && $current_status == 'sukses_out'){
+
+        if ($card->status == 'ready' && $card->guest_id == null && $current_status == 'sukses_out') {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Salah Kartu!'
@@ -357,26 +384,26 @@ class ApprovalController extends Controller
             DB::beginTransaction();
 
             // update status
-            if($card->status == 'used' && $card->guest_id !== null && $current_status == 'sukses_out'){
+            if ($card->status == 'used' && $card->guest_id !== null && $current_status == 'sukses_out') {
                 CardStatus::where('card_id', $card_id)
-                        ->where('serial', $serial)
-                        ->update([
-                            'guest_id' => null,
-                            'status' => 'ready'
-                        ]);
-            }elseif($card->status == 'ready' && $card->guest_id == null && $current_status == 'sukses_in'){
+                    ->where('serial', $serial)
+                    ->update([
+                        'guest_id' => null,
+                        'status' => 'ready'
+                    ]);
+            } elseif ($card->status == 'ready' && $card->guest_id == null && $current_status == 'sukses_in') {
                 CardStatus::where('card_id', $card_id)
-                        ->where('serial', $serial)
-                        ->update([
-                            'guest_id' => $guest_id,
-                            'status' => 'used'
-                        ]);
+                    ->where('serial', $serial)
+                    ->update([
+                        'guest_id' => $guest_id,
+                        'status' => 'used'
+                    ]);
             }
 
             DB::commit();
 
             return response()->json([
-                'status' =>'success',
+                'status' => 'success',
                 'message' => 'Kartu berhasil discan, silahkan masuk!'
             ]);
         } catch (\Throwable $th) {
@@ -385,6 +412,6 @@ class ApprovalController extends Controller
                 'status' => 'error',
                 'message' => $th->getMessage()
             ]);
-        }        
+        }
     }
 }

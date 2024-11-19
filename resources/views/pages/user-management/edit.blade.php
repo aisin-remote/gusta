@@ -64,7 +64,21 @@
                             <label for="phone_number" class="col-sm-2 col-form-label">Phone Number</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" id="phone_number" name="phone_number"
-                                    value="{{ old('email', $users->phone_number) }}">
+                                    value="{{ old('phone_number', $users->phone_number) }}">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="department" class="col-sm-2 col-form-label">Department</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" id="department" name="department" required>
+                                    @foreach ($departments as $department)
+                                        <option value="{{ old('department') == $department->id ? 'selected' : '' }}"
+                                            selected disabled>{{ $department->name }}</option>
+                                        <option value="{{ $department->id }}">
+                                            {{ $department->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 

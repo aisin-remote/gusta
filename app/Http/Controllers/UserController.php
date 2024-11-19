@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Department;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -9,12 +10,16 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::with('has_department')
+            ->orderBy('updated_at', 'DESC')
+            ->get();
         return view('pages.user-management.index', compact('users'));
     }
+
     public function create()
     {
-        return view('pages.user-management.add');
+        $departments = Department::all();
+        return view('pages.user-management.add', compact('departments'));
     }
     public function store(Request $request)
     {
@@ -23,6 +28,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'phone_number' => 'nullable|string|max:15',
+            'departments' => 'required|exists:departments,id',
             'company' => 'nullable|string|max:255',
             'role' => 'required|string|in:admin,visitor,approver',
             'password' => [
@@ -39,6 +45,7 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'phone_number' => $validated['phone_number'],
+            'department_id' => $validated['departments'],
             'company' => $validated['company'],
             'role' => $validated['role'],
             'password' => bcrypt($validated['password']),
@@ -50,7 +57,8 @@ class UserController extends Controller
     public function edit($id)
     {
         $users = User::findOrFail($id);
-        return view('pages.user-management.edit', compact('users'));
+        $departments = Department::all();
+        return view('pages.user-management.edit', compact('users', 'departments'));
     }
     public function update(Request $request, $id)
     {
@@ -58,6 +66,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'phone_number' => 'nullable|string|max:15',
+            'departments' => 'required|exists:departments,id',
             'company' => 'nullable|string|max:255',
             'role' => 'required|string|in:admin,visitor,approver',
         ]);
@@ -68,6 +77,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone_number' => $request->phone_number,
+            'department_id' => $request->department_id,
             'company' => $request->company,
             'role' => $request->role,
         ]);

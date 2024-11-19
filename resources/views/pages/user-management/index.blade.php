@@ -32,6 +32,7 @@
                                 <th class="text-center">Name</th>
                                 <th class="text-center">Email</th>
                                 <th class="text-center">Phone Number</th>
+                                <th class="text-center">Department</th>
                                 <th class="text-center">Company</th>
                                 <th class="text-center">Role</th>
                                 <th class="text-center">Action</th>
@@ -44,6 +45,7 @@
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->phone_number }}</td>
+                                    <td>{{ $user->has_department->name ?? '-' }}</td>
                                     <td>{{ $user->company }}</td>
                                     <td>{{ $user->role }}</td>
                                     <td>
