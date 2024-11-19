@@ -857,6 +857,11 @@
             });
 
             // Optional: Reset the iframe and image src when modal is closed
+            $('#viewDocumentModal-{{ $appointment->id }}').on('hidden.bs.modal', function() {
+                $('#documentContent').attr('src', '')
+                    .hide(); // Clear the iframe src and hide it
+                $('#imageContent').attr('src', '').hide(); // Clear the image src and hide it
+            });
         });
     </script>
 @endpush
