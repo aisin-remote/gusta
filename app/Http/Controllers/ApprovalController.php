@@ -24,53 +24,46 @@ class ApprovalController extends Controller
         $occupation = User::select('occupation')->where('id', $userId)->first();
         $role = auth()->user()->role; // Ambil role dari pengguna yang login
 
-        $appointments = Appointment::latest();
-        // Load facility detail dan guests
-        $appointments->with('facility_detail', 'guests');
+        // Query dasar
+        $appointmentsQuery = Appointment::latest()->with('facility_detail', 'guests');
 
-        // Logika berdasarkan role
+        // Filter berdasarkan role
         if ($role == 'superadmin') {
-            // Jika role "superadmin", ambil semua appointment
-            $appointments = $appointments->where('dh_approval', 'pending')->get();
+            // Jika role "superadmin", ambil semua appointment dengan dh_approval "pending"
+            $appointmentsQuery->where('dh_approval', 'pending');
         } else {
-            // Jika occupation adalah 2, filter berdasarkan dept dan status approval
             if ($occupation->occupation == 2) {
-                $appointments->where('pic_approval', 'approved')
+                // Jika occupation adalah 2, filter berdasarkan dept dan status approval
+                $appointmentsQuery->where('pic_approval', 'approved')
                     ->where('dh_approval', 'pending')
                     ->where('pic_dept', $userDept);
             } else {
                 // Jika occupation bukan 2, filter berdasarkan pic_id (userId)
-                $appointments->where('pic_approval', 'pending')
+                $appointmentsQuery->where('pic_approval', 'pending')
                     ->where('dh_approval', 'pending')
                     ->where('pic_id', $userId);
             }
-
-            // Ambil appointments yang sudah difilter
-            $appointments = $appointments->get();
         }
 
-        // Tambahkan logika facility eligible berdasarkan tanggal
-        foreach ($appointments as $key => $appointment) {
-            $date = Carbon::parse($appointment['date']);
-            $now = Carbon::now();
-            $now->setTime(0, 0, 0);
-            $now->addDays(2); // Tambahkan 2 hari untuk perhitungan eligibility
+        // Ambil semua data yang sudah difilter
+        $appointments = $appointmentsQuery->get();
+
+        // Tambahkan properti `facility_eligble` berdasarkan tanggal
+        $appointments->transform(function ($appointment) {
+            $date = Carbon::parse($appointment->date);
+            $now = Carbon::now()->setTime(0, 0, 0)->addDays(2);
 
             // Tentukan apakah facility eligible berdasarkan tanggal
-            if ($date >= $now) {
-                $appointments[$key]['facility_eligble'] = true;
-            } else {
-                $appointments[$key]['facility_eligble'] = false;
-            }
-        }
+            $appointment->facility_eligble = $date >= $now;
 
+            return $appointment;
+        });
         // Kembalikan view dengan appointments dan occupation
         return view('pages.admin.index', [
             'appointments' => $appointments,
-            'occupation' => $occupation
+            'occupation' => $occupation,
         ]);
     }
-
 
     public function history()
     {

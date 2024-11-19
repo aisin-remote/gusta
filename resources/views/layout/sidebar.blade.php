@@ -44,25 +44,25 @@
         @endcan
         @can('superadmin')
             <li class="nav-item {{ active_class(['department']) }}">
-                <a class="nav-link" href="{{ route('department.index') }}">
+                <a class="nav-link" href="{{ route('admin.department.index') }}">
                     <i class="menu-icon mdi mdi-account-group"></i>
                     <span class="menu-title">Departement</span>
                 </a>
             </li>
             <li class="nav-item {{ active_class(['user']) }}">
-                <a class="nav-link" href="{{ route('user.index') }}">
+                <a class="nav-link" href="{{ route('admin.user.index') }}">
                     <i class="menu-icon mdi mdi-account"></i>
                     <span class="menu-title">User Management</span>
                 </a>
             </li>
             <li class="nav-item {{ active_class(['approval']) }}">
-                <a class="nav-link" href="{{ route('ticket.index') }}">
+                <a class="nav-link" href="{{ route('admin.ticket.index') }}">
                     <i class="menu-icon mdi mdi-comment-check-outline"></i>
                     <span class="menu-title">Ticket Approval</span>
                 </a>
             </li>
             <li class="nav-item {{ active_class(['approval/history']) }}">
-                <a class="nav-link" href="{{ route('ticket.history') }}">
+                <a class="nav-link" href="{{ route('admin.ticket.history') }}">
                     <i class="menu-icon mdi mdi-history"></i>
                     <span class="menu-title">History</span>
                 </a>

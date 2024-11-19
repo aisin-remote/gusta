@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Department;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -49,6 +50,8 @@ class UserController extends Controller
             'company' => $validated['company'],
             'role' => $validated['role'],
             'password' => bcrypt($validated['password']),
+            'email_verified_at' => Carbon::now(),
+            'occupation' => 
         ]);
 
         return redirect()->route('user.index')->with('success', 'User created successfully.');
@@ -77,7 +80,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone_number' => $request->phone_number,
-            'department_id' => $request->department_id,
+            'department_id' => $request->departments,
             'company' => $request->company,
             'role' => $request->role,
         ]);

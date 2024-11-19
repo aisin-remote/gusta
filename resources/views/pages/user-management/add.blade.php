@@ -47,41 +47,45 @@
                         <div class="form-group row">
                             <label for="name" class="col-sm-2 col-form-label">Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="name"
+                                    required>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="email" class="col-sm-2 col-form-label">Email</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="xxxx@gmail.com" required>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="phone_number" class="col-sm-2 col-form-label">Phone Number</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="phone_number" name="phone_number">
+                                <input type="text" class="form-control" id="phone_number" name="phone_number"
+                                    placeholder="08xxxx">
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="department" class="col-sm-2 col-form-label">Department</label>
                             <div class="col-sm-10">
-                                @foreach ($departments as $department)
-                                    <select class="form-control" id="departments" name="departments" required>
-                                        <option value="" selected disabled></option>
+                                <select class="form-control" id="departments" name="departments" required>
+                                    <option value="" selected disabled>Select Department</option>
+                                    @foreach ($departments as $department)
                                         <option value="{{ $department->id }}">{{ $department->name }}</option>
                                         </option>
-                                    </select>
-                                @endforeach
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="company" class="col-sm-2 col-form-label">Company</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="company" name="company">
+                                <input type="text" class="form-control" id="company" name="company"
+                                    placeholder="company">
                             </div>
                         </div>
 
@@ -89,7 +93,7 @@
                             <label for="role" class="col-sm-2 col-form-label">Role</label>
                             <div class="col-sm-10">
                                 <select class="form-control" id="role" name="role" required>
-                                    <option value="" selected disabled></option>
+                                    <option value="" selected disabled>Select Role</option>
                                     <option value="admin">Admin</option>
                                     <option value="approver">Approver
                                     </option>
@@ -100,7 +104,8 @@
                         <div class="form-group row">
                             <label for="password" class="col-sm-2 col-form-label">Password</label>
                             <div class="col-sm-10 position-relative">
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="*******" required>
                                 <span class="toggle-password" onclick="togglePasswordVisibility('password')">
                                     <i class="mdi mdi-eye"></i>
                                 </span>
@@ -111,7 +116,7 @@
                             <label for="password_confirmation" class="col-sm-2 col-form-label">Confirm Password</label>
                             <div class="col-sm-10 position-relative">
                                 <input type="password" class="form-control" id="password_confirmation"
-                                    name="password_confirmation" required>
+                                    name="password_confirmation" placeholder="*******" required>
                                 <span class="toggle-password" onclick="togglePasswordVisibility('password_confirmation')">
                                     <i class="mdi mdi-eye"></i>
                                 </span>

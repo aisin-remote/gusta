@@ -63,9 +63,9 @@
                                     <td>
                                         <!-- Action buttons -->
                                         <a href="#" class="btn btn-warning btn-sm mr-2" data-toggle="modal"
-                                            data-target="#editDepartmentModal" data-id="{{ $department->id }}"
-                                            data-code="{{ $department->code }}" data-name="{{ $department->name }}"><i
-                                                class="mdi mdi-pencil"></i>Edit</a>
+                                            data-target="#editDepartmentModal{{ $department->id }}"
+                                            data-id="{{ $department->id }}" data-code="{{ $department->code }}"
+                                            data-name="{{ $department->name }}"><i class="mdi mdi-pencil"></i>Edit</a>
                                         <form action="{{ route('department.destroy', $department->id) }}" method="POST"
                                             class="d-inline-block">
                                             {{ csrf_field() }}
@@ -83,13 +83,15 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal Edit Department --}}
     @foreach ($departments as $department)
-        <div class="modal fade" id="editDepartmentModal" tabindex="-1" role="dialog"
-            aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
+        <div class="modal fade" id="editDepartmentModal{{ $department->id }}" tabindex="-1" role="dialog"
+            aria-labelledby="editDepartmentModalLabel{{ $department->id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editDepartmentModalLabel">Edit Department</h5>
+                        <h5 class="modal-title" id="editDepartmentModalLabel{{ $department->id }}">Edit Department</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -116,7 +118,6 @@
             </div>
         </div>
     @endforeach
-    <!-- Modal Edit Department -->
 @endsection
 
 @push('plugin-scripts')
@@ -124,11 +125,14 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+    <!-- JS untuk Bootstrap (Modal) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 @endpush
 
 @push('custom-scripts')
     <script>
         $(document).ready(function() {
+            // Inisialisasi DataTable
             $('#allTicket').DataTable({
                 "order": [
                     [0, 'asc']
@@ -169,19 +173,17 @@
                     $('#departmentNameLabel').hide();
                 }
             });
+
+            // Ketika tombol Edit diklik, buka modal yang sesuai
             $(document).on('click', '[data-toggle="modal"]', function() {
                 var departmentId = $(this).data('id');
                 var departmentCode = $(this).data('code');
                 var departmentName = $(this).data('name');
 
                 // Set data ke dalam form modal
-                $('#editDepartmentForm').attr('action', '/department/' +
-                    departmentId); // Update URL action form sesuai dengan id departemen
-                $('#editCode').val(departmentCode); // Set nilai kode
-                $('#editName').val(departmentName); // Set nilai nama
+                $('#editDepartmentModal' + departmentId).find('#editCode').val(departmentCode);
+                $('#editDepartmentModal' + departmentId).find('#editName').val(departmentName);
             });
-
-
         });
     </script>
 @endpush
