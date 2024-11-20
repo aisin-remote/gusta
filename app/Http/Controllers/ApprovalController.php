@@ -22,81 +22,64 @@ class ApprovalController extends Controller
         $userId = auth()->user()->id;
         $userDept = auth()->user()->department_id;
         $occupation = User::select('occupation')->where('id', $userId)->first();
-        $role = auth()->user()->role; // Ambil role dari pengguna yang login
 
-        // Query dasar
-        $appointmentsQuery = Appointment::latest()->with('facility_detail', 'guests');
+        $appointments = Appointment::latest();
+        //load facitily detail
+        $appointments->with('facility_detail', 'guests');
 
-        // Filter berdasarkan role
-        if ($role == 'superadmin') {
-            // Jika role "superadmin", ambil semua appointment dengan dh_approval "pending"
-            $appointmentsQuery->where('dh_approval', 'pending');
+
+        if ($occupation->occupation == 2) {
+            $appointments->where('pic_approval', 'approved')->where('dh_approval', 'pending')->where('pic_dept', $userDept);
         } else {
-            if ($occupation->occupation == 2) {
-                // Jika occupation adalah 2, filter berdasarkan dept dan status approval
-                $appointmentsQuery->where('pic_approval', 'approved')
-                    ->where('dh_approval', 'pending')
-                    ->where('pic_dept', $userDept);
+            $appointments->where('pic_approval', 'pending')->where('dh_approval', 'pending')->where('pic_id', $userId);
+        }
+        $appointments = $appointments->get();
+        //if appointment date is tomorrow then add new key  facility_eligble false,if the day after tomorrow or later then true
+        foreach ($appointments as $key => $appointment) {
+            $date = Carbon::parse($appointment['date']);
+
+            $now = Carbon::now();
+            $now->setTime(0, 0, 0);
+            //add 2 day
+            $now->addDays(2);
+
+            if ($date >= $now) {
+                $appointments[$key]['facility_eligble'] = true;
             } else {
-                // Jika occupation bukan 2, filter berdasarkan pic_id (userId)
-                $appointmentsQuery->where('pic_approval', 'pending')
-                    ->where('dh_approval', 'pending')
-                    ->where('pic_id', $userId);
+                $appointments[$key]['facility_eligble'] = false;
             }
         }
+        // dd($appointments);
 
-        // Ambil semua data yang sudah difilter
-        $appointments = $appointmentsQuery->get();
-
-        // Tambahkan properti `facility_eligble` berdasarkan tanggal
-        $appointments->transform(function ($appointment) {
-            $date = Carbon::parse($appointment->date);
-            $now = Carbon::now()->setTime(0, 0, 0)->addDays(2);
-
-            // Tentukan apakah facility eligible berdasarkan tanggal
-            $appointment->facility_eligble = $date >= $now;
-
-            return $appointment;
-        });
-        // Kembalikan view dengan appointments dan occupation
         return view('pages.admin.index', [
             'appointments' => $appointments,
-            'occupation' => $occupation,
+            'occupation' => $occupation
         ]);
     }
+
 
     public function history()
     {
         $userId = auth()->user()->id;
         $userDept = auth()->user()->department_id;
         $user = User::select('occupation')->where('id', $userId)->first();
-        $role = auth()->user()->role; // Ambil role dari pengguna yang login
 
-        $appointments = Appointment::with('guests', 'pic', 'facility_detail')
+        $appointments = Appointment::with('guests', 'pic')
             ->whereHas('pic', function ($q) {
                 $q->where('company', auth()->user()->company);
             })
             ->latest();
 
-        // Logika berdasarkan role
-        if ($role == 'superadmin') {
-            // Jika role "superadmin", ambil semua appointment
-            $appointments = $appointments->whereIn('dh_approval', ['approved', 'rejected'])->get();
+        if ($user->occupation == 2) {
+            $appointments->where('pic_approval', 'approved')->where('pic_dept', $userDept);
         } else {
-            // Jika occupation adalah 2, filter berdasarkan dept dan status approval
-            if ($user->occupation == 2) {
-                $appointments->where('pic_approval', 'approved')
-                    ->where('pic_dept', $userDept);
-            } else {
-                // Jika occupation bukan 2, filter berdasarkan pic_id (userId)
-                $appointments->where('pic_id', $userId);
-            }
-            // Ambil appointments yang sudah difilter
-            $appointments = $appointments->get();
+            $appointments->where('pic_id', $userId);
         }
+        // load facility_detail
+        $appointments->get()->load('facility_detail');
 
         return view('pages.admin.history', [
-            'appointments' => $appointments,
+            'appointments' => $appointments->get(),
             'user' => $user
         ]);
     }
