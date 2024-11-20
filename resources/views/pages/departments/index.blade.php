@@ -30,7 +30,7 @@
                     <button class="btn btn-primary mb-4" id="addDepartmentBtn">+ Add Department</button>
 
                     {{-- Form untuk tambah departemen, disembunyikan terlebih dahulu --}}
-                    <form id="addDepartmentsForm" action="{{ route('department.store') }}" method="POST">
+                    <form id="addDepartmentsForm" action="{{ route('admin.department.store') }}" method="POST">
                         {{ csrf_field() }}
                         <div id="departmentInputsContainer">
                             {{-- Label untuk Department Name dan Code, hanya muncul sekali --}}
@@ -66,7 +66,7 @@
                                             data-target="#editDepartmentModal{{ $department->id }}"
                                             data-id="{{ $department->id }}" data-code="{{ $department->code }}"
                                             data-name="{{ $department->name }}"><i class="mdi mdi-pencil"></i>Edit</a>
-                                        <form action="{{ route('department.destroy', $department->id) }}" method="POST"
+                                        <form action="{{ route('admin.department.destroy', $department->id) }}" method="POST"
                                             class="d-inline-block">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="_method" value="DELETE">
@@ -97,7 +97,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <form action="{{ route('department.update', $department->id) }}" method="POST">
+                        <form action="{{ route('admin.department.update', $department->id) }}" method="POST">
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <label for="editCode">Department Code</label>

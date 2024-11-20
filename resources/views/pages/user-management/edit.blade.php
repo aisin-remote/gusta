@@ -42,7 +42,7 @@
                         </div>
                     @endif
                     <!-- Form untuk Edit User -->
-                    <form action="{{ route('user.update', $users->id) }}" method="POST">
+                    <form action="{{ route('admin.user.update', $users->id) }}" method="POST">
                         {{ csrf_field() }}
                         <div class="form-group row">
                             <label for="name" class="col-sm-2 col-form-label">Name</label>

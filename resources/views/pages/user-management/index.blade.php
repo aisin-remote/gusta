@@ -50,9 +50,9 @@
                                     <td>{{ $user->role }}</td>
                                     <td>
                                         <!-- Action buttons -->
-                                        <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm mr-2"><i
+                                        <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-warning btn-sm mr-2"><i
                                                 class="mdi mdi-pencil"></i>Edit</a>
-                                        <form action="{{ route('user.destroy', $user->id) }}" method="POST"
+                                        <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST"
                                             class="d-inline-block">
                                             {{ csrf_field() }}
                                             <input type="hidden" name="_method" value="DELETE">
@@ -93,7 +93,7 @@
                 initComplete: function() {
                     // Tambahkan tombol ke dalam container
                     $("div.btn-container").html(
-                        `<a href="{{ route('user.create') }}" class="btn btn-primary">+ Tambah User</a>`
+                        `<a href="{{ route('admin.user.create') }}" class="btn btn-primary">+ Tambah User</a>`
                     );
                 }
             });

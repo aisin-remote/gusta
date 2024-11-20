@@ -24,7 +24,6 @@ class UserController extends Controller
     }
     public function store(Request $request)
     {
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
@@ -41,6 +40,14 @@ class UserController extends Controller
             ],
         ]);
 
+        // Tentukan occupation berdasarkan role
+        $occupation = null;
+        if ($validated['role'] === 'approver') {
+            $occupation = 2;
+        } elseif ($validated['role'] === 'admin') {
+            $occupation = 3;
+        }
+
         // Simpan user baru
         User::create([
             'name' => $validated['name'],
@@ -51,11 +58,12 @@ class UserController extends Controller
             'role' => $validated['role'],
             'password' => bcrypt($validated['password']),
             'email_verified_at' => Carbon::now(),
-            'occupation' => 
+            'occupation' => $occupation,
         ]);
 
-        return redirect()->route('user.index')->with('success', 'User created successfully.');
+        return redirect()->route('admin.user.index')->with('success', 'User created successfully.');
     }
+
 
     public function edit($id)
     {
@@ -65,34 +73,54 @@ class UserController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'phone_number' => 'nullable|string|max:15',
             'departments' => 'required|exists:departments,id',
             'company' => 'nullable|string|max:255',
             'role' => 'required|string|in:admin,visitor,approver',
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/',
+            ],
         ]);
 
-        // Proses update jika validasi berhasil
+        // Temukan user berdasarkan ID
         $user = User::findOrFail($id);
+
+        // Tentukan occupation berdasarkan role
+        $occupation = null;
+        if ($validated['role'] === 'approver') {
+            $occupation = 2;
+        } elseif ($validated['role'] === 'admin') {
+            $occupation = 3;
+        }
+
+        // Update data user
         $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'department_id' => $request->departments,
-            'company' => $request->company,
-            'role' => $request->role,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone_number' => $validated['phone_number'],
+            'department_id' => $validated['departments'],
+            'company' => $validated['company'],
+            'role' => $validated['role'],
+            'occupation' => $occupation,
+            'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password, // Jika password diisi, update; jika tidak, gunakan password lama
         ]);
 
-        return redirect()->route('user.index')->with('success', 'User updated successfully.');
+        return redirect()->route('admin.user.index')->with('success', 'User updated successfully.');
     }
+
     public function destroy($id)
     {
         // dd($id);
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->route('user.index')->with('success', 'User deleted successfully');
+        return redirect()->route('admin.user.index')->with('success', 'User deleted successfully');
     }
 }

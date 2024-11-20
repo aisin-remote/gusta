@@ -155,8 +155,8 @@ Route::prefix('admin')->middleware(['superadmin'])->name('admin.')->group(functi
     Route::delete('/department/delete/{id}', 'DepartmentController@destroy')->name('department.destroy');
 
     // Approval Management Routes
-    // Route::get('/approval', 'ApprovalController@index')->name('ticket.index');
-    // Route::get('/approval/history', 'ApprovalController@history')->name('ticket.history');
-    // Route::post('/approval/approve/{ticket}', 'ApprovalController@ticketApproval')->name('ticket.approval');
-    // Route::post('/approval/reject/{ticket}', 'ApprovalController@ticketRejection')->name('ticket.rejection');
+    Route::get('/approval', 'ApprovalController@index')->name('ticket.index');
+    Route::get('/approval/history', 'ApprovalController@history')->name('ticket.history');
+    Route::post('/approval/approve/{ticket}', 'ApprovalController@ticketApproval')->name('ticket.approval');
+    Route::post('/approval/reject/{ticket}', 'ApprovalController@ticketRejection')->name('ticket.rejection');
 });
