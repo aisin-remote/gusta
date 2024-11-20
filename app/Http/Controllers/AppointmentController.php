@@ -144,25 +144,25 @@ class AppointmentController extends Controller
                 'https://gusta-qa.aiia.co.id/approval' // The link to click
             );
         
-            $curl = curl_init();
-            curl_setopt_array($curl, [
-                CURLOPT_URL => 'https://app.ruangwa.id/api/send_message',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                // Use http_build_query to properly encode the POST fields
-                CURLOPT_POSTFIELDS => http_build_query([
-                    'token' => $token,
-                    'number' => $phone,
-                    'message' => $message
-                ]),
-            ]);
-            $response = curl_exec($curl);
-            curl_close($curl); // Don't forget to close the cURL session once done
+            // $curl = curl_init();
+            // curl_setopt_array($curl, [
+            //     CURLOPT_URL => 'https://app.ruangwa.id/api/send_message',
+            //     CURLOPT_RETURNTRANSFER => true,
+            //     CURLOPT_ENCODING => '',
+            //     CURLOPT_MAXREDIRS => 10,
+            //     CURLOPT_TIMEOUT => 0,
+            //     CURLOPT_FOLLOWLOCATION => true,
+            //     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            //     CURLOPT_CUSTOMREQUEST => 'POST',
+            //     // Use http_build_query to properly encode the POST fields
+            //     CURLOPT_POSTFIELDS => http_build_query([
+            //         'token' => $token,
+            //         'number' => $phone,
+            //         'message' => $message
+            //     ]),
+            // ]);
+            // $response = curl_exec($curl);
+            // curl_close($curl); // Don't forget to close the cURL session once done
 
             DB::commit();
             

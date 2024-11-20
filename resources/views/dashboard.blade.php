@@ -254,6 +254,103 @@ function has_all_null_values($array)
                                 </tr>
                             </thead>
                             <tbody class="text-center">
+                                @if (!$appointments->isEmpty())
+                                    @foreach ($appointments as $appointment)
+                                        <?php
+                                        $appointmentDateTime = Carbon\Carbon::parse($appointment->date . ' ' . $appointment->time);
+                                        ?>
+                                        <tr>
+                                            <td class="display-4">{{ $loop->iteration }}</td>
+                                            <td class="display-4">{{ $appointment->user->name }}</td>
+                                            <td class="display-4">{{ $appointment->user->company }}</td>
+                                            <td class="display-4">{{ $appointment->purpose }}</td>
+                                            <td class="display-4">
+
+                                                {{ Carbon\Carbon::parse($appointment->date . ' ' . $appointment->time) }}
+
+                                            </td>
+                                            <td class="display-4">{{ $appointment->pic->name }}</td>
+
+                                            @if ($appointment->checkin->status === 'in')
+                                                <td>
+                                                    <h5>
+                                                        <span
+                                                            class="badge badge-pill badge-success p-2 text-light">{{ $appointment->checkin->status }}</span>
+                                                    </h5>
+                                                </td>
+                                            @else
+                                                <td>
+                                                    <h5>
+                                                        <span
+                                                            class="badge badge-pill badge-danger p-2 text-light">{{ $appointment->checkin->status }}</span>
+                                                    </h5>
+                                                </td>
+                                            @endif
+
+                                            @if ($appointment->facility_status == 'done')
+                                                <td>
+                                                    <h5>
+                                                        <span
+                                                            class="badge badge-pill badge-success p-2 text-light">Prepared</span>
+                                                    </h5>
+                                                </td>
+                                            @else
+                                                @if (!$appointmentDateTime->isPast())
+                                                    <td>
+                                                        <h5>
+                                                            <span class="badge badge-warning p-2 text-light">Unprepared</span>
+                                                        </h5>
+                                                    </td>
+                                                @else
+                                                    <td>
+                                                        <h5>
+                                                            <span class="badge badge-danger p-2 text-light">Tidak
+                                                                Disiapkan</span>
+                                                        </h5>
+                                                    </td>
+                                                @endif
+                                            @endif
+
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                        {{-- </div> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endcan
+    @can('superadmin')
+        <div class="row">
+            <div class="col-lg-12 grid-margin">
+                <div class="card">
+                    <div class="card-body p-5">
+                        <div class="row">
+                            <div class="col-10">
+                                <h4 class="card-title mb-5">Today's Appointment <small class="text-muted"> / Janji temu hari
+                                        ini
+                                        /
+                                        今日の予定</small>
+                                </h4>
+                            </div>
+                        </div>
+                        {{-- <div class="table-responsive"> --}}
+                        <table class="table table-responsive-lg table-hover w-100" id="allTicket">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">Visitor Name <small class="text-muted"> / 訪問者名</small></th>
+                                    <th class="text-center">Visitor Company <small class="text-muted"> / 訪問会社</small></th>
+                                    <th class="text-center">Visit Purpose <small class="text-muted"> / 訪問目的</small></th>
+                                    <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
+                                    <th class="text-center">PIC <small class="text-muted"> / 担当者</small></th>
+                                    <th class="text-center">Checkin Status</th>
+                                    <th class="text-center">Facility Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
 
 
                                 @if (!$appointments->isEmpty())

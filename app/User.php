@@ -26,7 +26,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -46,6 +47,6 @@ class User extends Authenticatable
 
     public function has_department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'department_id'); // Sesuaikan foreign key jika berbeda
     }
 }
