@@ -97,6 +97,7 @@ class DashboardController extends Controller
             $appointmentFacility = $appointments
                 ->select('appointments.*', 'facility_details.status as facility_status')
                 ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
+                ->where('appointments.date', $current_date)
                 ->orderby('date', 'DESC');
 
             return view('dashboard', [
