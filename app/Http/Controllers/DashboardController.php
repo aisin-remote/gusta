@@ -56,12 +56,9 @@ class DashboardController extends Controller
                 $faciliti = [];
             }
 
-
-
             //merge into $appt['facility']
             $appt[$key]->facility = $faciliti;
         }
-
 
         if ($user_role === 'admin') {
             $appointmentFacility = $appointments
@@ -96,20 +93,17 @@ class DashboardController extends Controller
                 'visitor_inside' => $visitor_inside,
             ]);
         } elseif ($user_role === 'superadmin') {
+            // Jika superadmin, ambil semua appointment tanpa filter tambahan
             $appointmentFacility = $appointments
                 ->select('appointments.*', 'facility_details.status as facility_status')
                 ->leftJoin('facility_details', 'appointments.id', '=', 'facility_details.appointment_id')
-                ->where('appointments.date', $current_date)
-                ->where('pic_approval', 'approved')
-                ->where('dh_approval', 'approved')
-                ->where('pic_dept', $user_dept);
+                ->orderby('date', 'DESC');
 
             return view('dashboard', [
-                // showing appointment by department
                 'appointments' => $appointmentFacility->get(),
-                'total_appointment' => $appointments->get()->count(),
+                'total_appointment' => $appointments->count(),
                 'today_visitor' => $today_visitor,
-                'today_appointment' => $appointmentFacility->get()->count(),
+                'today_appointment' => $appointmentFacility->count(),
                 'visitor_inside' => $visitor_inside,
             ]);
         } elseif ($user_role === 'visitor') {

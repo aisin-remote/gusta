@@ -22,16 +22,28 @@ class ApprovalController extends Controller
         $userId = auth()->user()->id;
         $userDept = auth()->user()->department_id;
         $occupation = User::select('occupation')->where('id', $userId)->first();
+        $role = auth()->user()->role;
 
         $appointments = Appointment::latest();
         //load facitily detail
         $appointments->with('facility_detail', 'guests');
 
 
-        if ($occupation->occupation == 2) {
-            $appointments->where('pic_approval', 'approved')->where('dh_approval', 'pending')->where('pic_dept', $userDept);
+        if ($role == 'superadmin') {
+            // Jika role "superadmin", ambil semua appointment dengan dh_approval "pending"
+            $appointments->where('dh_approval', 'pending');
         } else {
-            $appointments->where('pic_approval', 'pending')->where('dh_approval', 'pending')->where('pic_id', $userId);
+            if ($occupation->occupation == 2) {
+                // Jika occupation adalah 2, filter berdasarkan dept dan status approval
+                $appointments->where('pic_approval', 'approved')
+                    ->where('dh_approval', 'pending')
+                    ->where('pic_dept', $userDept);
+            } else {
+                // Jika occupation bukan 2, filter berdasarkan pic_id (userId)
+                $appointments->where('pic_approval', 'pending')
+                    ->where('dh_approval', 'pending')
+                    ->where('pic_id', $userId);
+            }
         }
         $appointments = $appointments->get();
         //if appointment date is tomorrow then add new key  facility_eligble false,if the day after tomorrow or later then true
@@ -63,26 +75,35 @@ class ApprovalController extends Controller
         $userId = auth()->user()->id;
         $userDept = auth()->user()->department_id;
         $user = User::select('occupation')->where('id', $userId)->first();
+        $role = auth()->user()->role;
 
-        $appointments = Appointment::with('guests', 'pic')
-            ->whereHas('pic', function ($q) {
-                $q->where('company', auth()->user()->company);
-            })
-            ->latest();
+        // Query dasar untuk appointments
+        $appointments = Appointment::with('guests', 'pic', 'facility_detail')->latest();
 
-        if ($user->occupation == 2) {
-            $appointments->where('pic_approval', 'approved')->where('pic_dept', $userDept);
+        // Logika berdasarkan role
+        if ($role == 'superadmin') {
+            // Jika superadmin, ambil semua history yang approved atau rejected
+            $appointments->whereIn('dh_approval', ['approved', 'rejected']);
         } else {
-            $appointments->where('pic_id', $userId);
+            // Jika occupation adalah 2, filter berdasarkan dept dan status approval
+            if ($user->occupation == 2) {
+                $appointments->where('pic_approval', 'approved')
+                    ->where('pic_dept', $userDept);
+            } else {
+                // Jika occupation bukan 2, filter berdasarkan pic_id (userId)
+                $appointments->where('pic_id', $userId);
+            }
         }
-        // load facility_detail
-        $appointments->get()->load('facility_detail');
+
+        // Ambil semua data yang sudah difilter
+        $appointments = $appointments->get();
 
         return view('pages.admin.history', [
-            'appointments' => $appointments->get(),
-            'user' => $user
+            'appointments' => $appointments,
+            'user' => $user,
         ]);
     }
+
 
 
     public function ticketApproval(Request $request, Appointment $ticket)
