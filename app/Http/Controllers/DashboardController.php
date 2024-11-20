@@ -27,7 +27,6 @@ class DashboardController extends Controller
         $visitor_inside = Checkin::with('appointment')
             ->join('appointments', 'appointments.id', '=', 'checkin.appointment_id')
             ->join('guests', 'guests.appointment_id', '=', 'appointments.id')
-            ->where('date', $current_date)
             ->where('checkin.status', 'in')
             ->count();
 
