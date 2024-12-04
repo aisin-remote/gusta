@@ -108,7 +108,7 @@
                                                 {{-- if the pic of the ticket is spv down and the auth user is spv (the pic itself) then show the facility button modal --}}
                                             @elseif($appointment->pic->occupation == 1 && auth()->user()->occupation == 1)
                                                 <button data-toggle="modal"
-                                                    data-target="#facilityModal-{{ $appointment->id }}" type="submit"
+                                                    data-target="#approveModal-{{ $appointment->id }}" type="submit"
                                                     class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
                                                     title="Approve">
                                                     <i class="mdi mdi-check-circle"></i>
@@ -116,7 +116,7 @@
                                                 {{-- if the pic of the ticket is manager up and the auth user is manager (the pic itself) then show the facility button modal --}}
                                             @elseif($appointment->pic->occupation == 2 && auth()->user()->occupation == 2)
                                                 <button data-toggle="modal"
-                                                    data-target="#facilityModal-{{ $appointment->id }}" type="submit"
+                                                    data-target="#approveModal-{{ $appointment->id }}" type="submit"
                                                     class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
                                                     title="Approve">
                                                     <i class="mdi mdi-check-circle"></i>
