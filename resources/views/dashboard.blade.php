@@ -250,7 +250,6 @@ function has_all_null_values($array)
                                     <th class="text-center">Visit Date <small class="text-muted"> / 訪問日</small></th>
                                     <th class="text-center">PIC <small class="text-muted"> / 担当者</small></th>
                                     <th class="text-center">Checkin Status</th>
-                                    <th class="text-center">Facility Status</th>
                                 </tr>
                             </thead>
                             <tbody class="text-center">
@@ -287,7 +286,7 @@ function has_all_null_values($array)
                                                 </td>
                                             @endif
 
-                                            @if ($appointment->facility_status == 'done')
+                                            {{-- @if ($appointment->facility_status == 'done')
                                                 <td>
                                                     <h5>
                                                         <span
@@ -309,7 +308,7 @@ function has_all_null_values($array)
                                                         </h5>
                                                     </td>
                                                 @endif
-                                            @endif
+                                            @endif --}}
 
                                         </tr>
                                     @endforeach

@@ -20,8 +20,9 @@
             @endif
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-5">Create Appointment <small class="text-muted pl-0">/ Buat Janji Temu /
-                            チケットを作る</small>
+                    <h4 class="card-title mb-5">Create Form <small class="text-muted pl-0">/ Buat Form /
+                            フォームを作成する
+                        </small>
                     </h4>
                     <form action="{{ route('appointment.create') }}" method="POST" enctype="multipart/form-data"
                         id="appointmentForm">
@@ -223,9 +224,6 @@
         var category = "{{ session()->get('category') }}";
         var company = "{{ session()->get('company') }}";
         $(document).ready(function() {
-            var today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-            $('#date').attr('min', today); // Set the 'min' attribute of the date input
-
             const form = document.getElementById('appointmentForm');
             form.addEventListener('submit', function(event) {
                 if (!form.querySelector('input[type="checkbox"]:checked')) {
@@ -255,7 +253,9 @@
             });
 
             // disable past time
+            const $dateInput = $('#date');
             const $timeInput = $('#time');
+
             const now = new Date();
 
             // Format current time to "HH:MM"
@@ -263,12 +263,32 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const currentTime = `${hours}:${minutes}`;
 
-            $timeInput.attr('min', currentTime);
+            // Set the 'min' attribute of the date input to today's date in "YYYY-MM-DD" format
+            const today = now.toISOString().split('T')[0];
+            $dateInput.attr('min', today);
+
+            // Function to update time input constraints based on selected date
+            function updateTimeConstraints() {
+                const selectedDate = $dateInput.val();
+                if (selectedDate === today) {
+                    $timeInput.attr('min', currentTime);
+                } else {
+                    $timeInput.removeAttr('min');
+                }
+            }
+
+            // Set initial time constraints
+            updateTimeConstraints();
+
+            // Update time constraints whenever the date input changes
+            $dateInput.on('change', updateTimeConstraints);
 
             // Optional: prevent selecting a past time when the page is loaded or refreshed
             $timeInput.on('change', function() {
-                if ($(this).val() < $(this).attr('min')) {
-                    alert("Please select current or future time.");
+                const selectedDate = $dateInput.val();
+                const selectedTime = $(this).val();
+                if (selectedDate === today && selectedTime < currentTime) {
+                    alert("Please select a current or future time.");
                     $(this).val('');
                 }
             });
