@@ -47,10 +47,15 @@
                             Password?</a>
                     </div>
                     <div class="g-recaptcha" data-sitekey="{{ env('NOCAPTCHA_SITEKEY') }}"></div>
-                    <div class="mt-3">
+                    <div class="mt-3 mb-2">
                         <button type="submit"
                             class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">SIGN IN</button>
                     </div>
+                    <small>
+                        This site is protected by reCAPTCHA and the Google
+                        <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+                        <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+                    </small>
                     <div class="text-center mt-4 font-weight-light"> Don't have an account? <a
                             href="{{ route('register.index') }}" class="text-primary">Create</a>
                     </div>

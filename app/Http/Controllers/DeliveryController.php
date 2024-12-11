@@ -15,7 +15,7 @@ class DeliveryController extends Controller
     {
         $departments = Department::all();
 
-        return view('pages.visitor.index', [
+        return view('pages.visitor.delivery', [
             'departments' => $departments,
         ]);
     }

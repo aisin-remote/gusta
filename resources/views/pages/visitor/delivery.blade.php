@@ -13,17 +13,6 @@
                     <form action="{{ route('appointment.create') }}" method="POST" enctype="multipart/form-data"
                         id="appointmentForm">
                         {{ csrf_field() }}
-                        <div class="form-group row">
-                            <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Visitor Name <small
-                                        class="text-muted pl-0">/ Nama Tamu / お客様のお名前</small></label>
-                            </div>
-                            <div class="col-md-8">
-                                <input type="hidden" value="{{ auth()->user()->name }}" name="nama">
-                                <input type="text" class="form-control mt-2" id="nama" name="nama"
-                                    placeholder="Insert Name..." value="{{ auth()->user()->name }}" disabled>
-                            </div>
-                        </div>
 
                         <div class="form-group row">
                             <div class="col-md-4">
@@ -70,68 +59,6 @@
                                 <small id="emailHelp" class="form-text text-muted">Select time</small>
                             </div>
                         </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Total Guest <small class="text-muted pl-0">/
-                                        Jumlah Tamu / 宿泊人数</small></label>
-                            </div>
-                            <div class="col-md-8">
-                                <input type="number" class="form-control mt-1" id="jumlahTamu" name="jumlahTamu"
-                                    aria-describedby="emailHelp" placeholder="Total Guest" required>
-                                <small id="emailHelp" class="form-text text-muted">Number of guests arriving</small>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">PIC <small class="text-muted pl-0">/ PIC
-                                        / 担当者</small></label>
-                            </div>
-                            <div class="col-sm-4">
-                                <select class="form-control mt-1" id="dept" name="pic_dept" required>
-                                    <option value="0">-- Select Department --</option>
-                                    @foreach ($departments as $dept)
-                                        <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                                    @endforeach
-                                </select>
-                                <small id="emailHelp" class="form-text text-muted">Responsible person to be met</small>
-                            </div>
-                            <div class="col-sm-4">
-                                <select class="form-control mt-1" id="pic_id" name="pic_id" required>
-                                    <option value="0">-- Select PIC --</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Document<small class="text-muted pl-0">/
-                                        Dokumen / 資料</small> <span class="text-danger">*PNG</span> </label>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="doc" name="doc">
-                                    <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
-                                    <small id="emailHelp" class="form-text text-muted">ID card / KTP / others</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-1">
-                            <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Selfie Photo <small
-                                        class="text-muted pl-0">/ Foto selfie / 自撮り写真</small> <span
-                                        class="text-danger">*PNG</span> </label>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="selfie" name="selfie">
-                                    <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
-                                </div>
-                            </div>
-                        </div>
-
 
                         <div class="row mt-5">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">

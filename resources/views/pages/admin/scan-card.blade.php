@@ -96,9 +96,9 @@
                     inputValues[currentIndex] = {
                         serial: currentInput.val(), // QR code input value
                         card_id: currentInput.siblings('input[name="card_id"]')
-                    .val(), // Card ID from hidden input
+                            .val(), // Card ID from hidden input
                         guest_id: currentInput.siblings('input[name="guest_id"]')
-                        .val() // Guest ID from hidden input
+                            .val() // Guest ID from hidden input
                     };
 
                     // Find the next input based on the index
@@ -125,7 +125,8 @@
                                     nextInput.focus(); // Move to next input
                                 } else {
                                     // Redirect to the /card page if it's the last card
-                                    window.location.href = "{{ url('/card') }}";
+                                    window.location.href = "{{ url('/card') }}" + '/' +
+                                        inputValues[currentIndex].card_id;
                                 }
                             } else {
                                 showAlert('danger', data.message);
@@ -140,7 +141,7 @@
                     });
                 }
             });
-            
+
         });
     </script>
 @endpush
