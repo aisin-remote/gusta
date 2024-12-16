@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Department;
 use App\User;
 use Carbon\Carbon;
+use App\Department;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -77,9 +77,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'phone_number' => 'nullable|string|max:15',
-            'departments' => 'required|exists:departments,id',
             'company' => 'nullable|string|max:255',
-            'role' => 'required|string|in:admin,visitor,approver',
             'password' => [
                 'nullable',
                 'string',
@@ -92,12 +90,17 @@ class UserController extends Controller
         // Temukan user berdasarkan ID
         $user = User::findOrFail($id);
 
+        $validated['departments'] = $request->departments ? $request->departments : null;
+        $validated['role'] = $request->role ? $request->role : 'visitor';
+
         // Tentukan occupation berdasarkan role
         $occupation = null;
         if ($validated['role'] === 'approver') {
             $occupation = 2;
         } elseif ($validated['role'] === 'admin') {
             $occupation = 3;
+        }else{
+            $occupation = 1;
         }
 
         // Update data user

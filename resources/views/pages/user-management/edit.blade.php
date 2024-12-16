@@ -67,20 +67,23 @@
                                     value="{{ old('phone_number', $users->phone_number) }}">
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="department" class="col-sm-2 col-form-label">Department</label>
-                            <div class="col-sm-10">
-                                <select class="form-control" id="departments" name="departments" required>
-                                    {{-- <option value="" selected disabled>Select Department</option> --}}
-                                    @foreach ($departments as $department)
-                                        <option value="{{ $department->id }}"
-                                            @if (old('department') == $department->id) selected @endif>
-                                            {{ $department->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+
+                        @if ($users->role !== 'visitor')
+                            <div class="form-group row">
+                                <label for="department" class="col-sm-2 col-form-label">Department</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="departments" name="departments">
+                                        {{-- <option value="" selected disabled>Select Department</option> --}}
+                                        @foreach ($departments as $department)
+                                            <option value="{{ $department->id }}"
+                                                @if (old('department', $users->department_id) == $department->id) selected @endif>
+                                                {{ $department->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
                         <div class="form-group row">
                             <label for="company" class="col-sm-2 col-form-label">Company</label>
@@ -90,23 +93,26 @@
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="role" class="col-sm-2 col-form-label">Role</label>
-                            <div class="col-sm-10">
-                                <select class="form-control" id="role" name="role" required>
-                                    <option value="admin" {{ old('role', $users->role) == 'admin' ? 'selected' : '' }}>
-                                        Admin</option>
-                                    <option value="approver"
-                                        {{ old('role', $users->role) == 'approver' ? 'selected' : '' }}>Approver</option>
-                                </select>
+                        @if ($users->role !== 'visitor')
+                            <div class="form-group row">
+                                <label for="role" class="col-sm-2 col-form-label">Role</label>
+                                <div class="col-sm-10">
+                                    <select class="form-control" id="role" name="role">
+                                        <option value="admin" {{ old('role', $users->role) == 'admin' ? 'selected' : '' }}>
+                                            Admin</option>
+                                        <option value="approver"
+                                            {{ old('role', $users->role) == 'approver' ? 'selected' : '' }}>Approver
+                                        </option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        @endif
 
                         <div class="form-group row">
                             <label for="password" class="col-sm-2 col-form-label">Password</label>
                             <div class="col-sm-10 position-relative">
                                 <input type="password" class="form-control" id="password" name="password"
-                                    placeholder="********" required>
+                                    placeholder="********">
                                 <span class="toggle-password" onclick="togglePasswordVisibility('password')">
                                     <i class="mdi mdi-eye"></i>
                                 </span>
@@ -117,7 +123,7 @@
                             <label for="password_confirmation" class="col-sm-2 col-form-label">Confirm Password</label>
                             <div class="col-sm-10 position-relative">
                                 <input type="password" class="form-control" id="password_confirmation"
-                                    name="password_confirmation" placeholder="********" required>
+                                    name="password_confirmation" placeholder="********">
                                 <span class="toggle-password" onclick="togglePasswordVisibility('password_confirmation')">
                                     <i class="mdi mdi-eye"></i>
                                 </span>
@@ -126,7 +132,7 @@
 
                         <div class="form-group row">
                             <div class="col-sm-10 offset-sm-2">
-                                <button type="submit" class="btn btn-primary">Add User</button>
+                                <button type="submit" class="btn btn-primary">Edit User</button>
                             </div>
                         </div>
                     </form>

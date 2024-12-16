@@ -1,9 +1,7 @@
 @extends('layout.master')
 
 @push('plugin-styles')
-    <!-- CSS untuk DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+    <!-- {!! Html::style('/assets/plugins/plugin.css') !!} -->
 @endpush
 
 @section('content')
@@ -50,8 +48,8 @@
                                     <td>{{ $user->role }}</td>
                                     <td>
                                         <!-- Action buttons -->
-                                        <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-warning btn-sm mr-2"><i
-                                                class="mdi mdi-pencil"></i>Edit</a>
+                                        <a href="{{ route('admin.user.edit', $user->id) }}"
+                                            class="btn btn-warning btn-sm mr-2"><i class="mdi mdi-pencil"></i>Edit</a>
                                         <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST"
                                             class="d-inline-block">
                                             {{ csrf_field() }}
