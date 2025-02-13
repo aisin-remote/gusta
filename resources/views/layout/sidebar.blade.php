@@ -87,6 +87,12 @@
                     <span class="menu-title">Scan QR Code</span>
                 </a>
             </li>
+            <li class="nav-item {{ active_class(['card']) }}">
+                <a class="nav-link" href="{{ route('delivery.history') }}">
+                    <i class="menu-icon mdi mdi-id-card"></i>
+                    <span class="menu-title">Delivery History</span>
+                </a>
+            </li>
         @endcan
 
         @can('GA')
