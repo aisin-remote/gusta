@@ -63,8 +63,13 @@
                                                 </h5>
                                             </td>
                                             <td>
-                                                <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
+                                                {{-- <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
                                                     title="QR disable" disabled>
+                                                    <i class="mdi mdi-qrcode"></i>
+                                                </button> --}}
+                                                <button data-toggle="modal"
+                                                    data-target="#demoModal-{{ $appointment->id }}"data-toggle="tooltip"
+                                                    title="QR Code" type="submit" class="btn btn-icons btn-inverse-info">
                                                     <i class="mdi mdi-qrcode"></i>
                                                 </button>
                                             </td>
@@ -76,8 +81,13 @@
                                                 </h5>
                                             </td>
                                             <td>
-                                                <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
+                                                {{-- <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
                                                     title="QR disable" disabled>
+                                                    <i class="mdi mdi-qrcode"></i>
+                                                </button> --}}
+                                                <button data-toggle="modal"
+                                                    data-target="#demoModal-{{ $appointment->id }}"data-toggle="tooltip"
+                                                    title="QR Code" type="submit" class="btn btn-icons btn-inverse-info">
                                                     <i class="mdi mdi-qrcode"></i>
                                                 </button>
                                             </td>

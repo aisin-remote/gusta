@@ -35,6 +35,7 @@ class AppointmentController extends Controller
 
     public function create(Request $request)
     {
+
         $pic = User::select('phone_number','occupation')->where('id', $request->pic_id)->first();
         $user_company = auth()->user()->company;
         $user_name = auth()->user()->name;
@@ -53,6 +54,7 @@ class AppointmentController extends Controller
                     }
                 }
             ],
+            'photo' => 'required', // Validate all card IDs
             'cardId.*' => 'required|string|min:16|max:16', // Validate all card IDs
             'date' => 'required|date', // Ensure valid date format
             'time' => 'required', // Ensure time is provided
@@ -88,7 +90,7 @@ class AppointmentController extends Controller
                 ->where('area_id', $request->area_id)
                 ->where('category', session()->get('category'))
                 ->first();
-                        
+                
         try {
             DB::beginTransaction();
 
@@ -116,12 +118,21 @@ class AppointmentController extends Controller
 
             // Insert guest data
             foreach ($request->name as $index => $guestName) {
+                if (isset($request->photo[$index])) {
+                    $doc = $request->photo[$index];
+                    $docName = time() . '-' . $doc->getClientOriginalName();
+                    $doc->move(public_path('uploads/doc'), $docName);
+                } else {
+                    $docName = null;
+                }
+            
                 Guest::create([
                     'appointment_id' => $appointment->id,
                     'name' => $guestName,
+                    'photo' => $docName,
                     'id_card' => $request->cardId[$index],
                 ]);
-            }
+            }                
 
             // insert approval history data
             ApprovalHistory::create([
@@ -141,7 +152,7 @@ class AppointmentController extends Controller
                 $purpose,                   // The agenda of the guest visit
                 $date,                      // The date of the visit
                 $appointment->dh_approval,  // The current status (e.g., 'pending')
-                'https://gusta-qa.aiia.co.id/approval' // The link to click
+                'http://gusta.aiia.co.id/approval' // The link to click
             );
         
             $curl = curl_init();
@@ -169,6 +180,8 @@ class AppointmentController extends Controller
             return redirect()->route('appointment.history')->with('success', 'Your ticket has been successfully created! Please wait for the PIC to approve your ticket or contact the PIC.');
         } catch (\Exception $e) {
             DB::rollback();
+
+            dd($e->getMessage());
             return redirect()->route('appointment.history')->with('error', $e->getMessage());
         }
     }

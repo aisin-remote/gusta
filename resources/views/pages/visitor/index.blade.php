@@ -29,7 +29,7 @@
                         {{ csrf_field() }}
 
                         <div class="form-group row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="inputEmail3" class="col-form-label">Visitor Data <small
                                         class="text-muted pl-0">/ Data Tamu / 訪問者データ</small></label>
                             </div>
@@ -50,8 +50,18 @@
                                 @endif
                             </div>
                             <div class="col-md-2">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="photo" name="photo[]" required>
+                                    <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
+                                    @if ($errors->has('photo'))
+                                        <span class="text-danger"><small>{{ $errors->first('photo') }}</small></span>
+                                    @endif
+                                    <small class="text-danger">*Self Photo (JPG/PNG)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
                                 <button type="button" class="btn btn-primary p-2" id="addGuestBtn">
-                                    <i class="mdi mdi-plus"></i>Add New
+                                    <i class="mdi mdi-plus"></i>Add
                                 </button>
                             </div>
                         </div>
@@ -404,13 +414,12 @@
                 })
                 .append(
                     $('<div>', {
-                        class: 'col-md-4'
+                        class: 'col-md-3'
                     }) // First column for empty space (same as original label column)
                     .append(
                         $('<label>', {
                             class: 'col-form-label'
-                        })
-                        .html('&nbsp;') // Empty space (no label text)
+                        }).html('&nbsp;') // Empty space (no label text)
                     )
                 )
                 .append(
@@ -449,6 +458,39 @@
                 .append(
                     $('<div>', {
                         class: 'col-md-2'
+                    }) // Fourth column for File Upload input
+                    .append(
+                        $('<div>', {
+                            class: 'custom-file mt-1'
+                        })
+                        .append(
+                            $('<input>', {
+                                type: 'file',
+                                class: 'form-control',
+                                id: 'photo-' + guestIndex,
+                                name: 'photo[' + guestIndex + ']', // Ensure unique keys
+                                required: true,
+                                accept: 'image/jpeg, image/png'
+                            })
+                        )
+                        .append(
+                            $('<label>', {
+                                class: 'custom-file-label',
+                                for: 'photo-' + guestIndex,
+                                text: 'Choose file'
+                            })
+                        )
+                        .append(
+                            $('<small>', {
+                                class: 'text-danger',
+                                text: '*Self Photo (JPG/PNG)'
+                            })
+                        )
+                    )
+                )
+                .append(
+                    $('<div>', {
+                        class: 'col-md-1'
                     }) // Column for the remove button (same column width as before)
                     .append(
                         $('<button>', {
@@ -462,6 +504,7 @@
                         })
                     )
                 );
+
 
             // Insert the new input below the existing input with ID "jumlahTamu"
             $('#jumlahTamu').closest('.form-group').after(newGuestInput);

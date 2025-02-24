@@ -331,6 +331,7 @@ class ApprovalController extends Controller
                 'card_id' => $appointments->card->id,
                 'guest_id' => $guest->id,
                 'guest_name' => $guest->name, // You can adjust this based on your Guest model fields
+                'guest_photo' => asset('uploads/doc/' . $guest->photo ?? 'default.jpg'), // You can adjust this based on your Guest model fields
                 'guest_id_card' => $guest->id_card, // You can adjust this based on your Guest model fields
                 'card_title' => $appointments->card->title ?? 'No Title', // Fetching the card title associated with the appointment
                 'card_image_url' => asset('uploads/cards/' . $appointments->card->card ?? 'default.jpg'), // You can modify to handle default card images

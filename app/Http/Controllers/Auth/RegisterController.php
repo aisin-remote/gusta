@@ -54,16 +54,17 @@ class RegisterController extends Controller
         ]);
 
         // verification token
-        $validatedData['verification_token'] = str_random(32);
+        // $validatedData['verification_token'] = str_random(32);
 
         // hash password
         $validatedData['password'] = Hash::make($validatedData['password']);
 
         $user = User::create($validatedData);
 
-        Mail::to($user->email)->send(new VerifyEmail($user));
+        // Mail::to($user->email)->send(new VerifyEmail($user));
 
-        return redirect('/login')->with('success', 'Verification email sent! Please check your inbox.');
+        // return redirect('/login')->with('success', 'Verification email sent! Please check your inbox.');
+        return redirect('/login')->with('success', 'Successfully Registered');
     }
 
     public function verifyEmail($token)

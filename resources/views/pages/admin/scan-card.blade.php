@@ -30,18 +30,26 @@
     <div class="row">
         @foreach ($details as $index => $guestCard)
             <div class="col-md-4">
-                <div class="card mb-4 shadow-sm" id="card-{{ $index }}">
-                    <div class="card-header text-center">
+                <div class="card mb-4 shadow-sm rounded-lg" id="card-{{ $index }}">
+                    <div class="card-header text-center bg-primary text-white">
                         <strong>{{ $guestCard['guest_name'] }}</strong>
                     </div>
                     <div class="card-body text-center">
-                        <img src="{{ $guestCard['card_image_url'] }}" class="img-fluid mb-3" alt="Card Image"
-                            style="width: 150px;">
-                        <p><small><strong>ID Card:</strong> {{ $guestCard['guest_id_card'] }}</small></p>
+                        <div class="mb-3">
+                            <img src="{{ $guestCard['guest_photo'] }}" class="img-thumbnail shadow-sm" alt="Guest Photo"
+                                style="width: 150px; height: auto;">
+                        </div>
+                        <div class="mb-3">
+                            <img src="{{ $guestCard['card_image_url'] }}" class="img-thumbnail shadow-sm"
+                                alt="ID Card Image" style="width: 150px; height: auto;">
+                        </div>
+                        <p class="text-muted">
+                            <strong>ID Card:</strong> {{ $guestCard['guest_id_card'] }}
+                        </p>
                         <input type="hidden" name="card_id" value="{{ $guestCard['card_id'] }}">
                         <input type="hidden" name="guest_id" value="{{ $guestCard['guest_id'] }}">
-                        <input type="text" class="form-control input-qr" placeholder="Scan QR Code"
-                            id="input-{{ $index }}" />
+                        <input type="text" class="form-control input-qr mt-2" placeholder="Scan QR Code"
+                            id="input-{{ $index }}">
                     </div>
                 </div>
             </div>

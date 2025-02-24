@@ -53,9 +53,9 @@
 @section('main')
     <!-- Back Button positioned at the top-left -->
 
-    <a href="/portal" class="btn btn-primary" id="back-button">
+    {{-- <a href="/portal" class="btn btn-primary" id="back-button">
         <i class="mdi mdi-arrow-left"></i> Back
-    </a>
+    </a> --}}
 
     <div class="container d-flex justify-content-center align-items-center">
         <!-- Row to wrap the cards -->
