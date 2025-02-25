@@ -222,13 +222,13 @@
                                                 </div>
                                                 <div class="mt-4 text-center">
                                                     @if (pathinfo($appointment->ipk_form, PATHINFO_EXTENSION) === 'xlsx')
-                                                        <a href="{{ asset('uploads/documents/' . $appointment->ipk_form) }}"
+                                                        <a href="{{ asset('storage/doc/' . $appointment->ipk_form) }}"
                                                             class="btn btn-primary mx-2 p-3" download>
                                                             Download File
                                                         </a>
                                                     @else
                                                         <button class="btn btn-secondary mx-2 p-3 view-document"
-                                                            data-file-path="{{ asset('uploads/doc/' . $appointment->ipk_form) }}"
+                                                            data-file-path="{{ asset('storage/doc/' . $appointment->ipk_form) }}"
                                                             data-toggle="modal"
                                                             data-target="#viewDocumentModal-{{ $appointment->id }}">
                                                             View Document

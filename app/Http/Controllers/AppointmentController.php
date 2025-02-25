@@ -35,7 +35,6 @@ class AppointmentController extends Controller
 
     public function create(Request $request)
     {
-
         $pic = User::select('phone_number','occupation')->where('id', $request->pic_id)->first();
         $user_company = auth()->user()->company;
         $user_name = auth()->user()->name;
@@ -71,10 +70,10 @@ class AppointmentController extends Controller
         if ($request->has('purpose-4')) $purposes[] = $request->other_purpose;
         $purpose = implode(', ', $purposes);
 
-        if($request->has('ipk_form')){
+        if ($request->hasFile('ipk_form')) {
             $doc = $request->file('ipk_form');
             $docName = time() . '-' . $doc->getClientOriginalName();
-            $doc->move(public_path('uploads/doc'), $docName);
+            $docPath = $doc->storeAs('public/doc', $docName); // Store in storage/app/public/doc
         } else {
             $docName = null;
         }
@@ -121,7 +120,7 @@ class AppointmentController extends Controller
                 if (isset($request->photo[$index])) {
                     $doc = $request->photo[$index];
                     $docName = time() . '-' . $doc->getClientOriginalName();
-                    $doc->move(public_path('uploads/doc'), $docName);
+                    $doc->storeAs('public/photos', $docName); // Store in storage/app/public/photo
                 } else {
                     $docName = null;
                 }
@@ -180,8 +179,6 @@ class AppointmentController extends Controller
             return redirect()->route('appointment.history')->with('success', 'Your ticket has been successfully created! Please wait for the PIC to approve your ticket or contact the PIC.');
         } catch (\Exception $e) {
             DB::rollback();
-
-            dd($e->getMessage());
             return redirect()->route('appointment.history')->with('error', $e->getMessage());
         }
     }
