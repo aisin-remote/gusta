@@ -102,9 +102,11 @@ class AppointmentController extends Controller
                 'pic_id' => $request->pic_id,
                 'area_id' => $request->area_id,
                 'pic_dept' => $request->pic_dept,
-                'pic_approval' => $pic_approval,
+                // 'pic_approval' => $pic_approval,
+                'pic_approval' => 'approved',
                 'qr_code' => $qr,
-                'dh_approval' => 'pending',
+                // 'dh_approval' => 'pending',
+                'dh_approval' => 'approved',
                 'user_id' => auth()->user()->id,
                 'card_id' => $card->id
             ]);
@@ -143,11 +145,20 @@ class AppointmentController extends Controller
             // send Wa notif to pic
             $token = 'v2n49drKeWNoRDN4jgqcdsR8a6bcochcmk6YphL6vLcCpRZdV1';
             $phone = $pic->phone_number;
-            // Pass array elements as additional arguments to sprintf
+
+            // get guest name
+            $guestNames = Guest::where('appointment_id', $appointment->id)->pluck('name')->toArray();
+            
+            // Format guest names as a list with each name on a new line
+            $guestNamesList = implode("\n- ", $guestNames);
+
+            // Add a dash before the first name
+            $guestNamesList = "- " . $guestNamesList;
+
             $message = sprintf(
-                "```----GUEST ALERT-------\n\nCompany : %s\nName    : %s\nAgenda  : %s\nDate    : %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You\n\nPlease click the link below:\n%s```",
+                "```----GUEST ALERT-------\n\nCompany : %s\nGuests : \n%s\n\nAgenda  : %s\nDate    : %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You\n\nPlease click the link below:\n%s```",
                 $user_company,              // The company name
-                $user_name,                 // The guest's name
+                $guestNamesList,            // The guest's name(s) as a list
                 $purpose,                   // The agenda of the guest visit
                 $date,                      // The date of the visit
                 $appointment->dh_approval,  // The current status (e.g., 'pending')

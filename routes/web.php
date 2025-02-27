@@ -28,6 +28,10 @@ Route::get('/', function () {
 
 Route::post('/logout-auth', 'Auth\LoginController@logout')->name('logout.auth');
 
+// get stat
+Route::get('/delivery/stat', 'DeliveryController@getStat')->name('delivery.stat');
+Route::get('/visitor/stat', 'DashboardController@getStat')->name('visitor.stat');
+
 // guest route
 Route::middleware(['guest'])->group(function () {
     Route::get('/register', 'Auth\RegisterController@index')->name('register.index');

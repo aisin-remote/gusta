@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Delivery;
-use App\Department;
 use Carbon\Carbon;
+use App\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -58,6 +58,21 @@ class DeliveryController extends Controller
         ]);
     }
 
+    public function getStat()
+    {
+        $today = Carbon::today();
+
+        $deliveries = Delivery::whereDate('created_at', $today)->get();
+        $companies = Delivery::whereDate('created_at', $today)->distinct()->count('company');
+        $visitors = Delivery::whereDate('created_at', $today)->distinct()->count('name');
+
+        return response()->json([
+            'companies'  => $companies,
+            'visitors'   => $visitors,
+            'deliveries' => $deliveries,
+        ]);
+    }
+
     private function handleFileUpload(Request $request, $fileInputName, $destinationPath)
     {
         if ($request->hasFile($fileInputName)) {
@@ -68,4 +83,5 @@ class DeliveryController extends Controller
         }
         return '';
     }
+    
 }

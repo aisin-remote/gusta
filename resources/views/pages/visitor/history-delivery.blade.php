@@ -20,93 +20,8 @@ function has_all_null_values($array)
 @section('content')
 
     @can('superadmin')
-    <div class="row">
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
-            <div class="card card-statistics">
-                <div class="card-body">
-                    <div
-                        class="d-flex flex-md-column flex-xl-row flex-wrap justify-content-between align-items-md-center justify-content-xl-between">
-                        <div class="float-left">
-                            <i class="mdi mdi-cube text-danger icon-lg"></i>
-                        </div>
-                        <div class="float-right">
-                            <p class="mb-0 text-right">Total Delivery</p>
-                            <div class="fluid-container">
-                                <h3 class="font-weight-medium text-right mb-0">{{ $deliveries }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-muted mt-3 mb-0 text-left text-md-center text-xl-left">
-                        <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> Jumlah Delivery <small
-                            class="text-muted"> / Jumlah delivery selama 1 hari</small>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
-            <div class="card card-statistics">
-                <div class="card-body">
-                    <div
-                        class="d-flex flex-md-column flex-xl-row flex-wrap justify-content-between align-items-md-center justify-content-xl-between">
-                        <div class="float-left">
-                            <i class="mdi mdi-account-box-multiple text-info icon-lg"></i>
-                        </div>
-                        <div class="float-right">
-                            <p class="mb-0 text-right">Total Person</p>
-                            <div class="fluid-container">
-                                <h3 class="font-weight-medium text-right mb-0">{{ $deliveries }}</h3>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-muted mt-3 mb-0 text-left text-md-center text-xl-left pt-1">
-                        <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Visitor inside AIIA<small
-                            class="text-muted"> / Jumlah orang yang delivery dalam satu hari</small>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 grid-margin">
-            <div class="card">
-                <div class="card-body p-5">
-                    <div class="row container-fluid">
-                        <div class="col-10">
-                            <h4 class="card-title mb-5">Today's Appointment<small class="text-muted"> / Janji Temu Hari
-                                    ini</small></h4>
-                        </div>
-                    </div>
-                    {{-- <div class="table-responsive"> --}}
-                    <table class="table table-responsive-lg table-hover w-100" id="allTicket">
-                        <thead>
-                            <tr>
-                                <th class="text-center">Visitor Name</th>
-                                <th class="text-center">Visitor Company</th>
-                                <th class="text-center">Destination</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-center">
-                            @if (!$deliveries->isEmpty())
-                                @foreach ($deliveries as $delivery)
-                                    <tr>
-                                        <td class="display-4">{{ $delivery->name }}</td>
-                                        <td class="display-4">{{ $delivery->company }}</td>
-                                        <td class="display-4">{{ $delivery->destination }}</td>
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                    {{-- </div> --}}
-                </div>
-            </div>
-        </div>
-    </div>
-    @endcan
-
-    @can('admin')
         <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 grid-margin stretch-card">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
                 <div class="card card-statistics">
                     <div class="card-body">
                         <div
@@ -115,20 +30,20 @@ function has_all_null_values($array)
                                 <i class="mdi mdi-cube text-danger icon-lg"></i>
                             </div>
                             <div class="float-right">
-                                <p class="mb-0 text-right">Total Company</p>
+                                <p class="mb-0 text-right">Total Delivery</p>
                                 <div class="fluid-container">
-                                    <h3 class="font-weight-medium text-right mb-0">{{ $companies }}</h3>
+                                    <h3 class="font-weight-medium text-right mb-0">{{ $deliveries }}</h3>
                                 </div>
                             </div>
                         </div>
                         <p class="text-muted mt-3 mb-0 text-left text-md-center text-xl-left">
-                            <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> Jumlah Perusahaan <small
-                                class="text-muted"> / Jumlah Perusahaan selama 1 hari</small>
+                            <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> Jumlah Delivery <small
+                                class="text-muted"> / Jumlah delivery selama 1 hari</small>
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 grid-margin stretch-card">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 grid-margin stretch-card">
                 <div class="card card-statistics">
                     <div class="card-body">
                         <div
@@ -139,13 +54,13 @@ function has_all_null_values($array)
                             <div class="float-right">
                                 <p class="mb-0 text-right">Total Person</p>
                                 <div class="fluid-container">
-                                    <h3 class="font-weight-medium text-right mb-0">{{ $visitors }}</h3>
+                                    <h3 class="font-weight-medium text-right mb-0">{{ $deliveries }}</h3>
                                 </div>
                             </div>
                         </div>
                         <p class="text-muted mt-3 mb-0 text-left text-md-center text-xl-left pt-1">
-                            <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Visitor inside AIIA<small
-                                class="text-muted"> / Jumlah orang yang delivery selama 1 hari</small>
+                            <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Visitor inside AIIA<small class="text-muted">
+                                / Jumlah orang yang delivery dalam satu hari</small>
                         </p>
                     </div>
                 </div>
@@ -167,6 +82,90 @@ function has_all_null_values($array)
                                 <tr>
                                     <th class="text-center">Visitor Name</th>
                                     <th class="text-center">Visitor Company</th>
+                                    <th class="text-center">Destination</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                @if (!$deliveries->isEmpty())
+                                    @foreach ($deliveries as $delivery)
+                                        <tr>
+                                            <td class="display-4">{{ $delivery->name }}</td>
+                                            <td class="display-4">{{ $delivery->company }}</td>
+                                            <td class="display-4">{{ $delivery->destination }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
+                        </table>
+                        {{-- </div> --}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endcan
+
+    @can('admin')
+        <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+                    <div class="card-body">
+                        <div
+                            class="d-flex flex-md-column flex-xl-row flex-wrap justify-content-between align-items-md-center justify-content-xl-between">
+                            <div class="float-left">
+                                <i class="mdi mdi-cube text-danger icon-lg"></i>
+                            </div>
+                            <div class="float-right">
+                                <p class="mb-0 text-right">Total Company</p>
+                                <div class="fluid-container">
+                                    <h3 class="font-weight-medium text-right mb-0" id="companyCount">{{ $companies }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-muted mt-3 mb-0 text-left text-md-center text-xl-left">
+                            <i class="mdi mdi-alert-octagon mr-1" aria-hidden="true"></i> Jumlah Perusahaan <small
+                                class="text-muted"> / Jumlah Perusahaan selama 1 hari</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 grid-margin stretch-card">
+                <div class="card card-statistics">
+                    <div class="card-body">
+                        <div
+                            class="d-flex flex-md-column flex-xl-row flex-wrap justify-content-between align-items-md-center justify-content-xl-between">
+                            <div class="float-left">
+                                <i class="mdi mdi-account-box-multiple text-info icon-lg"></i>
+                            </div>
+                            <div class="float-right">
+                                <p class="mb-0 text-right">Total Person</p>
+                                <div class="fluid-container">
+                                    <h3 class="font-weight-medium text-right mb-0" id="visitorCount">{{ $visitors }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-muted mt-3 mb-0 text-left text-md-center text-xl-left pt-1">
+                            <i class="mdi mdi-reload mr-1" aria-hidden="true"></i> Visitor inside AIIA<small class="text-muted">
+                                / Jumlah orang yang delivery selama 1 hari</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 grid-margin">
+                <div class="card">
+                    <div class="card-body p-5">
+                        <div class="row container-fluid">
+                            <div class="col-10">
+                                <h4 class="card-title mb-5">Delivery Drivers List</h4>
+                            </div>
+                        </div>
+                        {{-- <div class="table-responsive"> --}}
+                        <table class="table table-responsive-lg table-hover w-100" id="allTicket">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Driver Name</th>
+                                    <th class="text-center">Driver Company</th>
                                     <th class="text-center">Destination</th>
                                     <th class="text-center">Entry Time</th>
                                 </tr>
@@ -205,12 +204,40 @@ function has_all_null_values($array)
     <script>
         $(document).ready(function() {
 
-            $('#allTicket').DataTable({
+            let table = $('#allTicket').DataTable({
                 order: [
-                    [3, 'asc']
+                    [3, 'dsc']
                 ],
-                "lengthChange": false
+                "lengthChange": false,
+                "processing": true
             });
+
+            function updateStats() {
+                $.ajax({
+                    url: "{{ url('/delivery/stat') }}", // API route
+                    type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        $('#companyCount').text(response.companies);
+                        $('#visitorCount').text(response.visitors);
+
+                        // Clear and reload table data
+                        table.clear();
+                        $.each(response.deliveries, function(index, delivery) {
+                            table.row.add([
+                                `<td class="display-4">${delivery.name}</td>`,
+                                `<td class="display-4">${delivery.company}</td>`,
+                                `<td class="display-4">${delivery.destination}</td>`,
+                                `<td class="display-4">${delivery.created_at}</td>`
+                            ]);
+                        });
+                        table.draw(false); // Redraw table without resetting pagination
+                    }
+                });
+            }
+
+            // Run updateStats() every 5 seconds
+            setInterval(updateStats, 5000);
 
         });
     </script>

@@ -153,4 +153,26 @@ class DashboardController extends Controller
         $card = Card::with('card_status.guest')->findOrFail($id);
         return view('pages.admin.card-detail', compact('card'));
     }
+
+    public function getStat()
+    {
+        $appointment = Appointment::with(['user','pic','checkin'])->where('pic_approval', 'approved')->where('dh_approval', 'approved');
+
+        
+        $current_date = date("Y-m-d");
+        $today_appointments = $appointment->where('date', $current_date)->count();
+        $total_appointments = $appointment->count();
+        $visitor_inside = Checkin::with('appointment')
+                    ->join('appointments', 'appointments.id', '=', 'checkin.appointment_id')
+                    ->join('guests', 'guests.appointment_id', '=', 'appointments.id')
+                    ->where('checkin.status', 'in')
+                    ->count();
+
+        return response()->json([
+            'today' => $today_appointments,
+            'total' => $total_appointments,
+            'inside' => $visitor_inside,
+            'appointments' => $appointment->where('date', $current_date)->get()
+        ]);
+    }
 }

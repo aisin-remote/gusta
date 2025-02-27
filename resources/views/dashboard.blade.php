@@ -434,7 +434,8 @@ function has_all_null_values($array)
                             <div class="float-right">
                                 <p class="mb-0 text-right">Total Ticket</p>
                                 <div class="fluid-container">
-                                    <h3 class="font-weight-medium text-right mb-0">{{ $total_appointment }}</h3>
+                                    <h3 class="font-weight-medium text-right mb-0" id="totalCount">{{ $total_appointment }}
+                                    </h3>
                                 </div>
                             </div>
                         </div>
@@ -456,7 +457,8 @@ function has_all_null_values($array)
                             <div class="float-right">
                                 <p class="mb-0 text-right">Today's Appointment</p>
                                 <div class="fluid-container">
-                                    <h3 class="font-weight-medium text-right mb-0">{{ $today_appointment }}</h3>
+                                    <h3 class="font-weight-medium text-right mb-0" id="todayCount">{{ $today_appointment }}
+                                    </h3>
                                 </div>
                             </div>
                         </div>
@@ -479,7 +481,8 @@ function has_all_null_values($array)
                             <div class="float-right">
                                 <p class="mb-0 text-right">Visitor Inside</p>
                                 <div class="fluid-container">
-                                    <h3 class="font-weight-medium text-right mb-0">{{ $visitor_inside }}</h3>
+                                    <h3 class="font-weight-medium text-right mb-0" id="insideCount">{{ $visitor_inside }}
+                                    </h3>
                                 </div>
                             </div>
                         </div>
@@ -668,12 +671,60 @@ function has_all_null_values($array)
     <script>
         $(document).ready(function() {
 
-            $('#allTicket').DataTable({
+            let table = $('#allTicket').DataTable({
                 order: [
-                    [3, 'asc']
+                    [3, 'desc']
                 ],
                 "lengthChange": false
             });
+
+            function updateStats() {
+                $.ajax({
+                    url: "{{ url('/visitor/stat') }}", // API route
+                    type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        $('#totalCount').text(response.total);
+                        $('#todayCount').text(response.today);
+                        $('#insideCount').text(response.inside);
+
+                        // Clear existing table data
+                        table.clear().draw();
+
+                        // Add new data
+                        $.each(response.appointments, function(index, appointment) {
+                            console.log(appointment.checkin);
+                            let checkinTime = appointment.checkin.checkin_at ? appointment
+                                .checkin
+                                .checkin_at : '--:--';
+                            let checkoutTime = appointment.checkin.checkout_at ?
+                                appointment.checkin
+                                .checkout_at : '--:--';
+                            let statusClass = appointment.checkin && appointment.checkin
+                                .status === 'in' ? 'badge-success' : 'badge-danger';
+                            let statusText = appointment.checkin ? appointment.checkin.status :
+                                'unknown';
+                            let formattedDate = new Date(appointment.date).toDateString();
+
+                            let row = [
+                                appointment.user.name,
+                                appointment.user.company,
+                                appointment.purpose,
+                                formattedDate,
+                                checkinTime,
+                                checkoutTime,
+                                appointment.pic.name,
+                                `<span class="badge badge-pill ${statusClass} p-2 text-light">${statusText}</span>`
+                            ];
+
+                            table.row.add(row).draw(false);
+                        });
+                    }
+                });
+            }
+
+            // Run updateStats() every 5 seconds
+            setInterval(updateStats, 5000);
 
         });
     </script>
