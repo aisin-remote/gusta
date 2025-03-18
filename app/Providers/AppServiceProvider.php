@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\User;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         \Illuminate\Pagination\Paginator::defaultView('pagination.default');
+
+        if (config('app.env') !== 'local') {
+            URL::forceScheme('https');
+        }
         
         Gate::define('approver', function(User $user){
             return $user->role === 'approver';
