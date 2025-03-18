@@ -121,7 +121,7 @@
                 // Create a hidden form dynamically
                 var form = $('<form>', {
                     method: 'POST',
-                    action: '{{ route('setCategory') }}' // Adjust the route to set the category
+                    action: '{{ secure_url(route('setCategory')) }}'
                 });
 
                 // Add CSRF token
