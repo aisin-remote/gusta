@@ -43,7 +43,7 @@
                 // Create a hidden form dynamically
                 var form = $('<form>', {
                     method: 'POST',
-                    action: '{{ secure_url(route('setCompany')) }}' // Pastikan menggunakan HTTPS
+                    action: '{{ route('setCompany', [], true) }}' // Parameter ketiga 'true' memaksa HTTPS
                 });
 
                 // Add CSRF token
