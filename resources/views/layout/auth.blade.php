@@ -8,13 +8,13 @@
     <title>GUSTA</title>
 
     <!-- plugins:css -->
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="shortcut icon" href="{{ secure_asset('favicon.ico') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/app.css') }}">
 
     <!-- plugin css -->
-    <link rel="stylesheet" href="{{ asset('assets/plugins/@mdi/font/css/materialdesignicons.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('assets/plugins/@mdi/font/css/materialdesignicons.min.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/style.css') }}">
 
     <!-- Plugin css for this page -->
     <!-- End plugin css for this page -->
@@ -23,8 +23,8 @@
     <!-- endinject -->
 
     <!-- Layout styles -->
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <link rel="shortcut icon" href="{{ asset('images/favicon.png') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/style.css') }}">
+    <link rel="shortcut icon" href="{{ secure_asset('images/favicon.png') }}">
 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
@@ -72,18 +72,18 @@
     </div>
 
     <!-- plugins:js -->
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
+    <script src="{{ secure_asset('js/app.js') }}"></script>
+    <script src="{{ secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
 
     <!-- plugin js -->
     @stack('plugin-scripts')
 
     <!-- common js -->
-    <script src="{{ asset('assets/js/off-canvas.js') }}"></script>
-    <script src="{{ asset('assets/js/hoverable-collapse.js') }}"></script>
-    <script src="{{ asset('assets/js/misc.js') }}"></script>
-    <script src="{{ asset('assets/js/settings.js') }}"></script>
-    <script src="{{ asset('assets/js/todolist.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/off-canvas.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/hoverable-collapse.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/misc.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/settings.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/todolist.js') }}"></script>
 
     <script>
         var loginElements = document.getElementsByClassName("login");
