@@ -10,20 +10,22 @@
     <!-- CSRF Token -->
     <meta name="_token" content="{{ csrf_token() }}">
 
-    <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+    <link rel="shortcut icon" href="{{ secure_asset('/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/app.css') }}">
 
     <!-- plugin css -->
-    {!! Html::style('assets/plugins/@mdi/font/css/materialdesignicons.min.css') !!}
-    {!! Html::style('assets/plugins/perfect-scrollbar/perfect-scrollbar.css') !!}
+    {!! Html::style(secure_asset('assets/plugins/@mdi/font/css/materialdesignicons.min.css')) !!}
+    {!! Html::style(secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.css')) !!}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
-
     <!-- end plugin css -->
 
     @stack('plugin-styles')
 
     <!-- common css -->
-    {!! Html::style('css/app.css') !!}
+    {!! Html::style(secure_asset('css/app.css')) !!}
     <!-- end common css -->
 
     @stack('style')
@@ -45,8 +47,8 @@
     </div>
 
     <!-- base js -->
-    {!! Html::script('js/app.js') !!}
-    {!! Html::script('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') !!}
+    {!! Html::script(secure_asset('js/app.js')) !!}
+    {!! Html::script(secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js')) !!}
     <!-- end base js -->
 
     <!-- plugin js -->
@@ -54,11 +56,11 @@
     <!-- end plugin js -->
 
     <!-- common js -->
-    {!! Html::script('assets/js/off-canvas.js') !!}
-    {!! Html::script('assets/js/hoverable-collapse.js') !!}
-    {!! Html::script('assets/js/misc.js') !!}
-    {!! Html::script('assets/js/settings.js') !!}
-    {!! Html::script('assets/js/todolist.js') !!}
+    {!! Html::script(secure_asset('assets/js/off-canvas.js')) !!}
+    {!! Html::script(secure_asset('assets/js/hoverable-collapse.js')) !!}
+    {!! Html::script(secure_asset('assets/js/misc.js')) !!}
+    {!! Html::script(secure_asset('assets/js/settings.js')) !!}
+    {!! Html::script(secure_asset('assets/js/todolist.js')) !!}
     <!-- end common js -->
 
     @stack('custom-scripts')
