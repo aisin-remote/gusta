@@ -18,7 +18,7 @@
     {!! Html::style('assets/plugins/perfect-scrollbar/perfect-scrollbar.css') !!}
 
     <!-- end plugin css -->
-    {!! Html::style('/assets/plugins/plugin.css') !!}
+    {{-- {!! Html::style('/assets/plugins/plugin.css') !!} --}}
 
     <!-- common css -->
     {!! Html::style('css/app.css') !!}
