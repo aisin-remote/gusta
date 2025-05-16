@@ -28,17 +28,6 @@
 </head>
 
 <body data-base-url="{{ url('/') }}" class="sidebar-icon-only">
-    <!-- Custom Script untuk SweetAlert jika session success ada -->
-    @if (session('success'))
-        <script>
-            swal({
-                title: "Success",
-                text: "{{ session('success') }}",
-                icon: "success",
-                button: "OK"
-            });
-        </script>
-    @endif
     <div class="container-scroller" id="app">
         <div class="page-body-wrapper w-100 vh-100">
             <div class="main-panel w-100">
@@ -133,6 +122,17 @@
         </div>
     </div>
 
+    <!-- Custom Script untuk SweetAlert jika session success ada -->
+    @if (session('success'))
+        <script>
+            swal({
+                title: "Success",
+                text: "{{ session('success') }}",
+                icon: "success",
+                button: "OK"
+            });
+        </script>
+    @endif
 
     <!-- base js -->
     {!! Html::script('js/app.js') !!}
