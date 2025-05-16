@@ -56,7 +56,8 @@ class AppointmentController extends Controller
                 'mimes:pdf,jpeg,png,jpg,gif',  // PDF juga boleh
                 'max:4096', // maksimal 4MB
             ],
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'required|array',
+            'photo.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'cardId.*' => 'required|string|min:16|max:16', // Validate all card IDs
             'date' => 'required|date', // Ensure valid date format
             'time' => 'required', // Ensure time is provided
