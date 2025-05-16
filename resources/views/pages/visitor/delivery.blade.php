@@ -122,18 +122,6 @@
         </div>
     </div>
 
-    <!-- Custom Script untuk SweetAlert jika session success ada -->
-    @if (session('success'))
-        <script>
-            swal({
-                title: "Success",
-                text: "{{ session('success') }}",
-                icon: "success",
-                button: "OK"
-            });
-        </script>
-    @endif
-
     <!-- base js -->
     {!! Html::script('js/app.js') !!}
     {!! Html::script('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') !!}
@@ -154,6 +142,18 @@
     {!! Html::script('/assets/js/dashboard.js') !!}
     {!! Html::script('/assets/js/sweetalert.min.js') !!}
     {!! Html::script('/assets/js/delivery.js') !!}
+
+    <!-- Custom Script untuk SweetAlert jika session success ada -->
+    @if (session('success'))
+        <script>
+            swal({
+                title: "Success",
+                text: "{{ session('success') }}",
+                icon: "success",
+                button: "OK"
+            });
+        </script>
+    @endif
 </body>
 
 </html>
