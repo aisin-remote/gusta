@@ -4,12 +4,12 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                @if (session('status'))
+                @if (session('status') || $errors->any())
                     <div class="alert alert-success" role="alert">
-                        {{ session('status') }}
+                        Please check your email to reset your password!
                     </div>
                 @endif
-                @if ($errors->any())
+                {{-- @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
                             @foreach ($errors->all() as $error)
@@ -17,7 +17,7 @@
                             @endforeach
                         </ul>
                     </div>
-                @endif
+                @endif --}}
                 <div class="card card-animate login">
                     <div class="card-header">Reset Password</div>
 

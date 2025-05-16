@@ -73,6 +73,10 @@ class UserController extends Controller
     }
     public function update(Request $request, $id)
     {
+        if (auth()->user()->role !== 'superadmin') {
+            abort(403, 'Unauthorized');
+        }
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
@@ -120,7 +124,10 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        // dd($id);
+        if (auth()->user()->role !== 'superadmin') {
+            abort(403, 'Unauthorized');
+        }
+        
         $user = User::findOrFail($id);
         $user->delete();
 

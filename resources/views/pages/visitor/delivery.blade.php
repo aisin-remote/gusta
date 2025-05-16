@@ -28,7 +28,17 @@
 </head>
 
 <body data-base-url="{{ url('/') }}" class="sidebar-icon-only">
-
+    <!-- Custom Script untuk SweetAlert jika session success ada -->
+    @if (session('success'))
+        <script>
+            swal({
+                title: "Success",
+                text: "{{ session('success') }}",
+                icon: "success",
+                button: "OK"
+            });
+        </script>
+    @endif
     <div class="container-scroller" id="app">
         <div class="page-body-wrapper w-100 vh-100">
             <div class="main-panel w-100">
@@ -143,48 +153,7 @@
     <!-- end common js -->
     {!! Html::script('/assets/js/dashboard.js') !!}
     {!! Html::script('/assets/js/sweetalert.min.js') !!}
-
-    <!-- Custom Script untuk SweetAlert jika session success ada -->
-    @if (session('success'))
-        <script>
-            swal({
-                title: "Success",
-                text: "{{ session('success') }}",
-                icon: "success",
-                button: "OK"
-            });
-        </script>
-    @endif
-
-    <script>
-        document.getElementById("addName").addEventListener("click", function() {
-            let container = document.getElementById("nameContainer");
-            let inputGroup = document.createElement("div");
-            inputGroup.classList.add("input-group", "mb-2");
-
-            let input = document.createElement("input");
-            input.type = "text";
-            input.name = "name[]";
-            input.classList.add("form-control");
-            input.placeholder = "Enter name";
-
-            let buttonGroup = document.createElement("div");
-            buttonGroup.classList.add("input-group-append");
-
-            let removeButton = document.createElement("button");
-            removeButton.type = "button";
-            removeButton.classList.add("btn", "btn-danger");
-            removeButton.innerHTML = '<i class="mdi mdi-minus"></i>';
-            removeButton.addEventListener("click", function() {
-                container.removeChild(inputGroup);
-            });
-
-            buttonGroup.appendChild(removeButton);
-            inputGroup.appendChild(input);
-            inputGroup.appendChild(buttonGroup);
-            container.appendChild(inputGroup);
-        });
-    </script>
+    {!! Html::script('/assets/js/delivery.js') !!}
 </body>
 
 </html>

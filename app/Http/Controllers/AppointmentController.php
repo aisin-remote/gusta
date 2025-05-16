@@ -46,14 +46,17 @@ class AppointmentController extends Controller
             'purpose-4' => 'required_without_all:purpose-1,purpose-2,purpose-3',
             'name.*' => 'required|string', // Validate all guest names
             'ipk_form' => [
-                'sometimes', 
+            'sometimes',
                 function ($attribute, $value, $fail) {
                     if (session()->get('category') === 'Contractor' && !$value) {
                         $fail('The IPK form document is required for contractors.');
                     }
-                }
+                },
+                'file',
+                'mimes:pdf,jpeg,png,jpg,gif',  // PDF juga boleh
+                'max:4096', // maksimal 4MB
             ],
-            'photo' => 'required', // Validate all card IDs
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'cardId.*' => 'required|string|min:16|max:16', // Validate all card IDs
             'date' => 'required|date', // Ensure valid date format
             'time' => 'required', // Ensure time is provided
@@ -61,6 +64,10 @@ class AppointmentController extends Controller
             'pic_id' => 'required|exists:users,id', // Ensure PIC exists
             'pic_dept' => 'required|string',
         ]);
+
+        // ✅ Sanitize `other_purpose` and `pic_dept`
+        $otherPurpose = strip_tags($request->input('other_purpose'));
+        $picDept = strip_tags($request->input('pic_dept'));
 
         // Build the purpose string
         $purposes = [];
@@ -119,21 +126,25 @@ class AppointmentController extends Controller
 
             // Insert guest data
             foreach ($request->name as $index => $guestName) {
+                // ✅ Sanitize guest name
+                $safeGuestName = strip_tags($guestName);
+                $safeIdCard = strip_tags($request->cardId[$index]);
+    
                 if (isset($request->photo[$index])) {
                     $doc = $request->photo[$index];
                     $docName = time() . '-' . $doc->getClientOriginalName();
-                    $doc->storeAs('public/photos', $docName); // Store in storage/app/public/photo
+                    $doc->storeAs('public/photos', $docName);
                 } else {
                     $docName = null;
                 }
-            
+    
                 Guest::create([
                     'appointment_id' => $appointment->id,
-                    'name' => $guestName,
+                    'name' => $safeGuestName,
                     'photo' => $docName,
-                    'id_card' => $request->cardId[$index],
+                    'id_card' => $safeIdCard,
                 ]);
-            }                
+            }         
 
             // insert approval history data
             ApprovalHistory::create([
@@ -162,7 +173,7 @@ class AppointmentController extends Controller
                 $purpose,                   // The agenda of the guest visit
                 $date,                      // The date of the visit
                 $appointment->dh_approval,  // The current status (e.g., 'pending')
-                'http://gusta.aiia.co.id/approval' // The link to click
+                'https://gusta.aiia.co.id/approval' // The link to click
             );
         
             $curl = curl_init();
@@ -250,6 +261,9 @@ class AppointmentController extends Controller
         $purpose = implode(', ', $purposes);
 
         $appointment = Appointment::findOrFail($id);
+        if ($appointment->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
         $appointment->update([
             'purpose' => $purpose,
             'date' => $request->input('date'),
@@ -317,6 +331,11 @@ class AppointmentController extends Controller
     public function destroy($id)
     {
         $appointment = Appointment::findOrFail($id);
+
+        // Cek user yang login pemilik appointment
+        if ($appointment->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
 
         // Perform the delete operation
         $appointment->delete();

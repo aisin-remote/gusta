@@ -53,6 +53,11 @@ class RegisterController extends Controller
             ],
         ]);
 
+        // Sanitize input to prevent XSS
+        $validatedData['name'] = strip_tags($validatedData['name']);
+        $validatedData['company'] = strip_tags($validatedData['company']);
+        $validatedData['phone_number'] = strip_tags($validatedData['phone_number']);
+
         // verification token
         // $validatedData['verification_token'] = str_random(32);
 
