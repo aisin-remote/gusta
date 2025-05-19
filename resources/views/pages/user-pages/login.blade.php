@@ -65,17 +65,9 @@
     </div>
 @endsection
 
-<script>
-    grecaptcha.ready(function() {
-        grecaptcha.execute('{{ env('NOCAPTCHA_SITEKEY') }}', {
-            action: 'login'
-        }).then(function(token) {
-            // Append token to the form
-            var recaptchaResponse = document.createElement('input');
-            recaptchaResponse.setAttribute('type', 'hidden');
-            recaptchaResponse.setAttribute('name', 'g-recaptcha-response');
-            recaptchaResponse.setAttribute('value', token);
-            document.getElementById('loginForm').appendChild(recaptchaResponse);
-        });
-    });
-</script>
+@push('custom-scripts')
+    <script>
+        const RECAPTCHA_SITEKEY = "{{ env('NOCAPTCHA_SITEKEY') }}";
+    </script>
+    {!! Html::script('/assets/js/website/login.js') !!}
+@endpush

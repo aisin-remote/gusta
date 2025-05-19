@@ -517,7 +517,7 @@ function has_all_null_values($array)
                             </div>
                         </div>
                         {{-- <div class="table-responsive"> --}}
-                        <table class="table table-responsive-lg table-hover w-100" id="allTicket">
+                        <table class="table table-responsive-lg table-hover w-100" id="adminTable">
                             <thead>
                                 <tr>
                                     <th class="text-center">Visitor Name</th>
@@ -668,64 +668,5 @@ function has_all_null_values($array)
     {!! Html::script('/assets/js/dashboard.js') !!}
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
-    <script>
-        $(document).ready(function() {
-
-            let table = $('#allTicket').DataTable({
-                order: [
-                    [3, 'desc']
-                ],
-                "lengthChange": false
-            });
-
-            function updateStats() {
-                $.ajax({
-                    url: "{{ url('/visitor/stat') }}", // API route
-                    type: "GET",
-                    dataType: "json",
-                    success: function(response) {
-                        $('#totalCount').text(response.total);
-                        $('#todayCount').text(response.today);
-                        $('#insideCount').text(response.inside);
-
-                        // Clear existing table data
-                        table.clear().draw();
-
-                        // Add new data
-                        $.each(response.appointments, function(index, appointment) {
-                            console.log(appointment.checkin);
-                            let checkinTime = appointment.checkin.checkin_at ? appointment
-                                .checkin
-                                .checkin_at : '--:--';
-                            let checkoutTime = appointment.checkin.checkout_at ?
-                                appointment.checkin
-                                .checkout_at : '--:--';
-                            let statusClass = appointment.checkin && appointment.checkin
-                                .status === 'in' ? 'badge-success' : 'badge-danger';
-                            let statusText = appointment.checkin ? appointment.checkin.status :
-                                'unknown';
-                            let formattedDate = new Date(appointment.date).toDateString();
-
-                            let row = [
-                                appointment.user.name,
-                                appointment.user.company,
-                                appointment.purpose,
-                                formattedDate,
-                                checkinTime,
-                                checkoutTime,
-                                appointment.pic.name,
-                                `<span class="badge badge-pill ${statusClass} p-2 text-light">${statusText}</span>`
-                            ];
-
-                            table.row.add(row).draw(false);
-                        });
-                    }
-                });
-            }
-
-            // Run updateStats() every 5 seconds
-            setInterval(updateStats, 5000);
-
-        });
-    </script>
+    {!! Html::script('/assets/js/website/dashboard.js') !!}
 @endpush
