@@ -274,8 +274,5 @@
 
 @push('custom-scripts')
     {!! Html::script('/assets/js/dashboard.js') !!}
-    {{-- <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script> --}}
-
     {!! Html::script('/assets/js/website/history.js') !!}
 @endpush
