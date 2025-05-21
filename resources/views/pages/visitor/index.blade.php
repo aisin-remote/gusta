@@ -225,7 +225,7 @@
 
 @push('plugin-scripts')
     {!! Html::script('/assets/plugins/chartjs/chart.min.js') !!}
-    {!! Html::script('/assets/plugins/jquery-sparkline/jquery.sparkline.min.js') !!}
+    {{-- {!! Html::script('/assets/plugins/jquery-sparkline/jquery.sparkline.min.js') !!} --}}
 @endpush
 
 @push('custom-scripts')
