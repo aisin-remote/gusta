@@ -59,7 +59,7 @@
     <!-- common js -->
     <script src="{{ secure_asset('assets/js/off-canvas.js') }}"></script>
     <script src="{{ secure_asset('assets/js/hoverable-collapse.js') }}"></script>
-    <script src="{{ secure_asset('assets/js/misc.js') }}"></script>
+    {{-- <script src="{{ secure_asset('assets/js/misc.js') }}"></script> --}}
     <script src="{{ secure_asset('assets/js/settings.js') }}"></script>
     <script src="{{ secure_asset('assets/js/todolist.js') }}"></script>
     <!-- end common js -->
