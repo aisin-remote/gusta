@@ -16,7 +16,7 @@ $(document).ready(function() {
         $('#deleteForm').attr('action', '/appointment/' + appointmentId + '/destroy');
 
         // Show the confirmation modal
-        $('#deleteConfirmationModal').modal('show');
+        $('#deleteConfirmatio   nModal').modal('show');
     });
 
     $('.openModalBtn').on('click', function() {
