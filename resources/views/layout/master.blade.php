@@ -19,7 +19,8 @@
     <!-- plugin css -->
     <link rel="stylesheet" href="{{ secure_asset('assets/plugins/@mdi/font/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.css') }}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="{{ secure_asset('css/dataTables.bootstrap4.min.css') }}">
+
     <!-- end plugin css -->
 
     @stack('plugin-styles')

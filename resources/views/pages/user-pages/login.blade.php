@@ -66,8 +66,5 @@
 @endsection
 
 @push('custom-scripts')
-    <script>
-        const RECAPTCHA_SITEKEY = "{{ env('NOCAPTCHA_SITEKEY') }}";
-    </script>
     {!! Html::script('/assets/js/website/login.js') !!}
 @endpush

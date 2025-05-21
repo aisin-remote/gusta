@@ -12,7 +12,7 @@
 // });
 
 grecaptcha.ready(function () {
-    grecaptcha.execute(RECAPTCHA_SITEKEY, {
+    grecaptcha.execute('6Lf7g0IrAAAAACzxrONW-DUdjYuPOCRQ2BnKq4YO', {
         action: 'login'
     }).then(function (token) {
         var recaptchaResponse = document.createElement('input');
