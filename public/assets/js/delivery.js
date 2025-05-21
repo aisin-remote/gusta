@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('body innerhtml: ' , document.body.innerHTML);
     document.getElementById("addName").addEventListener("click", function() {
         let container = document.getElementById("nameContainer");
         let inputGroup = document.createElement("div");
