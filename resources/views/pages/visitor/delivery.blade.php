@@ -10,18 +10,15 @@
     <!-- CSRF Token -->
     <meta name="_token" content="{{ csrf_token() }}">
 
-    <link rel="shortcut icon" href="{{ asset('/favicon.ico') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="shortcut icon" href="{{ secure_asset('favicon.ico') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/app.css') }}">
 
     <!-- plugin css -->
-    {!! Html::style('assets/plugins/@mdi/font/css/materialdesignicons.min.css') !!}
-    {!! Html::style('assets/plugins/perfect-scrollbar/perfect-scrollbar.css') !!}
-
-    <!-- end plugin css -->
-    {{-- {!! Html::style('/assets/plugins/plugin.css') !!} --}}
+    <link rel="stylesheet" href="{{ secure_asset('assets/plugins/@mdi/font/css/materialdesignicons.min.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.css') }}">
 
     <!-- common css -->
-    {!! Html::style('css/app.css') !!}
+    <link rel="stylesheet" href="{{ secure_asset('css/app.css') }}">
     <!-- end common css -->
 
     @stack('style')
@@ -33,7 +30,7 @@
             <div class="main-panel w-100">
                 <div class="content-wrapper">
                     <div class="row">
-                        <div class="col-12"> <!-- Menghapus grid-margin -->
+                        <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
                                     <h4 class="card-title mb-5">Delivery Request Form</h4>
@@ -43,8 +40,7 @@
                                         <div class="form-group row">
                                             <div class="col-md-4">
                                                 <label for="inputPt" class="col-form-label">Company Name <small
-                                                        class="text-muted pl-0">/
-                                                        Nama Perusahaan / 会社名</small></label>
+                                                        class="text-muted pl-0">/ Nama Perusahaan / 会社名</small></label>
                                             </div>
                                             <div class="col-md-8">
                                                 <input type="text" name="company" id="inputPt"
@@ -56,8 +52,7 @@
                                         <div class="form-group row">
                                             <div class="col-md-4">
                                                 <label for="inputName" class="col-form-label">Your Name <small
-                                                        class="text-muted pl-0">/
-                                                        Nama Anda / 名前</small></label>
+                                                        class="text-muted pl-0">/ Nama Anda / 名前</small></label>
                                             </div>
                                             <div class="col-md-6">
                                                 <div id="nameContainer">
@@ -114,8 +109,8 @@
                 </div>
                 <footer class="footer w-100">
                     <div class="container-fluid clearfix">
-                        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © <a
-                                href="#">ITD</a> 2022 <i class="mdi mdi-heart text-danger"></i></span>
+                        <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright ©
+                            <a href="#">ITD</a> 2022 <i class="mdi mdi-heart text-danger"></i></span>
                     </div>
                 </footer>
             </div>
@@ -123,27 +118,23 @@
     </div>
 
     <!-- base js -->
-    {!! Html::script('js/app.js') !!}
-    {!! Html::script('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') !!}
-    <!-- end base js -->
+    <script src="{{ secure_asset('js/app.js') }}"></script>
+    <script src="{{ secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
 
     <!-- plugin js -->
-    {!! Html::script('/assets/plugins/chartjs/chart.min.js') !!}
-    {!! Html::script('/assets/plugins/jquery-sparkline/jquery.sparkline.min.js') !!}
-    <!-- end plugin js -->
+    <script src="{{ secure_asset('assets/plugins/chartjs/chart.min.js') }}"></script>
+    <script src="{{ secure_asset('assets/plugins/jquery-sparkline/jquery.sparkline.min.js') }}"></script>
 
     <!-- common js -->
-    {!! Html::script('assets/js/off-canvas.js') !!}
-    {!! Html::script('assets/js/hoverable-collapse.js') !!}
-    {!! Html::script('assets/js/misc.js') !!}
-    {!! Html::script('assets/js/settings.js') !!}
-    {!! Html::script('assets/js/todolist.js') !!}
-    <!-- end common js -->
-    {!! Html::script('/assets/js/dashboard.js') !!}
-    {!! Html::script('/assets/js/sweetalert.min.js') !!}
-    {!! Html::script('/assets/js/delivery.js') !!}
+    <script src="{{ secure_asset('assets/js/off-canvas.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/hoverable-collapse.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/misc.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/settings.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/todolist.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/dashboard.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/sweetalert.min.js') }}"></script>
+    <script src="{{ secure_asset('assets/js/delivery.js') }}" defer></script>
 
-    <!-- Custom Script untuk SweetAlert jika session success ada -->
     @if (session('success'))
         <script>
             swal({
