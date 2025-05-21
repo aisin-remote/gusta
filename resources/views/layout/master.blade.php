@@ -49,6 +49,7 @@
 
     <!-- base js -->
     <script src="{{ secure_asset('js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ secure_asset('js/popper.min.js') }}"></script>
     <script src="{{ secure_asset('js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <!-- end base js -->

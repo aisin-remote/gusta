@@ -107,9 +107,8 @@
                                             @else
                                                 <td>
                                                     <button data-toggle="modal"
-                                                        data-target="#demoModal-{{ $appointment->id }}"data-toggle="tooltip"
-                                                        title="QR Code" type="submit"
-                                                        class="btn btn-icons btn-inverse-info">
+                                                        data-target="#demoModal-{{ $appointment->id }}" title="QR Code"
+                                                        type="submit" class="btn btn-icons btn-inverse-info">
                                                         <i class="mdi mdi-qrcode"></i>
                                                     </button>
                                                 </td>
@@ -279,7 +278,6 @@
 
 @push('custom-scripts')
     {!! Html::script('/assets/js/dashboard.js') !!}
-    <script src="{{ secure_asset('js/popper.min.js') }}"></script>
     {{-- <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script> --}}
 
