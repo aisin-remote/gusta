@@ -118,7 +118,7 @@
     </div>
 
     <!-- base js -->
-    <script src="{{ secure_asset('js/app.js') }}"></script>
+    {{-- <script src="{{ secure_asset('js/app.js') }}"></script> --}}
     <script src="{{ secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
 
     <!-- plugin js -->
@@ -133,7 +133,7 @@
     <script src="{{ secure_asset('assets/js/todolist.js') }}"></script>
     <script src="{{ secure_asset('assets/js/dashboard.js') }}"></script>
     <script src="{{ secure_asset('assets/js/sweetalert.min.js') }}"></script>
-    {{-- <script src="{{ secure_asset('assets/js/delivery.js') }}" defer></script> --}}
+    <script src="{{ secure_asset('assets/js/delivery.js') }}" defer></script>
 
     @if (session('success'))
         <script>
