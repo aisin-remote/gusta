@@ -63,7 +63,7 @@
                                                 </h5>
                                             </td>
                                             <td>
-                                                <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
+                                                <button class="btn btn-icons btn-inverse-info" data-toggles="tooltip"
                                                     title="QR disable" disabled>
                                                     <i class="mdi mdi-qrcode"></i>
                                                 </button>
@@ -76,7 +76,7 @@
                                                 </h5>
                                             </td>
                                             <td>
-                                                <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
+                                                <button class="btn btn-icons btn-inverse-info" data-toggles="tooltip"
                                                     title="QR disable" disabled>
                                                     <i class="mdi mdi-qrcode"></i>
                                                 </button>
@@ -98,7 +98,7 @@
                                             @if ($current_date > $end_date)
                                                 <td>
                                                     <button data-toggle="modal"
-                                                        data-target="#expiredModal-{{ $appointment->id }}"data-toggle="tooltip"
+                                                        data-target="#expiredModal-{{ $appointment->id }}"data-toggles="tooltip"
                                                         title="QR Code" type="submit"
                                                         class="btn btn-icons btn-inverse-info">
                                                         <i class="mdi mdi-qrcode"></i>
@@ -121,7 +121,7 @@
                                                 </h5>
                                             </td>
                                             <td>
-                                                <button class="btn btn-icons btn-inverse-info" data-toggle="tooltip"
+                                                <button class="btn btn-icons btn-inverse-info" data-toggles="tooltip"
                                                     title="Rejected" disabled>
                                                     <i class="mdi mdi-qrcode"></i>
                                                 </button>
@@ -136,19 +136,19 @@
                                                         : '';
                                             @endphp
                                             <button data-toggle="modal" class="btn btn-icons btn-inverse-info openModalBtn"
-                                                data-appointment-id="{{ $appointment->id }}" data-toggle="tooltip"
+                                                data-appointment-id="{{ $appointment->id }}" data-toggles="tooltip"
                                                 title="Detail">
                                                 <i class="mdi mdi-information"></i>
                                             </button>
 
                                             <a href="{{ route('appointment.edit', $appointment->id) }}"
-                                                class="btn btn-icons btn-inverse-warning" data-toggle="tooltip"
+                                                class="btn btn-icons btn-inverse-warning" data-toggles="tooltip"
                                                 title="edit" style="{{ $style }}">
                                                 <i class="mdi mdi-pencil"></i>
                                             </a>
 
                                             <a href="javascript:void(0);"
-                                                class="btn btn-icons btn-inverse-danger deleteButton" data-toggle="tooltip"
+                                                class="btn btn-icons btn-inverse-danger deleteButton" data-toggles="tooltip"
                                                 data-appointment-id="{{ $appointment->id }}" title="delete"
                                                 style="{{ $style }}">
                                                 <i class="mdi mdi-delete"></i>
