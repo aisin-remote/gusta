@@ -1,9 +1,5 @@
 $(document).ready(function() {
-
-    $(function() {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
-
+    console.log('test');
     $('#allTicket').DataTable({
         //order by desc
         "order": [
