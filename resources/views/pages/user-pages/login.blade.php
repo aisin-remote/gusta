@@ -66,7 +66,7 @@
 @endsection
 
 @push('custom-scripts')
-    <script>
+    {{-- <script>
         grecaptcha.ready(function() {
             grecaptcha.execute('6Lf7g0IrAAAAACzxrONW-DUdjYuPOCRQ2BnKq4YO', {
                 action: 'login'
@@ -78,6 +78,6 @@
                 document.getElementById('loginForm').appendChild(recaptchaResponse);
             });
         });
-    </script>
+    </script> --}}
     {{-- {!! Html::script('/assets/js/website/login.js') !!} --}}
 @endpush
