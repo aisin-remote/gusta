@@ -118,7 +118,7 @@
     </div>
 
     <!-- base js -->
-    <script src="{{ secure_asset('js/app.js') }}"></script>
+    {{-- <script src="{{ secure_asset('js/app.js') }}"></script>
     <script src="{{ secure_asset('assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
 
     <!-- plugin js -->
@@ -144,7 +144,7 @@
                 button: "OK"
             });
         </script>
-    @endif
+    @endif --}}
 </body>
 
 </html>
