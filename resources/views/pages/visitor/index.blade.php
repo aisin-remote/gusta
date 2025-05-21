@@ -238,5 +238,5 @@
             oldCardIds: @json(old('cardId', []))
         };
     </script>
-    {!! Html::script('/assets/js/website/visitor.js') !!}
+    {!! Html::script('/assets/js/website/.js') !!}
 @endpush
