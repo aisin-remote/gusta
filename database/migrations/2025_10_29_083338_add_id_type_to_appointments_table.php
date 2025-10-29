@@ -8,18 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('appointments', function (Blueprint $table) {
-            // Tambah kolom enum id_type dengan nilai yang diizinkan
-            // Jika DB Anda tidak nyaman dengan ENUM, ganti ke string(20) + cek di app layer.
+        Schema::table('guests', function (Blueprint $table) {
             $table->enum('id_type', ['KTP', 'SIM', 'ID CARD'])
                 ->default('KTP')
-                ->after('purpose'); // Sesuaikan posisi kolom jika perlu
+                ->after('id_card');
         });
     }
 
     public function down(): void
     {
-        Schema::table('appointments', function (Blueprint $table) {
+        Schema::table('guests', function (Blueprint $table) {
             $table->dropColumn('id_type');
         });
     }
