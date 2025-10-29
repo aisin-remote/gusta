@@ -10,6 +10,7 @@
             <div id="duplicateAlert" class="alert alert-danger d-none" role="alert">
                 <strong>Error!</strong> <span id="duplicateMessage"></span>
             </div>
+
             @if (session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('error') }}
@@ -18,58 +19,70 @@
                     </button>
                 </div>
             @endif
+
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title mb-5">Create Form <small class="text-muted pl-0">/ Buat Form /
-                            フォームを作成する
-                        </small>
+                    <h4 class="card-title mb-5">
+                        Create Form <small class="text-muted pl-0">/ Buat Form / フォームを作成する</small>
                     </h4>
+
                     <form action="{{ route('appointment.create') }}" method="POST" enctype="multipart/form-data"
                         id="appointmentForm">
                         {{ csrf_field() }}
 
-                        <div class="form-group row">
+                        {{-- VISITOR DATA --}}
+                        <div class="form-group row align-items-start">
                             <div class="col-md-3">
-                                <label for="inputEmail3" class="col-form-label">Visitor Data <small
-                                        class="text-muted pl-0">/ Data Tamu / 訪問者データ</small></label>
+                                <label class="col-form-label">
+                                    Visitor Data <small class="text-muted pl-0">/ Data Tamu / 訪問者データ</small>
+                                </label>
                             </div>
+
+                            {{-- Guest #1 --}}
                             <div class="col-md-3">
-                                <input type="text" class="form-control mt-1" id="jumlahTamu" name="name[]"
-                                    placeholder="Guest Name" value="{{ old('name.0') }}" required>
-                                @if ($errors->has('name'))
-                                    <span class="text-danger"><small>{{ $errors->first('name') }}</small></span>
+                                <input type="text" class="form-control mt-1" name="name[]" placeholder="Guest Name"
+                                    value="{{ old('name.0') }}" required>
+                                @if ($errors->has('name.*'))
+                                    <span class="text-danger"><small>{{ $errors->first('name.*') }}</small></span>
                                 @endif
                             </div>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control mt-1" id="jumlahTamu" name="cardId[]"
-                                    placeholder="ID Card Number" value="{{ old('cardId.0') }}" required maxlength="16"
-                                    pattern="\d{16}" title="Card ID must be exactly 16 digits">
-                                <small id="emailHelp" class="form-text text-danger">*KTP</small>
-                                @if ($errors->has('cardId'))
-                                    <span class="text-danger"><small>{{ $errors->first('cardId') }}</small></span>
-                                @endif
-                            </div>
+
                             <div class="col-md-2">
-                                <div class="custom-file">
-                                    <input type="file" class="custom-file-input" id="photo" name="photo[]" required>
-                                    <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
-                                    @if ($errors->has('photo'))
-                                        <span class="text-danger"><small>{{ $errors->first('photo') }}</small></span>
-                                    @endif
-                                    <small class="text-danger">*Self Photo (JPG/PNG)</small>
-                                </div>
+                                <select class="form-control mt-1 id-type" name="id_type[]" required>
+                                    <option value="">-- Select ID Type --</option>
+                                    <option value="KTP" {{ old('id_type.0') == 'KTP' ? 'selected' : '' }}>KTP</option>
+                                    <option value="SIM" {{ old('id_type.0') == 'SIM' ? 'selected' : '' }}>SIM</option>
+                                    <option value="ID CARD" {{ old('id_type.0') == 'ID CARD' ? 'selected' : '' }}>ID Card
+                                    </option>
+                                </select>
+                                @if ($errors->has('id_type.*'))
+                                    <span class="text-danger"><small>{{ $errors->first('id_type.*') }}</small></span>
+                                @endif
                             </div>
+
+                            <div class="col-md-3">
+                                <input type="text" class="form-control mt-1 id-number" name="cardId[]"
+                                    placeholder="ID Number" value="{{ old('cardId.0') }}" required data-role="id-input">
+                                <small class="form-text text-muted hint">* KTP: 16 digit | SIM/ID: 6–20 alfanumerik (-
+                                    diperbolehkan)</small>
+                                @if ($errors->has('cardId.*'))
+                                    <span class="text-danger"><small>{{ $errors->first('cardId.*') }}</small></span>
+                                @endif
+                            </div>
+
                             <div class="col-md-1">
                                 <button type="button" class="btn btn-primary p-2" id="addGuestBtn">
-                                    <i class="mdi mdi-plus"></i>Add
+                                    <i class="mdi mdi-plus"></i> Add
                                 </button>
                             </div>
                         </div>
 
+                        {{-- PURPOSE --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Visit Purpose <small
-                                        class="text-muted pl-0">/ Tujuan Kunjungan / 滞在目的</small></label>
+                                <label class="col-form-label">Visit Purpose
+                                    <small class="text-muted pl-0">/ Tujuan Kunjungan / 滞在目的</small>
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 <div class="boxes">
@@ -95,14 +108,16 @@
                                 @if ($errors->has('purpose-1'))
                                     <span class="text-danger"><small>{{ $errors->first('purpose-1') }}</small></span>
                                 @endif
-                                <small id="emailHelp" class="form-text text-muted mt-3">Select one or more</small>
+                                <small class="form-text text-muted mt-3">Select one or more</small>
                             </div>
                         </div>
 
+                        {{-- DATE --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Select Date <small class="text-muted pl-0">/
-                                        Pilih Tanggal / 日付を選択</small></label>
+                                <label class="col-form-label">Select Date
+                                    <small class="text-muted pl-0">/ Pilih Tanggal / 日付を選択</small>
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 <input type="date" name="date" id="date" class="form-control mt-1"
@@ -110,15 +125,16 @@
                                 @if ($errors->has('date'))
                                     <span class="text-danger"><small>{{ $errors->first('date') }}</small></span>
                                 @endif
-                                <small id="emailHelp" class="form-text text-muted">Select Date</small>
+                                <small class="form-text text-muted">Select Date</small>
                             </div>
                         </div>
 
+                        {{-- TIME --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Select Time <small
-                                        class="text-muted pl-0">/
-                                        Pilih Waktu / 時間を選択</small></label>
+                                <label class="col-form-label">Select Time
+                                    <small class="text-muted pl-0">/ Pilih Waktu / 時間を選択</small>
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 <input type="time" name="time" id="time" class="form-control mt-1"
@@ -126,15 +142,16 @@
                                 @if ($errors->has('time'))
                                     <span class="text-danger"><small>{{ $errors->first('time') }}</small></span>
                                 @endif
-                                <small id="emailHelp" class="form-text text-muted">Select time</small>
+                                <small class="form-text text-muted">Select time</small>
                             </div>
                         </div>
 
+                        {{-- AREA --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Select Area <small
-                                        class="text-muted pl-0">/
-                                        Pilih Area / エリアを選択</small></label>
+                                <label class="col-form-label">Select Area
+                                    <small class="text-muted pl-0">/ Pilih Area / エリアを選択</small>
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 <select class="form-control mt-1" id="area" name="area_id" required>
@@ -152,10 +169,11 @@
                             </div>
                         </div>
 
+                        {{-- PIC --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">PIC <small class="text-muted pl-0">/ PIC
-                                        / 担当者</small></label>
+                                <label class="col-form-label">PIC <small class="text-muted pl-0">/ PIC /
+                                        担当者</small></label>
                             </div>
                             <div class="col-md-4 col-sm-8">
                                 <select class="form-control mt-1" id="dept" name="pic_dept" required>
@@ -170,7 +188,7 @@
                                 @if ($errors->has('pic_dept'))
                                     <span class="text-danger"><small>{{ $errors->first('pic_dept') }}</small></span>
                                 @endif
-                                <small id="emailHelp" class="form-text text-muted">Responsible person to be met</small>
+                                <small class="form-text text-muted">Responsible person to be met</small>
                             </div>
                             <div class="col-md-4 col-sm-4">
                                 <select class="form-control mt-1" id="pic_id" name="pic_id" required>
@@ -182,19 +200,19 @@
                             </div>
                         </div>
 
+                        {{-- IPK (Contractor only) --}}
                         @if (session()->get('category') == 'Contractor' || session()->get('category') == 'contractor')
                             <div class="row mt-1">
                                 <div class="col-md-4">
-                                    <label for="inputEmail3" class="col-form-label">IPK Form <small
-                                            class="text-muted pl-0">/
-                                            Form IPK / 安全フォーム
-                                        </small></label>
+                                    <label class="col-form-label">IPK Form
+                                        <small class="text-muted pl-0">/ Form IPK / 安全フォーム</small>
+                                    </label>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" id="ipk" name="ipk_form"
                                             required>
-                                        <label class="custom-file-label" for="inputGroupFile03">Choose file</label>
+                                        <label class="custom-file-label" for="ipk">Choose file</label>
                                         @if ($errors->has('ipk_form'))
                                             <span
                                                 class="text-danger"><small>{{ $errors->first('ipk_form') }}</small></span>
@@ -205,6 +223,7 @@
                             </div>
                         @endif
 
+                        {{-- SUBMIT --}}
                         <div class="row mt-5">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <button type="submit" class="btn btn-lg btn-primary submit-btn">
@@ -216,7 +235,6 @@
                             </div>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
@@ -238,5 +256,131 @@
             oldCardIds: @json(old('cardId', []))
         };
     </script>
+
+    {{-- Script khusus halaman ini: ID Type rules, Duplicate check, Add/Remove guest, Toggle Other --}}
+    <script>
+        (function() {
+            const otherPurpose = document.getElementById('other_purpose');
+            const chkOther = document.getElementById('check_purpose');
+
+            function syncOther() {
+                if (!chkOther || !otherPurpose) return;
+                otherPurpose.style.display = chkOther.checked ? 'block' : 'none';
+            }
+            if (otherPurpose) otherPurpose.style.display = 'none';
+            if (chkOther) {
+                syncOther();
+                chkOther.addEventListener('change', syncOther);
+            }
+
+            function applyRule(selectEl, inputEl) {
+                const t = (selectEl.value || '').toUpperCase();
+                if (t === 'KTP') {
+                    inputEl.value = inputEl.value.replace(/\D/g, '').slice(0, 16);
+                    inputEl.setAttribute('maxlength', '16');
+                    inputEl.setAttribute('pattern', '\\d{16}');
+                    inputEl.setAttribute('title', 'KTP must be exactly 16 digits');
+                } else {
+                    inputEl.removeAttribute('maxlength');
+                    inputEl.setAttribute('pattern', '[A-Za-z0-9-]{6,20}');
+                    inputEl.setAttribute('title', '6–20 alphanumeric (letters/numbers/-)');
+                }
+            }
+
+            function bindRow(row) {
+                const sel = row.querySelector('select.id-type');
+                const inp = row.querySelector('input[data-role="id-input"]');
+                if (!sel || !inp) return;
+                applyRule(sel, inp);
+                sel.addEventListener('change', () => applyRule(sel, inp));
+            }
+
+            // Bind first row
+            bindRow(document.querySelector('.form-group.row'));
+
+            // Add guest
+            document.getElementById('addGuestBtn')?.addEventListener('click', function() {
+                const form = document.getElementById('appointmentForm');
+                const newRow = document.createElement('div');
+                newRow.className = 'form-group row';
+                newRow.innerHTML = `
+                    <div class="col-md-3 offset-md-3">
+                        <input type="text" class="form-control mt-1" name="name[]" placeholder="Guest Name" required>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control mt-1 id-type" name="id_type[]" required>
+                            <option value="">-- Select ID Type --</option>
+                            <option value="KTP">KTP</option>
+                            <option value="SIM">SIM</option>
+                            <option value="ID CARD">ID Card</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control mt-1 id-number"
+                                   name="cardId[]" placeholder="ID Number"
+                                   required data-role="id-input">
+                            <button type="button" class="btn btn-danger mt-1 remove-guest">
+                                <i class="mdi mdi-minus"></i>
+                            </button>
+                        </div>
+                        <small class="form-text text-muted hint">* KTP: 16 digit | SIM/ID: 6–20 alfanumerik (- diperbolehkan)</small>
+                    </div>
+                `;
+                // Sisipkan sebelum blok "Purpose" (baris berikutnya setelah visitor)
+                const firstPurpose = form.querySelector('.boxes')?.closest('.form-group.row');
+                form.insertBefore(newRow, firstPurpose);
+                bindRow(newRow);
+            });
+
+            // Remove guest
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-guest')) {
+                    e.preventDefault();
+                    const row = e.target.closest('.form-group.row');
+                    row?.remove();
+                }
+            });
+
+            // Duplicate check on submit (berdasarkan nomor ID)
+            function hasDuplicates(selector) {
+                const values = [];
+                let dup = false;
+                document.querySelectorAll(selector).forEach(el => {
+                    const v = (el.value || '').trim();
+                    if (v && values.includes(v)) dup = true;
+                    values.push(v);
+                });
+                return dup;
+            }
+
+            document.getElementById('appointmentForm')?.addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('.submit-btn');
+                const spinner = submitBtn.querySelector('.spinner-border');
+                const btnText = submitBtn.querySelector('.btn-text');
+                const iconBtn = submitBtn.querySelector('.icon-btn');
+
+                submitBtn.disabled = true;
+                spinner.classList.remove('d-none');
+                iconBtn.classList.add('d-none');
+                btnText.textContent = 'Loading...';
+
+                if (hasDuplicates('input[name="cardId[]"]')) {
+                    e.preventDefault();
+                    submitBtn.disabled = false;
+                    spinner.classList.add('d-none');
+                    iconBtn.classList.remove('d-none');
+                    btnText.textContent = 'Submit';
+
+                    document.getElementById('duplicateMessage').textContent =
+                        "ID Card numbers can't be the same.";
+                    document.getElementById('duplicateAlert').classList.remove('d-none');
+                    setTimeout(() => document.getElementById('duplicateAlert').classList.add('d-none'), 4000);
+                }
+            });
+        })();
+    </script>
+
+    {{-- Jika masih ingin pakai visitor.js milikmu, tetap load --}}
     {!! Html::script('/assets/js/website/visitor.js') !!}
 @endpush

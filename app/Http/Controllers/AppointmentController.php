@@ -37,169 +37,138 @@ class AppointmentController extends Controller
     {
         $pic = User::select('phone_number','occupation')->where('id', $request->pic_id)->first();
         $user_company = auth()->user()->company;
-        $user_name = auth()->user()->name;
 
         $request->validate([
             'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
             'purpose-2' => 'required_without_all:purpose-1,purpose-3,purpose-4',
             'purpose-3' => 'required_without_all:purpose-1,purpose-2,purpose-4',
             'purpose-4' => 'required_without_all:purpose-1,purpose-2,purpose-3',
-            'name.*' => 'required|string', // Validate all guest names
-            'ipk_form' => [
-            'sometimes',
+
+            'name.*'    => 'required|string',
+            'id_type.*' => 'required|in:KTP,SIM,ID CARD',
+            // Union regex: KTP (16 digit) ATAU SIM/ID (6-20 alfanumerik plus -)
+            'cardId.*'  => ['required','string','regex:/^(?:\d{16}|[A-Za-z0-9-]{6,20})$/'],
+
+            'ipk_form'  => [
+                'sometimes',
                 function ($attribute, $value, $fail) {
                     if (session()->get('category') === 'Contractor' && !$value) {
                         $fail('The IPK form document is required for contractors.');
                     }
                 },
-                'file',
-                'mimes:pdf,jpeg,png,jpg,gif',  // PDF juga boleh
-                'max:4096', // maksimal 4MB
+                'file','mimes:pdf,jpeg,png,jpg,gif','max:4096'
             ],
-            'photo' => 'required|array',
-            'photo.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            'cardId.*' => 'required|string|min:16|max:16', // Validate all card IDs
-            'date' => 'required|date', // Ensure valid date format
-            'time' => 'required', // Ensure time is provided
-            'area_id' => 'required|exists:areas,id', // Ensure area exists
-            'pic_id' => 'required|exists:users,id', // Ensure PIC exists
-            'pic_dept' => 'required|string',
+
+            'date'      => 'required|date',
+            'time'      => 'required',
+            'area_id'   => 'required|exists:areas,id',
+            'pic_id'    => 'required|exists:users,id',
+            'pic_dept'  => 'required|string',
         ]);
 
-        // ✅ Sanitize `other_purpose` and `pic_dept`
         $otherPurpose = strip_tags($request->input('other_purpose'));
         $picDept = strip_tags($request->input('pic_dept'));
 
-        // Build the purpose string
         $purposes = [];
         if ($request->has('purpose-1')) $purposes[] = 'Company Visit';
         if ($request->has('purpose-2')) $purposes[] = 'Benchmarking';
         if ($request->has('purpose-3')) $purposes[] = 'Trial';
-        if ($request->has('purpose-4')) $purposes[] = $request->other_purpose;
+        if ($request->has('purpose-4')) $purposes[] = $otherPurpose;
         $purpose = implode(', ', $purposes);
 
         if ($request->hasFile('ipk_form')) {
             $doc = $request->file('ipk_form');
             $docName = time() . '-' . $doc->getClientOriginalName();
-            $docPath = $doc->storeAs('public/doc', $docName); // Store in storage/app/public/doc
+            $doc->storeAs('public/doc', $docName);
         } else {
             $docName = null;
         }
 
-        // Determine approval status based on occupation
-        $pic_approval = ($pic->occupation == 2) ? 'approved' : 'pending';
+        $qr = Uuid::uuid4()->toString();
 
-        // Generate a 15-character random string for barcode_id
-        $qr = Uuid::uuid4()->toString(); ; // This generates a secure random string
-
-        // get cards_id
         $card = Card::select('id')
-                ->where('area_id', $request->area_id)
-                ->where('category', session()->get('category'))
-                ->first();
-                
+            ->where('area_id', $request->area_id)
+            ->where('category', session()->get('category'))
+            ->first();
+
         try {
             DB::beginTransaction();
 
-            // Create the appointment record
+            $appointmentIdType = strtoupper(strip_tags($request->id_type[0] ?? 'KTP'));
+
             $appointment = Appointment::create([
-                'purpose' => $purpose,
-                'ipk_form' => $docName,
-                'date' => $request->date,
-                'time' => $request->time,
-                'pic_id' => $request->pic_id,
-                'area_id' => $request->area_id,
-                'pic_dept' => $request->pic_dept,
-                // 'pic_approval' => $pic_approval,
+                'purpose'      => $purpose,
+                'ipk_form'     => $docName,
+                'date'         => $request->date,
+                'time'         => $request->time,
+                'pic_id'       => $request->pic_id,
+                'area_id'      => $request->area_id,
+                'pic_dept'     => $picDept,
                 'pic_approval' => 'approved',
-                'qr_code' => $qr,
-                // 'dh_approval' => 'pending',
-                'dh_approval' => 'approved',
-                'user_id' => auth()->user()->id,
-                'card_id' => $card->id
+                'qr_code'      => $qr,
+                'dh_approval'  => 'approved',
+                'user_id'      => auth()->user()->id,
+                'card_id'      => $card->id ?? null,
+                'id_type'      => $appointmentIdType,
             ]);
 
-            // Create check-in data immediately
             Checkin::create([
                 'appointment_id' => $appointment->id,
-                'status' => 'out', // Initial status
+                'status' => 'out',
             ]);
 
-            // Insert guest data
+            // Guests (tanpa foto)
             foreach ($request->name as $index => $guestName) {
-                // ✅ Sanitize guest name
-                $safeGuestName = strip_tags($guestName);
-                $safeIdCard = strip_tags($request->cardId[$index]);
-    
-                if (isset($request->photo[$index])) {
-                    $doc = $request->photo[$index];
-                    $docName = time() . '-' . $doc->getClientOriginalName();
-                    $doc->storeAs('public/photos', $docName);
-                } else {
-                    $docName = null;
-                }
-    
                 Guest::create([
                     'appointment_id' => $appointment->id,
-                    'name' => $safeGuestName,
-                    'photo' => $docName,
-                    'id_card' => $safeIdCard,
+                    'name'    => strip_tags($guestName),
+                    'photo'   => null,
+                    'id_card' => strip_tags($request->cardId[$index] ?? ''),
+                    // kalau punya kolom id_type, boleh ditambahkan:
+                    // 'id_type' => strtoupper(strip_tags($request->id_type[$index] ?? '')),
                 ]);
-            }         
+            }
 
-            // insert approval history data
             ApprovalHistory::create([
                 'appointment_id' => $appointment->id,
             ]);
 
+            // WA notif
             $date = $request->date . ' at ' . $request->time;
-
-            // send Wa notif to pic
             $token = 'v2n49drKeWNoRDN4jgqcdsR8a6bcochcmk6YphL6vLcCpRZdV1';
             $phone = $pic->phone_number;
 
-            // get guest name
             $guestNames = Guest::where('appointment_id', $appointment->id)->pluck('name')->toArray();
-            
-            // Format guest names as a list with each name on a new line
-            $guestNamesList = implode("\n- ", $guestNames);
-
-            // Add a dash before the first name
-            $guestNamesList = "- " . $guestNamesList;
+            $guestNamesList = '- ' . implode("\n- ", $guestNames);
 
             $message = sprintf(
                 "```----GUEST ALERT-------\n\nCompany : %s\nGuests : \n%s\n\nAgenda  : %s\nDate    : %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You\n\nPlease click the link below:\n%s```",
-                $user_company,              // The company name
-                $guestNamesList,            // The guest's name(s) as a list
-                $purpose,                   // The agenda of the guest visit
-                $date,                      // The date of the visit
-                $appointment->dh_approval,  // The current status (e.g., 'pending')
-                'https://gusta.aiia.co.id/approval' // The link to click
+                $user_company,
+                $guestNamesList,
+                $purpose,
+                $date,
+                $appointment->dh_approval,
+                'https://gusta.aiia.co.id/approval'
             );
-        
+
             $curl = curl_init();
             curl_setopt_array($curl, [
                 CURLOPT_URL => 'https://app.ruangwa.id/api/send_message',
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => 'POST',
-                // Use http_build_query to properly encode the POST fields
                 CURLOPT_POSTFIELDS => http_build_query([
-                    'token' => $token,
-                    'number' => $phone,
+                    'token'   => $token,
+                    'number'  => $phone,
                     'message' => $message
                 ]),
             ]);
             $response = curl_exec($curl);
-            curl_close($curl); // Don't forget to close the cURL session once done
+            curl_close($curl);
 
             DB::commit();
-            
-            return redirect()->route('appointment.history')->with('success', 'Your ticket has been successfully created! Please wait for the PIC to approve your ticket or contact the PIC.');
+
+            return redirect()->route('appointment.history')
+                ->with('success', 'Your ticket has been successfully created! Please wait for the PIC to approve your ticket or contact the PIC.');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->route('appointment.history')->with('error', $e->getMessage());
@@ -243,17 +212,19 @@ class AppointmentController extends Controller
             'purpose-2' => 'required_without_all:purpose-1,purpose-3,purpose-4',
             'purpose-3' => 'required_without_all:purpose-1,purpose-2,purpose-4',
             'purpose-4' => 'required_without_all:purpose-1,purpose-2,purpose-3',
-            'name.*' => 'required|string',
-            'cardId.*' => 'required|digits:16',
-            'date' => 'required|date',
-            'time' => 'required',
-            'area_id' => 'required|exists:areas,id',
-            'pic_dept' => 'required|exists:departments,id',
-            'pic_id' => 'required|exists:users,id',
-            // Additional validations as needed
+
+            'name.*'    => 'required|string',
+            'id_type.*' => 'required|in:KTP,SIM,ID CARD',
+            // Union regex sama seperti create
+            'cardId.*'  => ['required','string','regex:/^(?:\d{16}|[A-Za-z0-9-]{6,20})$/'],
+
+            'date'      => 'required|date',
+            'time'      => 'required',
+            'area_id'   => 'required|exists:areas,id',
+            'pic_dept'  => 'required|exists:departments,id',
+            'pic_id'    => 'required|exists:users,id',
         ]);
-        
-        // Build the purpose string
+
         $purposes = [];
         if ($request->has('purpose-1')) $purposes[] = 'Company Visit';
         if ($request->has('purpose-2')) $purposes[] = 'Benchmarking';
@@ -265,20 +236,26 @@ class AppointmentController extends Controller
         if ($appointment->user_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
+
         $appointment->update([
-            'purpose' => $purpose,
-            'date' => $request->input('date'),
-            'time' => $request->input('time'),
-            'area_id' => $request->input('area_id'),
+            'purpose'  => $purpose,
+            'date'     => $request->input('date'),
+            'time'     => $request->input('time'),
+            'area_id'  => $request->input('area_id'),
             'pic_dept' => $request->input('pic_dept'),
-            'pic_id' => $request->input('pic_id'),
-            // Additional fields as required
+            'pic_id'   => $request->input('pic_id'),
+            'id_type' => strtoupper($request->id_type[0] ?? 'KTP')
         ]);
 
+        // Reset & reinsert guests agar sesuai urutan form
+        Guest::where('appointment_id', $appointment->id)->delete();
         foreach ($request->name as $index => $guestName) {
-            Guest::where('appointment_id', $appointment->id)->update([
-                'name' => $guestName,
-                'id_card' => $request->cardId[$index],
+            Guest::create([
+                'appointment_id' => $appointment->id,
+                'name'    => strip_tags($guestName),
+                'photo'   => null,
+                'id_card' => strip_tags($request->cardId[$index] ?? ''),
+                // 'id_type' => strtoupper(strip_tags($request->id_type[$index] ?? '')),
             ]);
         }
 
@@ -297,7 +274,6 @@ class AppointmentController extends Controller
                 'appointments' => $appointments,
             ]);
         }
-
     }
 
     public function getPic(Request $request)

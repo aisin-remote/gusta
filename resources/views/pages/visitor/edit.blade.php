@@ -10,18 +10,20 @@
             <div id="duplicateAlert" class="alert alert-danger d-none" role="alert">
                 <strong>Error!</strong> <span id="duplicateMessage"></span>
             </div>
+
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-5">Edit User Management</h4>
 
-                    <form action="{{ route('appointment.update', $appointment->id) }}"
-                        method="POST"enctype="multipart/form-data" id="appointmentEditForm">
+                    <form action="{{ route('appointment.update', $appointment->id) }}" method="POST"
+                        enctype="multipart/form-data" id="appointmentEditForm">
                         {{ csrf_field() }}
 
+                        {{-- VISITOR DATA --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="inputEmail3" class="col-form-label">Visitor Data
-                                    <small class="text-muted pl-0">/ Data Tamu / 訪問者データ</small>
+                                <label class="col-form-label">
+                                    Visitor Data <small class="text-muted pl-0">/ Data Tamu / 訪問者データ</small>
                                 </label>
                             </div>
                         </div>
@@ -32,6 +34,7 @@
                                     <div class="col-md-4">
                                         <label class="col-form-label">&nbsp;</label>
                                     </div>
+
                                     <div class="col-md-3">
                                         <input type="text" class="form-control mt-1" name="name[]"
                                             placeholder="Guest Name" value="{{ old('name.' . $index, $guest->name ?? '') }}"
@@ -41,22 +44,52 @@
                                                 class="text-danger"><small>{{ $errors->first('name.' . $index) }}</small></span>
                                         @endif
                                     </div>
+
+                                    <div class="col-md-2">
+                                        @php
+                                            $idTypeVal = old('id_type.' . $index, $guest->id_type ?? '');
+                                            // fallback simple: jika kosong, default KTP
+                                            if ($idTypeVal === '' || $idTypeVal === null) {
+                                                $idTypeVal = 'KTP';
+                                            }
+                                        @endphp
+                                        <select class="form-control mt-1 id-type" name="id_type[]" required>
+                                            <option value="">-- Select ID Type --</option>
+                                            <option value="KTP" {{ $idTypeVal == 'KTP' ? 'selected' : '' }}>KTP</option>
+                                            <option value="SIM" {{ $idTypeVal == 'SIM' ? 'selected' : '' }}>SIM</option>
+                                            <option value="ID CARD" {{ $idTypeVal == 'ID CARD' ? 'selected' : '' }}>ID Card
+                                            </option>
+                                        </select>
+                                        @if ($errors->has('id_type.' . $index))
+                                            <span
+                                                class="text-danger"><small>{{ $errors->first('id_type.' . $index) }}</small></span>
+                                        @endif
+                                    </div>
+
                                     <div class="col-md-3">
-                                        <input type="text" class="form-control mt-1" name="cardId[]"
-                                            placeholder="ID Card Number"
+                                        <input type="text" class="form-control mt-1 id-number" name="cardId[]"
+                                            placeholder="ID Number"
                                             value="{{ old('cardId.' . $index, $guest->id_card ?? '') }}" required
-                                            maxlength="16" pattern="\d{16}" title="Card ID must be exactly 16 digits">
-                                        <small class="form-text text-danger">*KTP</small>
+                                            data-role="id-input">
+                                        <small class="form-text text-muted hint">* KTP: 16 digit | SIM/ID: 6–20 alfanumerik
+                                            (- diperbolehkan)
+                                        </small>
                                         @if ($errors->has('cardId.' . $index))
                                             <span
                                                 class="text-danger"><small>{{ $errors->first('cardId.' . $index) }}</small></span>
                                         @endif
                                     </div>
+
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger remove-guest p-2">
+                                            <i class="mdi mdi-minus"></i> Remove
+                                        </button>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
 
-                        <!-- Add New button -->
+                        {{-- Add New --}}
                         <div class="form-group row">
                             <div class="col-md-4">
                                 <label class="col-form-label">&nbsp;</label>
@@ -68,12 +101,12 @@
                             </div>
                         </div>
 
-
+                        {{-- PURPOSE --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="visitPurpose" class="col-form-label">Visit Purpose <small
-                                        class="text-muted pl-0">/
-                                        Tujuan Kunjungan / 滞在目的</small></label>
+                                <label for="visitPurpose" class="col-form-label">Visit Purpose
+                                    <small class="text-muted pl-0">/ Tujuan Kunjungan / 滞在目的</small>
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 <div class="boxes">
@@ -97,15 +130,16 @@
                                         placeholder="Other purpose..."
                                         value="{{ old('other_purpose', $appointment->purpose == 'Other' ? $appointment->purpose : '') }}">
                                 </div>
-
                                 <small class="form-text text-muted mt-3">Select one or more</small>
                             </div>
                         </div>
 
+                        {{-- DATE --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="selectDate" class="col-form-label">Select Date <small class="text-muted pl-0">/
-                                        Pilih Tanggal / 日付を選択</small></label>
+                                <label class="col-form-label">Select Date
+                                    <small class="text-muted pl-0">/ Pilih Tanggal / 日付を選択</small>
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 <input type="date" name="date" class="form-control mt-1"
@@ -116,10 +150,12 @@
                             </div>
                         </div>
 
+                        {{-- TIME --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="selectTime" class="col-form-label">Select Time <small class="text-muted pl-0">/
-                                        Pilih Waktu / 時間を選択</small></label>
+                                <label class="col-form-label">Select Time
+                                    <small class="text-muted pl-0">/ Pilih Waktu / 時間を選択</small>
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 <input type="time" name="time" class="form-control mt-1"
@@ -130,11 +166,12 @@
                             </div>
                         </div>
 
+                        {{-- AREA --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="selectArea" class="col-form-label">Select Area <small
-                                        class="text-muted pl-0">/
-                                        Pilih Area / エリアを選択</small></label>
+                                <label class="col-form-label">Select Area
+                                    <small class="text-muted pl-0">/ Pilih Area / エリアを選択</small>
+                                </label>
                             </div>
                             <div class="col-md-8">
                                 <select class="form-control mt-1" name="area_id" required>
@@ -152,9 +189,10 @@
                             </div>
                         </div>
 
+                        {{-- PIC --}}
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="selectPIC" class="col-form-label">PIC <small class="text-muted pl-0">/ PIC /
+                                <label class="col-form-label">PIC <small class="text-muted pl-0">/ PIC /
                                         担当者</small></label>
                             </div>
                             <div class="col-md-4 col-sm-8">
@@ -187,13 +225,14 @@
                             </div>
                         </div>
 
-                        <!-- IPK Form field for Contractors -->
+                        {{-- IPK (Contractor only) --}}
                         @if (session()->get('category') == 'Contractor' || session()->get('category') == 'contractor')
                             <div class="row mt-1">
                                 <div class="col-md-4">
-                                    <label for="ipkForm" class="col-form-label">IPK Form <small
-                                            class="text-muted pl-0">/ Form
-                                            IPK / 安全フォーム</small> <span class="text-danger">*PNG</span></label>
+                                    <label class="col-form-label">IPK Form
+                                        <small class="text-muted pl-0">/ Form IPK / 安全フォーム</small>
+                                        <span class="text-danger">*PNG</span>
+                                    </label>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="custom-file">
@@ -204,6 +243,7 @@
                             </div>
                         @endif
 
+                        {{-- SUBMIT --}}
                         <div class="row mt-5">
                             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                 <button type="submit" class="btn btn-lg btn-primary submit-btn">
@@ -228,114 +268,127 @@
 
 @push('custom-scripts')
     {!! Html::script('/assets/js/dashboard.js') !!}
+
     <script>
-        $(document).ready(function() {
-            // Pre-existing guest names and card IDs if available
-            $('#other_purpose').hide();
-            $("input[type='checkbox']").on("change", function() {
-                if (this.checked) {
-                    if (this == checkbox) {
-                        $('#other_purpose').show();
-                    }
-                } else {
-                    if (this == checkbox) {
-                        $('#other_purpose').hide();
-                    }
-                }
-            });
+        (function() {
+            // Toggle Other Purpose
+            const otherPurpose = document.getElementById('other_purpose');
+            const chkOther = document.getElementById('check_purpose');
 
-            let guestIndex =
-                {{ count($appointment->guests) }}; // Start from the current count of guests
-
-            function hasDuplicates(selector) {
-                let values = [];
-                let hasDuplicate = false;
-
-                $(selector).each(function() {
-                    let value = $(this).val();
-                    if (values.includes(value)) {
-                        hasDuplicate = true;
-                        return false; // Stop the loop if duplicate is found
-                    }
-                    values.push(value);
-                });
-
-                return hasDuplicate;
+            function syncOther() {
+                if (!chkOther || !otherPurpose) return;
+                otherPurpose.style.display = chkOther.checked ? 'block' : 'none';
+            }
+            if (otherPurpose) otherPurpose.style.display = 'none';
+            if (chkOther) {
+                syncOther();
+                chkOther.addEventListener('change', syncOther);
             }
 
-            // On form submission
-            $('form').on('submit', function(e) {
-                let duplicateMessage = '';
-                let hasError = false;
-                const submitButton = $(this).find('.submit-btn');
-                const spinner = submitButton.find('.spinner-border');
-                const buttonText = submitButton.find('.btn-text');
-                const iconBtn = submitButton.find('.icon-btn');
-
-                submitButton.prop('disabled', true);
-                spinner.removeClass('d-none');
-                iconBtn.addClass('d-none');
-                buttonText.text('Loading...');
-
-                // Check for duplicate card IDs
-                if (hasDuplicates('input[name="cardId[]"]')) {
-                    duplicateMessage = 'ID Card numbers can\'t be the same.';
-                    hasError = true;
-
-                    // Reset button state
-                    submitButton.prop('disabled', false);
-                    spinner.addClass('d-none');
-                    iconBtn.removeClass('d-none');
-                    buttonText.text('Submit');
-                }
-
-                if (hasError) {
-                    e.preventDefault(); // Prevent form submission
-                    $('#duplicateMessage').text(duplicateMessage);
-                    $('#duplicateAlert').removeClass('d-none'); // Show alert
-
-                    // Set a timeout to hide the alert after 4 seconds (4000 milliseconds)
-                    setTimeout(function() {
-                        $('#duplicateAlert').addClass('d-none');
-                    }, 4000);
-
-                    return false; // Stop execution
+            // Dinamis aturan ID berdasarkan tipe
+            function applyRule(selectEl, inputEl) {
+                const t = (selectEl.value || '').toUpperCase();
+                if (t === 'KTP') {
+                    inputEl.value = inputEl.value.replace(/\D/g, '').slice(0, 16);
+                    inputEl.setAttribute('maxlength', '16');
+                    inputEl.setAttribute('pattern', '\\d{16}');
+                    inputEl.setAttribute('title', 'KTP must be exactly 16 digits');
                 } else {
-                    $('#duplicateAlert').addClass('d-none'); // Hide alert if no error
+                    inputEl.removeAttribute('maxlength');
+                    inputEl.setAttribute('pattern', '[A-Za-z0-9-]{6,20}');
+                    inputEl.setAttribute('title', '6–20 alphanumeric (letters/numbers/-)');
                 }
-            });
+            }
 
-            $('#addGuestBtn').click(function() {
-                // Create a new row
-                var newGuestRow = `
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <label class="col-form-label">&nbsp;</label>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" class="form-control mt-1" name="name[]" placeholder="Guest Name" required>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="text" class="form-control mt-1" name="cardId[]" placeholder="ID Card Number" required maxlength="16" pattern="\\d{16}" title="Card ID must be exactly 16 digits">
-                            <small class="form-text text-danger">*KTP</small>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="button" class="btn btn-danger remove-guest p-2">
+            function bindRow(row) {
+                const sel = row.querySelector('select.id-type');
+                const inp = row.querySelector('input[data-role="id-input"]');
+                if (!sel || !inp) return;
+                applyRule(sel, inp);
+                sel.addEventListener('change', () => applyRule(sel, inp));
+            }
+
+            // Bind semua baris existing
+            document.querySelectorAll('#guestContainer .form-group.row').forEach(bindRow);
+
+            // Add guest
+            document.getElementById('addGuestBtn')?.addEventListener('click', function() {
+                const container = document.getElementById('guestContainer');
+                const newRow = document.createElement('div');
+                newRow.className = 'form-group row';
+                newRow.innerHTML = `
+                    <div class="col-md-4"><label class="col-form-label">&nbsp;</label></div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control mt-1" name="name[]" placeholder="Guest Name" required>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control mt-1 id-type" name="id_type[]" required>
+                            <option value="">-- Select ID Type --</option>
+                            <option value="KTP">KTP</option>
+                            <option value="SIM">SIM</option>
+                            <option value="ID CARD">ID Card</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control mt-1 id-number" name="cardId[]" placeholder="ID Number"
+                                   required data-role="id-input">
+                            <button type="button" class="btn btn-danger mt-1 remove-guest">
                                 <i class="mdi mdi-minus"></i> Remove
                             </button>
                         </div>
+                        <small class="form-text text-muted hint">* KTP: 16 digit | SIM/ID: 6–20 alfanumerik (- diperbolehkan)</small>
                     </div>
                 `;
-
-                // Append the new row after the last guest row in the guest section
-                $('#guestContainer .form-group.row:last').after(newGuestRow);
-                guestIndex++; // Increment the guest index if needed for your purposes
+                container.appendChild(newRow);
+                bindRow(newRow);
             });
 
-            // Event delegation for removing a guest row
-            $(document).on('click', '.remove-guest', function() {
-                $(this).closest('.form-group.row').remove(); // Remove the row on button click
+            // Remove guest
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-guest')) {
+                    e.preventDefault();
+                    const row = e.target.closest('.form-group.row');
+                    row?.remove();
+                }
             });
-        });
+
+            // Duplicate check on submit
+            function hasDuplicates(selector) {
+                const values = [];
+                let dup = false;
+                document.querySelectorAll(selector).forEach(el => {
+                    const v = (el.value || '').trim();
+                    if (v && values.includes(v)) dup = true;
+                    values.push(v);
+                });
+                return dup;
+            }
+
+            document.getElementById('appointmentEditForm')?.addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('.submit-btn');
+                const spinner = submitBtn.querySelector('.spinner-border');
+                const btnText = submitBtn.querySelector('.btn-text');
+                const iconBtn = submitBtn.querySelector('.icon-btn');
+
+                submitBtn.disabled = true;
+                spinner.classList.remove('d-none');
+                iconBtn.classList.add('d-none');
+                btnText.textContent = 'Loading...';
+
+                if (hasDuplicates('input[name="cardId[]"]')) {
+                    e.preventDefault();
+                    submitBtn.disabled = false;
+                    spinner.classList.add('d-none');
+                    iconBtn.classList.remove('d-none');
+                    btnText.textContent = 'Update';
+
+                    document.getElementById('duplicateMessage').textContent =
+                        "ID Card numbers can't be the same.";
+                    document.getElementById('duplicateAlert').classList.remove('d-none');
+                    setTimeout(() => document.getElementById('duplicateAlert').classList.add('d-none'), 4000);
+                }
+            });
+        })();
     </script>
 @endpush
