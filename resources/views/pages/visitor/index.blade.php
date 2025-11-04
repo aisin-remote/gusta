@@ -7,9 +7,6 @@
 @section('content')
     <div class="row">
         <div class="col-lg-12 grid-margin">
-            <div id="duplicateAlert" class="alert alert-danger d-none" role="alert">
-                <strong>Error!</strong> <span id="duplicateMessage"></span>
-            </div>
 
             @if (session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -39,7 +36,7 @@
                             </div>
 
                             {{-- Guest #1 --}}
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <input type="text" class="form-control mt-1" name="name[]" placeholder="Guest Name"
                                     value="{{ old('name.0') }}" required>
                                 @if ($errors->has('name.*'))
@@ -47,7 +44,7 @@
                                 @endif
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-md-4">
                                 <select class="form-control mt-1 id-type" name="id_type[]" required>
                                     <option value="">-- Select ID Type --</option>
                                     <option value="KTP" {{ old('id_type.0') == 'KTP' ? 'selected' : '' }}>KTP</option>
@@ -57,16 +54,6 @@
                                 </select>
                                 @if ($errors->has('id_type.*'))
                                     <span class="text-danger"><small>{{ $errors->first('id_type.*') }}</small></span>
-                                @endif
-                            </div>
-
-                            <div class="col-md-3">
-                                <input type="text" class="form-control mt-1 id-number" name="cardId[]"
-                                    placeholder="ID Number" value="{{ old('cardId.0') }}" required data-role="id-input">
-                                <small class="form-text text-muted hint">* KTP: 16 digit | SIM/ID: 6–20 alfanumerik (-
-                                    diperbolehkan)</small>
-                                @if ($errors->has('cardId.*'))
-                                    <span class="text-danger"><small>{{ $errors->first('cardId.*') }}</small></span>
                                 @endif
                             </div>
 
@@ -252,12 +239,11 @@
         window.appData = {
             category: "{{ session()->get('category') }}",
             company: "{{ session()->get('company') }}",
-            oldGuests: @json(old('name', [])),
-            oldCardIds: @json(old('cardId', []))
+            oldGuests: @json(old('name', []))
         };
     </script>
 
-    {{-- Script khusus halaman ini: ID Type rules, Duplicate check, Add/Remove guest, Toggle Other --}}
+    {{-- Script khusus halaman ini: Toggle Other purpose + Add/Remove guest (tanpa cardId) --}}
     <script>
         (function() {
             const otherPurpose = document.getElementById('other_purpose');
@@ -273,64 +259,36 @@
                 chkOther.addEventListener('change', syncOther);
             }
 
-            function applyRule(selectEl, inputEl) {
-                const t = (selectEl.value || '').toUpperCase();
-                if (t === 'KTP') {
-                    inputEl.value = inputEl.value.replace(/\D/g, '').slice(0, 16);
-                    inputEl.setAttribute('maxlength', '16');
-                    inputEl.setAttribute('pattern', '\\d{16}');
-                    inputEl.setAttribute('title', 'KTP must be exactly 16 digits');
-                } else {
-                    inputEl.removeAttribute('maxlength');
-                    inputEl.setAttribute('pattern', '[A-Za-z0-9-]{6,20}');
-                    inputEl.setAttribute('title', '6–20 alphanumeric (letters/numbers/-)');
-                }
-            }
-
-            function bindRow(row) {
-                const sel = row.querySelector('select.id-type');
-                const inp = row.querySelector('input[data-role="id-input"]');
-                if (!sel || !inp) return;
-                applyRule(sel, inp);
-                sel.addEventListener('change', () => applyRule(sel, inp));
-            }
-
-            // Bind first row
-            bindRow(document.querySelector('.form-group.row'));
-
-            // Add guest
+            // Add guest (tanpa field ID Number)
             document.getElementById('addGuestBtn')?.addEventListener('click', function() {
                 const form = document.getElementById('appointmentForm');
                 const newRow = document.createElement('div');
                 newRow.className = 'form-group row';
+
                 newRow.innerHTML = `
-                    <div class="col-md-3 offset-md-3">
+                    <div class="col-md-4 offset-md-3">
                         <input type="text" class="form-control mt-1" name="name[]" placeholder="Guest Name" required>
                     </div>
-                    <div class="col-md-2">
-                        <select class="form-control mt-1 id-type" name="id_type[]" required>
-                            <option value="">-- Select ID Type --</option>
-                            <option value="KTP">KTP</option>
-                            <option value="SIM">SIM</option>
-                            <option value="ID CARD">ID Card</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="d-flex gap-2">
-                            <input type="text" class="form-control mt-1 id-number"
-                                   name="cardId[]" placeholder="ID Number"
-                                   required data-role="id-input">
-                            <button type="button" class="btn btn-danger mt-1 remove-guest">
-                                <i class="mdi mdi-minus"></i>
-                            </button>
+                    <div class="col-md-4">
+                        <div class="input-group mt-1">
+                            <select class="form-control id-type" name="id_type[]" required>
+                                <option value="">-- Select ID Type --</option>
+                                <option value="KTP">KTP</option>
+                                <option value="SIM">SIM</option>
+                                <option value="ID CARD">ID Card</option>
+                            </select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-danger remove-guest">
+                                    <i class="mdi mdi-minus"></i>
+                                </button>
+                            </div>
                         </div>
-                        <small class="form-text text-muted hint">* KTP: 16 digit | SIM/ID: 6–20 alfanumerik (- diperbolehkan)</small>
                     </div>
                 `;
-                // Sisipkan sebelum blok "Purpose" (baris berikutnya setelah visitor)
+
+                // Sisipkan sebelum blok "Purpose"
                 const firstPurpose = form.querySelector('.boxes')?.closest('.form-group.row');
                 form.insertBefore(newRow, firstPurpose);
-                bindRow(newRow);
             });
 
             // Remove guest
@@ -342,19 +300,8 @@
                 }
             });
 
-            // Duplicate check on submit (berdasarkan nomor ID)
-            function hasDuplicates(selector) {
-                const values = [];
-                let dup = false;
-                document.querySelectorAll(selector).forEach(el => {
-                    const v = (el.value || '').trim();
-                    if (v && values.includes(v)) dup = true;
-                    values.push(v);
-                });
-                return dup;
-            }
-
-            document.getElementById('appointmentForm')?.addEventListener('submit', function(e) {
+            // UX: tombol submit -> loading
+            document.getElementById('appointmentForm')?.addEventListener('submit', function() {
                 const submitBtn = this.querySelector('.submit-btn');
                 const spinner = submitBtn.querySelector('.spinner-border');
                 const btnText = submitBtn.querySelector('.btn-text');
@@ -364,19 +311,6 @@
                 spinner.classList.remove('d-none');
                 iconBtn.classList.add('d-none');
                 btnText.textContent = 'Loading...';
-
-                if (hasDuplicates('input[name="cardId[]"]')) {
-                    e.preventDefault();
-                    submitBtn.disabled = false;
-                    spinner.classList.add('d-none');
-                    iconBtn.classList.remove('d-none');
-                    btnText.textContent = 'Submit';
-
-                    document.getElementById('duplicateMessage').textContent =
-                        "ID Card numbers can't be the same.";
-                    document.getElementById('duplicateAlert').classList.remove('d-none');
-                    setTimeout(() => document.getElementById('duplicateAlert').classList.add('d-none'), 4000);
-                }
             });
         })();
     </script>

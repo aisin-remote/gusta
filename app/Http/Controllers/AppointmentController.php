@@ -35,7 +35,7 @@ class AppointmentController extends Controller
 
     public function create(Request $request)
     {
-        $pic = User::select('phone_number','occupation')->where('id', $request->pic_id)->first();
+        $pic = User::select('phone_number','occupation')->findOrFail($request->pic_id);
         $user_company = auth()->user()->company;
 
         $request->validate([
@@ -46,12 +46,11 @@ class AppointmentController extends Controller
 
             'name.*'    => 'required|string',
             'id_type.*' => 'required|in:KTP,SIM,ID CARD',
-            'cardId.*'  => ['required','string','regex:/^(?:\d{16}|[A-Za-z0-9-]{6,20})$/'],
 
             'ipk_form'  => [
                 'sometimes',
                 function ($attribute, $value, $fail) {
-                    if (session()->get('category') === 'Contractor' && !$value) {
+                    if (strtolower((string) session()->get('category')) === 'contractor' && !$value) {
                         $fail('The IPK form document is required for contractors.');
                     }
                 },
@@ -67,25 +66,26 @@ class AppointmentController extends Controller
 
         $names = (array) $request->input('name', []);
         $types = (array) $request->input('id_type', []);
-        $cards = (array) $request->input('cardId', []);
-        if (count($names) !== count($types) || count($names) !== count($cards)) {
-            return back()->withInput()->with('error', 'Jumlah Name, ID Type, dan ID Number tidak selaras.');
+
+        // Selaraskan jumlah name dan id_type
+        if (count($names) !== count($types)) {
+            return back()->withInput()->with('error', 'Jumlah Name dan ID Type tidak selaras.');
         }
 
-        $otherPurpose = strip_tags($request->input('other_purpose'));
-        $picDept = strip_tags($request->input('pic_dept'));
+        $otherPurpose = trim(strip_tags($request->input('other_purpose')));
+        $picDept = trim(strip_tags($request->input('pic_dept')));
 
         $purposes = [];
-        if ($request->has('purpose-1')) $purposes[] = 'Company Visit';
-        if ($request->has('purpose-2')) $purposes[] = 'Benchmarking';
-        if ($request->has('purpose-3')) $purposes[] = 'Trial';
-        if ($request->has('purpose-4')) $purposes[] = $otherPurpose;
+        if ($request->boolean('purpose-1')) $purposes[] = 'Company Visit';
+        if ($request->boolean('purpose-2')) $purposes[] = 'Benchmarking';
+        if ($request->boolean('purpose-3')) $purposes[] = 'Trial';
+        if ($request->boolean('purpose-4') && $otherPurpose !== '') $purposes[] = $otherPurpose;
         $purpose = implode(', ', $purposes);
 
         $docName = null;
         if ($request->hasFile('ipk_form')) {
             $doc = $request->file('ipk_form');
-            $docName = time() . '-' . $doc->getClientOriginalName();
+            $docName = time() . '-' . preg_replace('/[^\w\-.]+/', '_', $doc->getClientOriginalName());
             $doc->storeAs('public/doc', $docName);
         }
 
@@ -110,33 +110,28 @@ class AppointmentController extends Controller
                 'pic_approval' => 'approved',
                 'qr_code'      => $qr,
                 'dh_approval'  => 'approved',
-                'user_id'      => auth()->user()->id,
+                'user_id'      => auth()->id(),
                 'card_id'      => $card->id ?? null,
-                // 'id_type' dihapus: sudah tidak ada di tabel appointments
+                // id_type tidak disimpan di tabel appointments
             ]);
 
             Checkin::create([
                 'appointment_id' => $appointment->id,
-                'status' => 'out',
+                'status'         => 'out',
             ]);
 
-            // Simpan per-guest (id_type ikut index)
+            // Simpan per-guest (tanpa id_card)
             foreach ($names as $i => $guestName) {
-                $guestType = strtoupper(strip_tags($types[$i] ?? 'KTP'));
+                $guestType = strtoupper(trim(strip_tags($types[$i] ?? 'KTP')));
                 if (!in_array($guestType, ['KTP','SIM','ID CARD'], true)) {
                     $guestType = 'KTP';
                 }
 
-                $idCard = strip_tags($cards[$i] ?? '');
-                if ($guestType === 'KTP') {
-                    $idCard = preg_replace('/\D/', '', $idCard);
-                }
-
                 Guest::create([
                     'appointment_id' => $appointment->id,
-                    'name'    => strip_tags($guestName),
+                    'name'    => trim(strip_tags($guestName)),
                     'photo'   => null,
-                    'id_card' => $idCard,
+                    'id_card' => null,   // tidak digunakan lagi
                     'id_type' => $guestType,
                 ]);
             }
@@ -145,48 +140,49 @@ class AppointmentController extends Controller
                 'appointment_id' => $appointment->id,
             ]);
 
-            // WA notif (tetap)
-            $date = $request->date . ' at ' . $request->time;
+            // Kirim WA notif ke PIC (jika ada nomor)
+            $dateText = $request->date . ' at ' . $request->time;
             $token = 'v2n49drKeWNoRDN4jgqcdsR8a6bcochcmk6YphL6vLcCpRZdV1';
-            $phone = $pic->phone_number;
+            $phone = $pic->phone_number ?? null;
 
-            $guestNames = Guest::where('appointment_id', $appointment->id)->pluck('name')->toArray();
-            $guestNamesList = '- ' . implode("\n- ", $guestNames);
+            if ($phone) {
+                $guestNames = Guest::where('appointment_id', $appointment->id)->pluck('name')->toArray();
+                $guestNamesList = '- ' . implode("\n- ", $guestNames);
 
-            $message = sprintf(
-                "```----GUEST ALERT-------\n\nCompany : %s\nGuests : \n%s\n\nAgenda  : %s\nDate    : %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You\n\nPlease click the link below:\n%s```",
-                $user_company,
-                $guestNamesList,
-                $purpose,
-                $date,
-                $appointment->dh_approval,
-                'https://gusta.aiia.co.id/approval'
-            );
+                $message = sprintf(
+                    "```----GUEST ALERT-------\n\nCompany : %s\nGuests : \n%s\n\nAgenda  : %s\nDate    : %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You\n\nPlease click the link below:\n%s```",
+                    $user_company,
+                    $guestNamesList,
+                    $purpose,
+                    $dateText,
+                    $appointment->dh_approval,
+                    'https://gusta.aiia.co.id/approval'
+                );
 
-            $curl = curl_init();
-            curl_setopt_array($curl, [
-                CURLOPT_URL => 'https://app.ruangwa.id/api/send_message',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => http_build_query([
-                    'token'   => $token,
-                    'number'  => $phone,
-                    'message' => $message
-                ]),
-            ]);
-            $response = curl_exec($curl);
-            curl_close($curl);
+                $curl = curl_init();
+                curl_setopt_array($curl, [
+                    CURLOPT_URL => 'https://app.ruangwa.id/api/send_message',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS => http_build_query([
+                        'token'   => $token,
+                        'number'  => $phone,
+                        'message' => $message
+                    ]),
+                ]);
+                $response = curl_exec($curl);
+                curl_close($curl);
+            }
 
             DB::commit();
 
             return redirect()->route('appointment.history')
                 ->with('success', 'Your ticket has been successfully created! Please wait for the PIC to approve your ticket or contact the PIC.');
         } catch (\Exception $e) {
-            DB::rollback();
+            DB::rollBack();
             return redirect()->route('appointment.history')->with('error', $e->getMessage());
         }
     }
-
     
     public function edit($id)
     {
@@ -220,7 +216,7 @@ class AppointmentController extends Controller
     // Update the appointment
     public function update(Request $request, $id)
     {
-        // VALIDASI (samakan dengan create)
+        // VALIDASI (selaras dengan create) — tanpa cardId.*
         $request->validate([
             'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
             'purpose-2' => 'required_without_all:purpose-1,purpose-3,purpose-4',
@@ -229,32 +225,32 @@ class AppointmentController extends Controller
 
             'name.*'    => 'required|string',
             'id_type.*' => 'required|in:KTP,SIM,ID CARD',
-            // KTP 16 digit ATAU SIM/ID 6–20 alfanumerik + '-'
-            'cardId.*'  => ['required','string','regex:/^(?:\d{16}|[A-Za-z0-9-]{6,20})$/'],
 
             'date'      => 'required|date',
             'time'      => 'required',
             'area_id'   => 'required|exists:areas,id',
-            // Konsisten dengan create(): pic_dept string
+            // Konsisten dengan create(): pic_dept disimpan apa adanya (umumnya id dept)
             'pic_dept'  => 'required|string',
             'pic_id'    => 'required|exists:users,id',
+
+            // (Opsional) Jika Contractor upload ulang IPK saat edit
+            'ipk_form'  => 'sometimes|file|mimes:pdf,jpeg,png,jpg,gif|max:4096',
         ]);
 
-        // GUARD: pastikan array sejajar
+        // Array sejajar (tanpa cardId)
         $names = (array) $request->input('name', []);
         $types = (array) $request->input('id_type', []);
-        $cards = (array) $request->input('cardId', []);
-        if (count($names) !== count($types) || count($names) !== count($cards)) {
-            return back()->withInput()->with('error', 'Jumlah Name, ID Type, dan ID Number tidak selaras.');
+        if (count($names) !== count($types)) {
+            return back()->withInput()->with('error', 'Jumlah Name dan ID Type tidak selaras.');
         }
 
-        // Purpose
-        $otherPurpose = strip_tags($request->input('other_purpose'));
+        // Build purpose
+        $otherPurpose = trim(strip_tags($request->input('other_purpose')));
         $purposes = [];
-        if ($request->has('purpose-1')) $purposes[] = 'Company Visit';
-        if ($request->has('purpose-2')) $purposes[] = 'Benchmarking';
-        if ($request->has('purpose-3')) $purposes[] = 'Trial';
-        if ($request->has('purpose-4')) $purposes[] = $otherPurpose;
+        if ($request->boolean('purpose-1')) $purposes[] = 'Company Visit';
+        if ($request->boolean('purpose-2')) $purposes[] = 'Benchmarking';
+        if ($request->boolean('purpose-3')) $purposes[] = 'Trial';
+        if ($request->boolean('purpose-4') && $otherPurpose !== '') $purposes[] = $otherPurpose;
         $purpose = implode(', ', $purposes);
 
         $appointment = Appointment::findOrFail($id);
@@ -264,36 +260,39 @@ class AppointmentController extends Controller
 
         DB::beginTransaction();
         try {
-            // UPDATE APPOINTMENT (tanpa id_type)
+            // Optional: handle IPK re-upload
+            $docName = $appointment->ipk_form;
+            if ($request->hasFile('ipk_form')) {
+                $doc = $request->file('ipk_form');
+                $docName = time() . '-' . preg_replace('/[^\w\-.]+/', '_', $doc->getClientOriginalName());
+                $doc->storeAs('public/doc', $docName);
+            }
+
+            // UPDATE APPOINTMENT
             $appointment->update([
                 'purpose'  => $purpose,
+                'ipk_form' => $docName,
                 'date'     => $request->input('date'),
                 'time'     => $request->input('time'),
                 'area_id'  => $request->input('area_id'),
-                'pic_dept' => strip_tags($request->input('pic_dept')),
+                'pic_dept' => trim(strip_tags($request->input('pic_dept'))),
                 'pic_id'   => $request->input('pic_id'),
             ]);
 
-            // RESET & REINSERT GUESTS sesuai urutan form
+            // RESET & REINSERT GUESTS (tanpa id_card)
             Guest::where('appointment_id', $appointment->id)->delete();
 
             foreach ($names as $i => $guestName) {
-                $guestType = strtoupper(strip_tags($types[$i] ?? 'KTP'));
+                $guestType = strtoupper(trim(strip_tags($types[$i] ?? 'KTP')));
                 if (!in_array($guestType, ['KTP','SIM','ID CARD'], true)) {
                     $guestType = 'KTP';
                 }
 
-                $idCard = strip_tags($cards[$i] ?? '');
-                if ($guestType === 'KTP') {
-                    // normalisasi: hanya digit
-                    $idCard = preg_replace('/\D/', '', $idCard);
-                }
-
                 Guest::create([
                     'appointment_id' => $appointment->id,
-                    'name'    => strip_tags($guestName),
-                    'photo'   => null, // kalau ingin mempertahankan foto lama, ganti strategi (update by id)
-                    'id_card' => $idCard,
+                    'name'    => trim(strip_tags($guestName)),
+                    'photo'   => null,
+                    'id_card' => null,   // sudah tidak digunakan
                     'id_type' => $guestType,
                 ]);
             }
@@ -305,7 +304,6 @@ class AppointmentController extends Controller
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
-
 
     public function history(\App\Models\Appointment $appointment)
     {
