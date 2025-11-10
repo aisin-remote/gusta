@@ -307,7 +307,7 @@ class AppointmentController extends Controller
             ]);
 
             // RESET & REINSERT GUESTS (tanpa id_card)
-            \App\Models\Guest::where('appointment_id', $appointment->id)->delete();
+            Guest::where('appointment_id', $appointment->id)->delete();
 
             foreach ($names as $i => $guestName) {
                 $guestType = strtoupper(trim(strip_tags($types[$i] ?? 'KTP')));
@@ -315,7 +315,7 @@ class AppointmentController extends Controller
                     $guestType = 'KTP';
                 }
 
-                \App\Models\Guest::create([
+                Guest::create([
                     'appointment_id' => $appointment->id,
                     'name'    => trim(strip_tags($guestName)),
                     'photo'   => null,
