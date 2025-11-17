@@ -36,7 +36,8 @@ class AppointmentController extends Controller
     public function create(\Illuminate\Http\Request $request)
     {
         try {
-            // 1) Validasi lebih dulu
+
+            // 1) VALIDATION
             $request->validate([
                 'purpose-1' => 'required_without_all:purpose-2,purpose-3,purpose-4',
                 'purpose-2' => 'required_without_all:purpose-1,purpose-3,purpose-4',
@@ -63,26 +64,32 @@ class AppointmentController extends Controller
                 'pic_dept'  => 'required|integer|exists:departments,id',
             ]);
 
-            // 2) Ambil PIC tanpa findOrFail (boleh null untuk nomor HP)
+            // 2) GET PIC
             $pic = User::select('phone_number','occupation')->find($request->pic_id);
             $user_company = optional(auth()->user())->company;
 
+            // 3) GUEST NAME & ID TYPE CHECK
             $names = (array) $request->input('name', []);
             $types = (array) $request->input('id_type', []);
+
             if (count($names) !== count($types)) {
                 return back()->withInput()->with('error', 'Jumlah Name dan ID Type tidak selaras.');
             }
 
-            // 3) Susun purpose
+            // 4) PURPOSE FIX (NO MORE boolean())
             $otherPurpose = trim(strip_tags($request->input('other_purpose')));
             $purposes = [];
-            if ($request->boolean('purpose-1')) $purposes[] = 'Company Visit';
-            if ($request->boolean('purpose-2')) $purposes[] = 'Benchmarking';
-            if ($request->boolean('purpose-3')) $purposes[] = 'Trial';
-            if ($request->boolean('purpose-4') && $otherPurpose !== '') $purposes[] = $otherPurpose;
+
+            if ($request->has('purpose-1')) $purposes[] = 'Company Visit';
+            if ($request->has('purpose-2')) $purposes[] = 'Benchmarking';
+            if ($request->has('purpose-3')) $purposes[] = 'Trial';
+            if ($request->has('purpose-4') && $otherPurpose !== '') {
+                $purposes[] = $otherPurpose;
+            }
+
             $purpose = implode(', ', $purposes);
 
-            // 4) Upload IPK bila ada
+            // 5) UPLOAD IPK FILE
             $docName = null;
             if ($request->hasFile('ipk_form')) {
                 $doc = $request->file('ipk_form');
@@ -90,14 +97,14 @@ class AppointmentController extends Controller
                 $doc->storeAs('public/doc', $docName);
             }
 
-            // 5) Data pendukung
+            // 6) CARD QR
             $qr = \Ramsey\Uuid\Uuid::uuid4()->toString();
             $card = Card::select('id')
                 ->where('area_id', $request->area_id)
                 ->where('category', session()->get('category'))
                 ->first();
 
-            // 6) Transaksi simpan data utama
+            // 7) TRANSACTION SAVE
             \DB::beginTransaction();
 
             $appointment = \App\Models\Appointment::create([
@@ -107,7 +114,7 @@ class AppointmentController extends Controller
                 'time'         => $request->time,
                 'pic_id'       => $request->pic_id,
                 'area_id'      => $request->area_id,
-                'pic_dept'     => (string) $request->pic_dept, // jika kolom bertipe string, tetap simpan ID sebagai string
+                'pic_dept'     => (string) $request->pic_dept,
                 'pic_approval' => 'approved',
                 'qr_code'      => $qr,
                 'dh_approval'  => 'approved',
@@ -120,6 +127,7 @@ class AppointmentController extends Controller
                 'status'         => 'out',
             ]);
 
+            // 8) GUEST SAVE
             foreach ($names as $i => $guestName) {
                 $guestType = strtoupper(trim(strip_tags($types[$i] ?? 'KTP')));
                 if (!in_array($guestType, ['KTP','SIM','ID CARD'], true)) {
@@ -141,11 +149,13 @@ class AppointmentController extends Controller
 
             \DB::commit();
 
-            // 7) Kirim WA (non-blocking) setelah commit
+            // 9) SEND WA (NON BLOCKING)
             try {
                 $phone = optional($pic)->phone_number;
+
                 if (!empty($phone)) {
                     $guestNames = Guest::where('appointment_id', $appointment->id)->pluck('name')->toArray();
+
                     $message = sprintf(
                         "```----GUEST ALERT-------\n\nCompany : %s\nGuests : \n- %s\n\nAgenda  : %s\nDate    : %s at %s\nStatus  : %s\n\nPlease confirm your guest!\nThank You\n\nPlease click the link below:\n%s```",
                         (string) $user_company,
@@ -169,23 +179,22 @@ class AppointmentController extends Controller
                         CURLOPT_CONNECTTIMEOUT => 5,
                         CURLOPT_TIMEOUT => 8,
                     ]);
-                    $resp = curl_exec($ch);
-                    if ($resp === false) {
-                        \Log::warning('WA send failed', ['error' => curl_error($ch)]);
-                    }
+                    curl_exec($ch);
                     curl_close($ch);
                 }
-            } catch (\Throwable $wae) {
-                \Log::warning('WA notification threw', ['msg' => $wae->getMessage()]);
+            } catch (\Throwable $waErr) {
+                \Log::warning('WA error', ['msg' => $waErr->getMessage()]);
             }
 
             return redirect()->route('appointment.history')
                 ->with('success', 'Your ticket has been successfully created! Please wait for the PIC to approve your ticket or contact the PIC.');
 
         } catch (\Throwable $e) {
+
             if (\DB::transactionLevel() > 0) {
                 \DB::rollBack();
             }
+
             \Log::error('Appointment create failed', [
                 'msg'   => $e->getMessage(),
                 'file'  => $e->getFile(),
