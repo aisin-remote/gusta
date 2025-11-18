@@ -43,20 +43,36 @@ class DeliveryController extends Controller
         return redirect()->back()->with('success', 'Your delivery request has been successfully created!');
     }
 
-    public function history()
+    public function history(Request $request)
     {
-        $today = Carbon::today();
+        // Ambil bulan dari request, default bulan sekarang
+        $month = $request->input('month', Carbon::now()->month);
+        $year  = $request->input('year', Carbon::now()->year);
 
-        $deliveries = Delivery::whereDate('created_at', $today)->get();
-        $companies = Delivery::whereDate('created_at', $today)->distinct()->count('company');
-        $visitors = Delivery::whereDate('created_at', $today)->distinct()->count('name');
-        
+        $deliveries = Delivery::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $companies = Delivery::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->distinct()
+            ->count('company');
+
+        $visitors = Delivery::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->distinct()
+            ->count('name');
+
         return view('pages.visitor.history-delivery', [
             'deliveries' => $deliveries,
             'companies'  => $companies,
             'visitors'   => $visitors,
+            'selectedMonth' => $month,
+            'selectedYear'  => $year
         ]);
     }
+
 
     public function getStat()
     {
